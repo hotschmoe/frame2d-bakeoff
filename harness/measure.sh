@@ -8,6 +8,8 @@
 # Elsewhere (Windows, macOS, no systemd): falls back to harness/measure_fallback.py (wall time, plus CPU
 # and peak memory of the process tree when psutil is installed). Linux-only fields are null there.
 set -u
+# python3 or python (Linux often has only python3; Windows Git bash often has only python)
+if python3 -c pass >/dev/null 2>&1; then PY=python3; else PY=python; fi
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
 
@@ -26,7 +28,7 @@ if [ "${1:-}" = "--inner" ]; then
   swappeak=$(cat "$CG/memory.swap.peak" 2>/dev/null || echo 0)
   io=$(awk '{for(i=2;i<=NF;i++){split($i,a,"=");if(a[1]=="rbytes")r+=a[2];if(a[1]=="wbytes")w+=a[2]}}END{print r+0, w+0}' "$CG/io.stat" 2>/dev/null)
   procs=$(cat "$OUT.procs" 2>/dev/null || echo 0)
-  python - "$OUT" "$RC" "$T0" "$T1" "$cpu" "$mempeak" "$swappeak" "$io" "$procs" <<'PY'
+  $PY - "$OUT" "$RC" "$T0" "$T1" "$cpu" "$mempeak" "$swappeak" "$io" "$procs" <<'PY'
 import json, sys
 out, rc, t0, t1, cpu, mem, swap, io, procs = sys.argv[1:10]
 r, w = (int(x) for x in io.split())
@@ -55,12 +57,12 @@ if [ "$(uname -s)" = "Linux" ] && command -v systemd-run >/dev/null 2>&1 \
   RC=$?
   REC="$OUT.rec"
 else
-  python "$HERE/measure_fallback.py" "$OUT.rec" "$@"
+  $PY "$HERE/measure_fallback.py" "$OUT.rec" "$@"
   RC=$?
   REC="$OUT.rec"
 fi
 if [ -f "$REC" ]; then
-  python - "$REC" "$STACK" "$LABEL" >> "$OUTDIR/$LABEL.jsonl" <<'PY'
+  $PY - "$REC" "$STACK" "$LABEL" >> "$OUTDIR/$LABEL.jsonl" <<'PY'
 import json, sys
 rec = json.load(open(sys.argv[1])); rec.update(stack=sys.argv[2], label=sys.argv[3]); print(json.dumps(rec))
 PY

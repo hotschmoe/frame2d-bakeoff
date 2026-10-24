@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""link-timer: a transparent linker wrapper that logs the wall time and peak RSS of each link (SPEC 9.5).
+
+Use it as the linker; it execs the real one with the same arguments and appends one JSON line per link to $LINK_TIMER_LOG.
+  LINK_TIMER_REAL   the real linker command (default: cc). May contain flags, e.g. "clang -fuse-ld=mold".
+  LINK_TIMER_LOG    output file (default: ./link-timer.jsonl)
+
+  Rust:   CARGO_TARGET_<TRIPLE>_LINKER=$PWD/harness/shims/link-timer  (env var form, no stack file edit; the triple is
+          upper-cased with - -> _, e.g. CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER)
+  cgo:    CC=<path>/link-timer  or  go build -ldflags "-extld=<path>/link-timer"
+  CMake:  -DCMAKE_LINKER_LAUNCHER=<path>/link-timer  (or CMAKE_CXX_LINKER_LAUNCHER)
+
+Peak RSS comes from psutil sampling the child tree every 20 ms when psutil is installed, else from resource.getrusage
+(children) on POSIX. Windows is unsupported (rustc only sets up the MSVC environment when it runs link.exe itself).
+"""
+import json
+import os
+import shlex
+import subprocess
+import sys
+import time
+
+real = shlex.split(os.environ.get("LINK_TIMER_REAL", "cc"))
+log = os.environ.get("LINK_TIMER_LOG", "link-timer.jsonl")
+t0 = time.perf_counter()
+p = subprocess.Popen(real + sys.argv[1:])
+peak = 0
+try:
+    import psutil
+    root = psutil.Process(p.pid)
+    while p.poll() is None:
+        try:
+            rss = sum(q.memory_info().rss for q in [root] + root.children(recursive=True))
+            peak = max(peak, rss)
+        except psutil.Error:
+            pass
+        time.sleep(0.02)
+except ImportError:
+    p.wait()
+    try:
+        import resource
+        peak = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss * 1024   # KiB on Linux
+    except ImportError:
+        peak = 0
+rc = p.wait()
+out = next((a for a in sys.argv[1:] if a.startswith("-o") and len(a) > 2), None)
+if out is None and "-o" in sys.argv[1:]:
+    i = sys.argv.index("-o")
+    out = sys.argv[i + 1] if i + 1 < len(sys.argv) else None
+with open(log, "a", encoding="utf-8") as f:
+    f.write(json.dumps({"wall_s": time.perf_counter() - t0, "peak_rss_mb": peak / 2**20, "exit_code": rc,
+                        "linker": real[0], "output": out}) + "\n")
+sys.exit(rc)

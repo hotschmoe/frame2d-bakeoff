@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Flip the BENCH-EDIT:<name> line of a stack between two states (SPEC 9.2).
 
-usage: toggle.py <stack> <name> <state-a> <state-b>
+usage: toggle.py <stack-name-or-dir> <name> <state-a> <state-b>
 Exactly one line under stacks/<stack>/ must carry the marker. States may list alternates separated by '|' (paired by position). If it contains state-b it becomes state-a,
 otherwise state-a becomes state-b, so repeated runs alternate and every run is a real change.
 """
@@ -10,7 +10,10 @@ import sys
 
 SKIP = {"target", "zig-out", ".zig-cache", "build", ".dart_tool", "node_modules", "generated", ".git"}
 stack, name, a, b = sys.argv[1:5]
-root = pathlib.Path(__file__).resolve().parent.parent.parent / "stacks" / stack
+if any(c in stack for c in ("/", "\\", ":")):  # a directory path (a stack copy, e.g. a contention copy or stacks/rust-tuned)
+    root = pathlib.Path(stack).resolve()
+else:
+    root = pathlib.Path(__file__).resolve().parent.parent.parent / "stacks" / stack
 marker = f"BENCH-EDIT:{name}"
 hits = []
 for p in root.rglob("*"):

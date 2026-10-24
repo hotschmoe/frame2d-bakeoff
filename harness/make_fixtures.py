@@ -142,9 +142,13 @@ F["F21"] = ("p2", model([(0, 0), (L, 0)], [(1, 2)], [fixed(1)], [case(nodal=[tip
                         springs=[{"node": 2, "ky": 3 * EI / L**3}]),
             [disp(0, 1, "uy", tip_pl / 2)])
 
-F["F22"] = ("p2", model([(0, 0), (L, 0)], [(1, 2, {"j": ["mz"]})], [fixed(1), fixed(2)],
+# SPEC 6.2 originally said "both ends fixed", which leaves no free DOFs (no_free_dofs). Node 2 is the F07 roller
+# (uy only); the released rz is then auto-restrained (4.7), so the result equals F07.
+F["F22"] = ("p2", model([(0, 0), (L, 0)], [(1, 2, {"j": ["mz"]})],
+                        [fixed(1), {"node": 2, "ux": False, "uy": True, "rz": False}],
                         [case(udl=[{"member": 1, "w": W}])]),
-            [react(0, 0, "fy", -5 * W * L / 8), react(0, 0, "mz", -W * L**2 / 8), react(0, 1, "fy", -3 * W * L / 8),
+            [{"path": "/warnings", "len": 1}, {"path": "/warnings/0/warning", "value": "auto_restrained"},
+             react(0, 0, "fy", -5 * W * L / 8), react(0, 0, "mz", -W * L**2 / 8), react(0, 1, "fy", -3 * W * L / 8),
              react(0, 1, "mz", 0.0)])
 
 F["F23"] = ("p2", model(ss_nodes, [(1, 2, {"j": ["mz"]}), (2, 3)], ff_sup, [case(nodal=pmid)]),

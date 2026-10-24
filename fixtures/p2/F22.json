@@ -33,9 +33,9 @@
   },
   {
    "node": 2,
-   "ux": true,
+   "ux": false,
    "uy": true,
-   "rz": true
+   "rz": false
   }
  ],
  "members": [
@@ -65,6 +65,14 @@
   }
  ],
  "expect": [
+  {
+   "path": "/warnings",
+   "len": 1
+  },
+  {
+   "path": "/warnings/0/warning",
+   "value": "auto_restrained"
+  },
   {
    "path": "/load_cases/0/reactions/0/fy",
    "value": 15625.0

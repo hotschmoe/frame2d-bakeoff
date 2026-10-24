@@ -14,3 +14,11 @@ Each file is a model (SPEC §5.1) plus an `expect` list:
 Pointers index into the results after arrays are sorted by id. `displacements` has every node; `reactions` has one entry per node with a restrained DOF; `stations[k]` is at x = k·L/10. "Midspan" in two-member beams is member 1, station 10.
 
 `golden/` is empty until the first stack passes P1. See SPEC §6.3 for how the goldens are produced and verified.
+
+## Reference implementation
+
+`harness/reference/ref.py` is an independent dense-numpy implementation of SPEC §4 (RCM, LDLᵀ with the pivot check, static condensation, auto-restraint). It passes all 20 fixtures:
+
+    python harness/conformance.py reference all --bin "python harness/reference/ref.py" --no-golden
+
+`golden/reference/gen_10_10.results.json` is its output for `gen 10 10`: a candidate for the real golden, and the second opinion required by SPEC §6.3. It is too slow to produce `gen 50 50` (dense), so that golden still comes from the first stack to pass P1.

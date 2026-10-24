@@ -3,7 +3,7 @@
 
 usage: conformance.py <stack> <p1|p2|all> [--bin PATH] [--no-golden]
 
-The binary comes from --bin, or from `build_cli_release` in stacks/<stack>/stack.sh
+The binary comes from --bin (a path, or a command such as "python harness/reference/ref.py"), or from `build_cli_release` in stacks/<stack>/stack.sh
 (last stdout line is taken as the path).
 
 Expect-block entries:
@@ -14,7 +14,9 @@ Pointers are resolved after sorting every array of objects by "id"/"node".
 """
 import argparse
 import json
+import os
 import pathlib
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -64,7 +66,7 @@ def run_solve(binary, model):
     with tempfile.TemporaryDirectory() as td:
         mp, rp = pathlib.Path(td, "model.json"), pathlib.Path(td, "results.json")
         mp.write_text(json.dumps(model))
-        p = subprocess.run([binary, "solve", str(mp), "-o", str(rp)], capture_output=True, text=True, timeout=300)
+        p = subprocess.run([*binary, "solve", str(mp), "-o", str(rp)], capture_output=True, text=True, timeout=300)
         if p.returncode == 0:
             return 0, normalize(json.loads(rp.read_text()))
         try:
@@ -135,7 +137,7 @@ def check_golden(binary, name):
     _, b, s = name.split("_")
     with tempfile.TemporaryDirectory() as td:
         mp = pathlib.Path(td, "model.json")
-        p = subprocess.run([binary, "gen", b, s, "-o", str(mp)], capture_output=True, text=True)
+        p = subprocess.run([*binary, "gen", b, s, "-o", str(mp)], capture_output=True, text=True)
         if p.returncode != 0:
             return [f"gen failed: {p.stderr[:200]}"]
         code, res = run_solve(binary, json.loads(mp.read_text()))
@@ -153,6 +155,7 @@ def main():
     a = ap.parse_args()
 
     binary = find_bin(a.stack, a.bin)
+    binary = [binary] if os.path.exists(binary) else shlex.split(binary)
     phases = ["p1", "p2"] if a.phase == "all" else [a.phase]
     failed = total = 0
     for ph in phases:

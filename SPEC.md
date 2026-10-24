@@ -93,6 +93,7 @@ Measure the build loop (§9.1–9.6) after P2 on every stack, and again after P3
   - Process components in ascending order of their minimum node id.
   - Reverse the final order.
 - **Skyline (profile) storage**, upper triangle, stored by column.
+- **Profile definition** (the spec previously left this open): the height of free-DOF column `j` is `j − r`, where `r` is the lowest free-DOF index coupled to `j` by any member (structural coupling, regardless of numeric zeros or releases). The diagonal is not counted. `profile` is the sum of heights. The reference implementation (`harness/reference/ref.py`) gives `gen 10 10`: `profile_before = 10221`, `profile_after = 7575`, `free_dofs = 330`.
 - **LDLᵀ or Cholesky** factorization in skyline. Implementations must produce the same `profile` statistic (§4.6), which proves equal work.
 - **Pivot check:** a pivot ≤ `1e-12 × max diagonal` aborts with error `unstable`, reporting the DOF's node id and component. The tolerance literal must sit on a line marked `BENCH-EDIT:leaf` (§9.2).
 
@@ -344,7 +345,7 @@ Common properties unless stated: E = 200e9 Pa, A = 0.01 m², I = 8e-5 m⁴ (EI =
 | ID | Model | Checks |
 |----|-------|--------|
 | F21 | F01 plus vertical spring at tip, `ky = 384000` (= 3EI/L³) | tip `uy = −0.01302083333` (half of F01) |
-| F22 | One member, both ends fixed, release `mz` at `j`, UDL `w` | identical to F07 reactions |
+| F22 | One member, fixed at `i`, roller (`uy` only) at `j`, release `mz` at `j`, UDL `w` | identical to F07 reactions; one `auto_restrained` warning for node 2 `rz` (the original "both ends fixed" leaves no free DOFs) |
 | F23 | Fixed–fixed, 2 members, release `mz` at the `j` end of member 1 only (internal hinge), `fy = −P` at mid | mid `uy = −0.001627604167`; end reactions `mz = +12500` (left) and `−12500` (right) |
 | F24 | As F23, but release `mz` at both member 1 `j` and member 2 `i` | solves; one `auto_restrained` warning for the hinge node `rz`; `ux` and `uy` at every node match F23; hinge node `rz = 0` |
 | F25 | F01 with the tip both restrained in `uy` and given a `ky` spring | error `support_conflict` |

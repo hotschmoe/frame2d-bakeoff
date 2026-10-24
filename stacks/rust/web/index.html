@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frame2D</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #fafafa; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+</style>
+</head>
+<body>
+<canvas id="frame2d_canvas"></canvas>
+<script type="module">
+  import init, * as engine from "./frame2d.js";
+
+  const bench = new URLSearchParams(location.search).get("bench");
+  await init({ module_or_path: "./frame2d_bg.wasm" });
+
+  // boundary mode: time JS -> WASM calls into the exported engine functions (no UI is started).
+  if (bench === "boundary") {
+    const N = 38103;
+    let t = performance.now();
+    for (let i = 0; i < 1000000; i++) engine.f2d_noop();
+    const noop_ns = (performance.now() - t) * 1e6 / 1e6;
+    let sink = 0;
+    t = performance.now();
+    for (let i = 0; i < 1000; i++) sink += engine.f2d_echo(N)[N - 1];
+    const transfer_us = (performance.now() - t) * 1e3 / 1000;
+    console.log("BENCH " + JSON.stringify({
+      mode: "boundary", noop_ns, transfer_us,
+      mechanism: "wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)",
+    }));
+  }
+</script>
+</body>
+</html>

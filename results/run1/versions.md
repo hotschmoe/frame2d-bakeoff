@@ -13,8 +13,8 @@ PATH ordering for these pins is set by `harness/machine-env.sh` (`f2d_check_pins
 | wasm-bindgen / -cli | 0.2.129 | |
 | wasm-pack / wasm-opt (binaryen) | 0.15.0 / version_133 | |
 | ffigen | per project | latest on pub.dev is 23.0.0 |
-| dvui | pinned at P1 start | main requires Zig 0.17.0 (`minimum_zig_version`); record the commit when the smoke test (SPEC 15.6) passes |
-| Teak | pinned only if used | pin release tag/commit here. Teak targets Zig 0.16, see hotschmoe/teak#131 |
+| dvui | `275c248f6a2a80f92723ac93242310e16201a49b` (main, 2026-10-22; 0.6.0-dev) | SPEC 15.6 smoke test PASSED 2026-10-23 on win-arm64 (window, pan/zoom canvas, 20,100-row virtualized list, `wasm32-freestanding` web backend in Chromium, no Emscripten). Desktop backend SDL3 3.4.18 built from source via dvui lazy dep, D3D11 renderer. zon hash `dvui-0.6.0-dev-AQFJmWZLBAG6E9WSTCqdouXXCC8gF91z6oiLmZvh3e-5` |
+| Teak | not used (dvui passed) | Teak targets Zig 0.16, see hotschmoe/teak#131 |
 | Playwright / Chromium | 1.64.1 / 156.0.8078.4 | Chromium is x64 (emulated) on ARM64 Windows |
 | hyperfine / oha / scc / brotli | 2.0.0 / 1.16.0 / 4.1.0 / 1.2.1 | |
 | Node | 24.22.1 | |

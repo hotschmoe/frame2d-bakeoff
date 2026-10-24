@@ -38,8 +38,56 @@ func (p *Prepared) geometry() ([]geom, error) {
 	return g, nil
 }
 
-// localK fills the 6x6 local stiffness of member m.
+// localK fills the 6x6 local stiffness of member m, statically condensed for end releases.
 func (p *Prepared) localK(m int, l float64, k *[6][6]float64) {
+	p.rawK(m, l, k)
+	p.condense(m, k, nil)
+}
+
+// condense removes released rotations (local dof 2 at i, 5 at j) from k and, if given, f.
+func (p *Prepared) condense(m int, k *[6][6]float64, f *[6]float64) {
+	for e, r := range [2]int{2, 5} {
+		if !p.rel[m][e] {
+			continue
+		}
+		piv := k[r][r]
+		if piv == 0 {
+			continue
+		}
+		col := [6]float64{}
+		for a := 0; a < 6; a++ {
+			col[a] = k[a][r]
+		}
+		for a := 0; a < 6; a++ {
+			for b := 0; b < 6; b++ {
+				k[a][b] -= col[a] * k[r][b] / piv
+			}
+		}
+		if f != nil {
+			fr := f[r]
+			for a := 0; a < 6; a++ {
+				f[a] -= col[a] * fr / piv
+			}
+			f[r] = 0
+		}
+		for a := 0; a < 6; a++ {
+			k[a][r], k[r][a] = 0, 0
+		}
+	}
+}
+
+// fixedEndM returns the fixed-end forces of member m, condensed for releases.
+func (p *Prepared) fixedEndM(m int, w, l float64) [6]float64 {
+	f := fixedEnd(w, l)
+	if p.rel[m][0] || p.rel[m][1] {
+		var k [6][6]float64
+		p.rawK(m, l, &k)
+		p.condense(m, &k, &f)
+	}
+	return f
+}
+
+func (p *Prepared) rawK(m int, l float64, k *[6][6]float64) {
 	*k = [6][6]float64{}
 	ea := p.mE[m] * p.mA[m] / l
 	ei := p.mE[m] * p.mI[m]
@@ -122,6 +170,11 @@ func (p *Prepared) SolveCase(only int) (*Out, error) {
 			}
 		}
 	}
+	for k, q := range p.dofOf {
+		if q >= 0 && p.spring[k] != 0 {
+			vals[p.colPtr[q+1]-1] += p.spring[k]
+		}
+	}
 	maxDiag := 0.0
 	for j := 0; j < n; j++ {
 		if d := vals[p.colPtr[j+1]-1]; d > maxDiag {
@@ -150,7 +203,7 @@ func (p *Prepared) SolveCase(only int) (*Out, error) {
 			if pc.w[m] == 0 {
 				continue
 			}
-			f := fixedEnd(pc.w[m], g[m].l)
+			f := p.fixedEndM(m, pc.w[m], g[m].l)
 			ffix[m] = f
 			fg := rotate(g[m], &f, false)
 			for d := 0; d < 3; d++ {
@@ -205,8 +258,9 @@ func (p *Prepared) SolveCase(only int) (*Out, error) {
 					co.React[k*3+d] = sum[k*3+d] - pc.nodal[k*3+d]
 				}
 			}
-			rx += co.React[k*3] + pc.nodal[k*3]
-			ry += co.React[k*3+1] + pc.nodal[k*3+1]
+			sx, sy := -p.spring[k*3]*co.U[k*3], -p.spring[k*3+1]*co.U[k*3+1] // spring reactions
+			rx += co.React[k*3] + pc.nodal[k*3] + sx
+			ry += co.React[k*3+1] + pc.nodal[k*3+1] + sy
 			scale += math.Abs(co.React[k*3]) + math.Abs(co.React[k*3+1]) + math.Abs(pc.nodal[k*3]) + math.Abs(pc.nodal[k*3+1])
 		}
 		for m := 0; m < nM; m++ {
@@ -319,7 +373,7 @@ func (p *Prepared) MemberLength(m int) float64 {
 
 // ResultsJSON converts flat output to the JSON result structure.
 func (p *Prepared) ResultsJSON(out *Out) *Results {
-	res := &Results{Warnings: []any{}, Stats: out.Stats}
+	res := &Results{Warnings: append([]any{}, p.Warns...), Stats: out.Stats}
 	for c := range out.Cases {
 		co := &out.Cases[c]
 		cr := CaseResult{ID: p.cases[c].id, EquilibriumResidual: co.Residual,
@@ -327,7 +381,7 @@ func (p *Prepared) ResultsJSON(out *Out) *Results {
 			Reactions:     []Reaction{}, Members: make([]MemberResult, len(p.MemIDs))}
 		for k, id := range p.NodeIDs {
 			cr.Displacements[k] = Displacement{id, co.U[k*3], co.U[k*3+1], co.U[k*3+2]}
-			if p.restr[k*3] || p.restr[k*3+1] || p.restr[k*3+2] {
+			if p.Restrained(k, 0) || p.Restrained(k, 1) || p.Restrained(k, 2) {
 				cr.Reactions = append(cr.Reactions, Reaction{id, co.React[k*3], co.React[k*3+1], co.React[k*3+2]})
 			}
 		}

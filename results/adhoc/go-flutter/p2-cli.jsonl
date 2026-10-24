@@ -1,0 +1,1 @@
+{"wall_s": 0.731289299990749, "cpu_s": 0.421875, "parallelism": 0.5768920726794947, "mem_peak_mb": 145.84765625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 5, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "p2-cli"}

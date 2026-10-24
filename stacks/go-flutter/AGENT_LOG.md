@@ -66,3 +66,12 @@ Run id: run1   Machine: win-arm64   Agent model: claude-sonnet-5-5   Started: Fr
   - web (default dart2js/CanvasKit build): `boundary` noop ~24 us, transfer ~95 us; `drag` p50 247 ms (solve_p50 140 ms, raster 213 ms); `render` p50 53 ms; `startup` 3.0 s; `ready` 1.9 s
   - web bench was driven by an ad-hoc Playwright 1.64.1 script (headless Chromium 156.0.8078.4, static server, no cache); harness/bench_web.mjs did not exist yet
   - CLI (native arm64): `bench 200 200` factor ~6.6 s, 50x50 and smaller are tens of ms
+
+# Phase P2 (SPEC 4.7 change request)
+
+Started: Sat Oct 24 01:17:00 2026 (local `date`). Done within ~10 minutes; no problems over 10 minutes.
+
+- Springs: `Model.Springs`, added to the free-DOF diagonal after assembly; spring on a restrained DOF -> `support_conflict` (checked in `Prepare`). Spring forces (-k u) count in the equilibrium residual but are not listed as reactions.
+- Releases: `Member.Release`; `condense` does static condensation of the local k and fixed-end forces (`fixedEndM`). Skyline stays structural.
+- Auto-restraint: in `Prepare`, a free rz with no kr spring whose attached members all release mz there is restrained and a `auto_restrained` warning is emitted. Such DOFs are hidden from `Restrained()` and the reactions list.
+- Result: conformance p2 7/7, p1 17/17, `test_all` green.

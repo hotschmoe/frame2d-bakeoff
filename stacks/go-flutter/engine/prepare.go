@@ -23,6 +23,10 @@ type Prepared struct {
 	dofOf   []int // nodes*3 -> free dof index or -1
 	restr   []bool
 	nFree   int
+	autoR   []bool    // nodes*3: restrained automatically (SPEC 4.7)
+	spring  []float64 // nodes*3 spring stiffness
+	rel     [][2]bool // per member: mz released at i, j
+	Warns   []any
 	top     []int // per free dof: first row of its skyline column
 	colPtr  []int // per free dof: start of its column in the value array
 	vals    []float64
@@ -44,7 +48,7 @@ func (p *Prepared) CaseW(c, m int) float64 { return p.cases[c].w[m] }
 func (p *Prepared) SetCoord(k int, x, y float64) { p.X[k], p.Y[k] = x, y }
 
 // Restrained reports whether dof d (0..2) of node index k is restrained.
-func (p *Prepared) Restrained(k, d int) bool { return p.restr[k*3+d] }
+func (p *Prepared) Restrained(k, d int) bool { return p.restr[k*3+d] && !p.autoR[k*3+d] }
 
 // Prepare validates the model and builds the RCM-ordered DOF numbering.
 func Prepare(m *Model) (*Prepared, error) {
@@ -99,6 +103,16 @@ func Prepare(m *Model) (*Prepared, error) {
 		p.mA = append(p.mA, s.A)
 		p.mI = append(p.mI, s.I)
 		memIdx[mb.ID] = k
+		var r [2]bool
+		if mb.Release != nil {
+			for _, d := range mb.Release.I {
+				r[0] = r[0] || d == "mz"
+			}
+			for _, d := range mb.Release.J {
+				r[1] = r[1] || d == "mz"
+			}
+		}
+		p.rel = append(p.rel, r)
 	}
 
 	nN, nM := len(p.NodeIDs), len(p.MemIDs)
@@ -111,6 +125,41 @@ func Prepare(m *Model) (*Prepared, error) {
 		p.restr[k*3] = p.restr[k*3] || s.UX
 		p.restr[k*3+1] = p.restr[k*3+1] || s.UY
 		p.restr[k*3+2] = p.restr[k*3+2] || s.RZ
+	}
+	p.autoR = make([]bool, nN*3)
+	p.spring = make([]float64, nN*3)
+	for _, sp := range m.Springs {
+		k, ok := p.nodeIdx[sp.Node]
+		if !ok {
+			return nil, modelErr(ErrInvalidRef, "spring references missing node %d", sp.Node)
+		}
+		for d, v := range [3]float64{sp.KX, sp.KY, sp.KR} {
+			if v == 0 {
+				continue
+			}
+			if p.restr[k*3+d] {
+				return nil, modelErr(ErrSupportConflict, "node %d %s is both restrained and sprung", sp.Node, [3]string{"ux", "uy", "rz"}[d])
+			}
+			p.spring[k*3+d] += v
+		}
+	}
+	// Auto-restraint: a free rz with no stiffness because every attached member releases mz there.
+	nAttached := make([]int, nN)
+	nReleased := make([]int, nN)
+	for mi := range p.MemIDs {
+		for e, k := range [2]int{p.MI[mi], p.MJ[mi]} {
+			nAttached[k]++
+			if p.rel[mi][e] {
+				nReleased[k]++
+			}
+		}
+	}
+	p.Warns = []any{}
+	for k := 0; k < nN; k++ {
+		if !p.restr[k*3+2] && p.spring[k*3+2] == 0 && nAttached[k] > 0 && nAttached[k] == nReleased[k] {
+			p.restr[k*3+2], p.autoR[k*3+2] = true, true
+			p.Warns = append(p.Warns, map[string]any{"warning": "auto_restrained", "node": p.NodeIDs[k], "dof": "rz"})
+		}
 	}
 	for _, lc := range m.LoadCases {
 		pc := preparedCase{id: lc.ID, nodal: make([]float64, nN*3), w: make([]float64, nM)}

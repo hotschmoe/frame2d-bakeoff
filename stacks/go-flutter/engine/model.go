@@ -35,11 +35,26 @@ type Support struct {
 
 // Member is a prismatic Euler-Bernoulli member from node I to node J.
 type Member struct {
-	ID       int    `json:"id"`
-	I        int    `json:"i"`
-	J        int    `json:"j"`
-	Material string `json:"material"`
-	Section  string `json:"section"`
+	ID       int      `json:"id"`
+	I        int      `json:"i"`
+	J        int      `json:"j"`
+	Material string   `json:"material"`
+	Section  string   `json:"section"`
+	Release  *Release `json:"release,omitempty"`
+}
+
+// Release lists released DOFs ("mz") at each member end (SPEC 4.7).
+type Release struct {
+	I []string `json:"i"`
+	J []string `json:"j"`
+}
+
+// Spring is an elastic support on free DOFs (SPEC 4.7).
+type Spring struct {
+	Node int     `json:"node"`
+	KX   float64 `json:"kx"`
+	KY   float64 `json:"ky"`
+	KR   float64 `json:"kr"`
 }
 
 // NodalLoad is a load in global axes.
@@ -69,17 +84,19 @@ type Model struct {
 	Sections  []Section  `json:"sections"`
 	Nodes     []Node     `json:"nodes"`
 	Supports  []Support  `json:"supports"`
+	Springs   []Spring   `json:"springs,omitempty"`
 	Members   []Member   `json:"members"`
 	LoadCases []LoadCase `json:"load_cases"`
 }
 
 // Error codes (SPEC 4.6).
 const (
-	ErrInvalidRef  = "invalid_ref"
-	ErrZeroLength  = "zero_length"
-	ErrDuplicateID = "duplicate_id"
-	ErrUnstable    = "unstable"
-	ErrNoFreeDOFs  = "no_free_dofs"
+	ErrInvalidRef      = "invalid_ref"
+	ErrZeroLength      = "zero_length"
+	ErrDuplicateID     = "duplicate_id"
+	ErrUnstable        = "unstable"
+	ErrNoFreeDOFs      = "no_free_dofs"
+	ErrSupportConflict = "support_conflict"
 )
 
 // ModelError is a validation or solve failure caused by the model.

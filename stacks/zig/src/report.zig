@@ -62,7 +62,12 @@ pub fn writeResults(w: *Writer, m: *const model_mod.Model, res: *const solver.Re
         }
         try w.print("],\"equilibrium_residual\":{}}}", .{c.residual});
     }
-    try w.writeAll("],\"warnings\":[],\"stats\":");
+    try w.writeAll("],\"warnings\":[");
+    for (res.warnings, 0..) |nd, k| {
+        if (k > 0) try w.writeByte(',');
+        try w.print("{{\"warning\":\"auto_restrained\",\"node\":{d},\"dof\":\"rz\"}}", .{m.nodes[nd].id});
+    }
+    try w.writeAll("],\"stats\":");
     try writeStats(w, res.stats);
     try w.writeAll("}\n");
 }

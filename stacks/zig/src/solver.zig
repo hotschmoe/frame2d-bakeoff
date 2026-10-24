@@ -17,6 +17,7 @@ pub const Code = enum {
     duplicate_id,
     unstable,
     no_free_dofs,
+    support_conflict,
 };
 
 /// Filled in when `solve` returns `error.ModelError`.
@@ -72,9 +73,12 @@ pub const Results = struct {
     cases: []CaseResult,
     /// Member length per member (sorted by id).
     length: []f64,
+    /// Node indexes (sorted) whose rz was restrained automatically (SPEC 4.7).
+    warnings: []u32,
     stats: Stats,
 
     pub fn deinit(self: *Results) void {
+        self.gpa.free(self.warnings);
         for (self.cases) |c| freeCase(self.gpa, c);
         self.gpa.free(self.cases);
         self.gpa.free(self.length);
@@ -142,6 +146,12 @@ const Geometry = struct {
     ei: []f64,
     /// bit mask of restrained dofs per node (bit0 ux, bit1 uy, bit2 rz)
     fixed: []u8,
+    /// user-declared supports only (reactions are reported here, not at auto-restrained dofs)
+    reac: []u8,
+    /// per member: bit0 = mz released at i, bit1 = mz released at j
+    rel: []u8,
+    /// spring stiffness per dof (3 per node)
+    spring: []f64,
 
     fn init(gpa: Allocator, n: usize, m: usize) !Geometry {
         const mi = try gpa.alloc(u32, m);
@@ -159,8 +169,16 @@ const Geometry = struct {
         const ei = try gpa.alloc(f64, m);
         errdefer gpa.free(ei);
         const fixed = try gpa.alloc(u8, n);
+        errdefer gpa.free(fixed);
         @memset(fixed, 0);
-        return .{ .mi = mi, .mj = mj, .len = len, .c = c, .s = s, .ea = ea, .ei = ei, .fixed = fixed };
+        const reac = try gpa.alloc(u8, n);
+        errdefer gpa.free(reac);
+        const rel = try gpa.alloc(u8, m);
+        errdefer gpa.free(rel);
+        @memset(rel, 0);
+        const spring = try gpa.alloc(f64, n * 3);
+        @memset(spring, 0);
+        return .{ .mi = mi, .mj = mj, .len = len, .c = c, .s = s, .ea = ea, .ei = ei, .fixed = fixed, .reac = reac, .rel = rel, .spring = spring };
     }
 
     fn deinit(g: Geometry, gpa: Allocator) void {
@@ -172,6 +190,9 @@ const Geometry = struct {
         gpa.free(g.ea);
         gpa.free(g.ei);
         gpa.free(g.fixed);
+        gpa.free(g.reac);
+        gpa.free(g.rel);
+        gpa.free(g.spring);
     }
 };
 
@@ -210,11 +231,34 @@ fn buildGeometry(gpa: Allocator, m: *const Model, err: *ErrorInfo) SolveError!Ge
         g.s[k] = dy / l;
         g.ea[k] = m.materials[mat_i].E * m.sections[sec_i].A;
         g.ei[k] = m.materials[mat_i].E * m.sections[sec_i].I;
+        if (mem.release) |r| {
+            for (r.i) |d| {
+                if (!std.mem.eql(u8, d, "mz")) return err.set(.invalid_ref, "member {d}: unsupported release '{s}'", .{ mem.id, d });
+                g.rel[k] |= 1;
+            }
+            for (r.j) |d| {
+                if (!std.mem.eql(u8, d, "mz")) return err.set(.invalid_ref, "member {d}: unsupported release '{s}'", .{ mem.id, d });
+                g.rel[k] |= 2;
+            }
+        }
     }
     for (m.supports) |sp| {
         const nd = findNode(m.nodes, sp.node) orelse
             return err.set(.invalid_ref, "support references missing node {d}", .{sp.node});
         g.fixed[nd] |= @as(u8, @intFromBool(sp.ux)) | (@as(u8, @intFromBool(sp.uy)) << 1) | (@as(u8, @intFromBool(sp.rz)) << 2);
+    }
+    @memcpy(g.reac, g.fixed);
+    for (m.springs) |sp| {
+        const nd = findNode(m.nodes, sp.node) orelse
+            return err.set(.invalid_ref, "spring references missing node {d}", .{sp.node});
+        const ks = [3]?f64{ sp.kx, sp.ky, sp.kr };
+        const names = [3][]const u8{ "ux", "uy", "rz" };
+        for (ks, 0..) |kv, c| {
+            const v = kv orelse continue;
+            if ((g.fixed[nd] >> @intCast(c)) & 1 == 1)
+                return err.set(.support_conflict, "node {d} {s} is both restrained and sprung", .{ sp.node, names[c] });
+            g.spring[nd * 3 + c] += v;
+        }
     }
     for (m.load_cases) |lc| {
         for (lc.nodal) |ld| {
@@ -563,6 +607,71 @@ fn fixedEndForces(w: f64, l: f64) [6]f64 {
     return .{ 0, -w * l / 2, -w * l * l / 12, 0, -w * l / 2, w * l * l / 12 };
 }
 
+/// Static condensation (SPEC 4.7) of the released local dofs (mask bit0 = dof 2, bit1 = dof 5):
+/// eliminates each released dof in turn, leaving zero rows/columns and zero force there.
+fn condense(k: *[36]f64, f: *[6]f64, mask: u8) void {
+    const released = [2]usize{ 2, 5 };
+    for (released, 0..) |p, b| {
+        if ((mask >> @intCast(b)) & 1 == 0) continue;
+        const kpp = k[p * 6 + p];
+        for (0..6) |a| {
+            if (a == p) continue;
+            const kap = k[a * 6 + p];
+            if (kap == 0) continue;
+            for (0..6) |q| {
+                if (q == p) continue;
+                k[a * 6 + q] -= kap * k[p * 6 + q] / kpp;
+            }
+            f[a] -= kap * f[p] / kpp;
+        }
+        for (0..6) |a| {
+            k[a * 6 + p] = 0;
+            k[p * 6 + a] = 0;
+        }
+        f[p] = 0;
+    }
+}
+
+/// Condensed local stiffness and fixed-end forces of member k.
+fn memberLocal(geo: *const Geometry, k: usize, w: f64) struct { k: [36]f64, f: [6]f64 } {
+    var kl = localStiffness(geo.ea[k], geo.ei[k], geo.len[k]);
+    var ff = fixedEndForces(w, geo.len[k]);
+    if (geo.rel[k] != 0) condense(&kl, &ff, geo.rel[k]);
+    return .{ .k = kl, .f = ff };
+}
+
+/// Restrains (bit 2 of `fixed`) every free rz dof left without stiffness by member releases;
+/// returns the affected node indexes (SPEC 4.7). Only needed when some member has a release.
+fn autoRestrain(gpa: Allocator, geo: *const Geometry) !?[]u32 {
+    const n = geo.fixed.len;
+    const diag = try gpa.alloc(f64, n * 3);
+    defer gpa.free(diag);
+    @memcpy(diag, geo.spring);
+    for (0..geo.mi.len) |k| {
+        const kl = memberLocal(geo, k, 0).k;
+        const kg = globalStiffness(&kl, geo.c[k], geo.s[k]);
+        for (0..3) |c| {
+            diag[geo.mi[k] * 3 + c] += kg[c * 6 + c];
+            diag[geo.mj[k] * 3 + c] += kg[(3 + c) * 6 + 3 + c];
+        }
+    }
+    var scale: f64 = 0;
+    for (0..n * 3) |q| {
+        if ((geo.fixed[q / 3] >> @intCast(q % 3)) & 1 == 0) scale = @max(scale, diag[q]);
+    }
+    var list: std.ArrayList(u32) = .empty;
+    errdefer list.deinit(gpa);
+    for (0..n) |nd| {
+        if (geo.fixed[nd] & 4 == 0 and diag[nd * 3 + 2] <= 1e-12 * scale) try list.append(gpa, @intCast(nd));
+    }
+    if (list.items.len == 0) {
+        list.deinit(gpa);
+        return null;
+    }
+    for (list.items) |nd| geo.fixed[nd] |= 4;
+    return try list.toOwnedSlice(gpa);
+}
+
 // ------------------------------------------------------------------ factor / solve
 
 /// In-place LDL^T on the skyline: the strict upper part becomes L^T (unit), the diagonal becomes D.
@@ -645,6 +754,14 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
     const geo = try buildGeometry(gpa, m, err);
     defer geo.deinit(gpa);
 
+    var any_release = false;
+    for (geo.rel) |r| any_release = any_release or r != 0;
+    const warn_list: ?[]u32 = if (any_release) try autoRestrain(gpa, &geo) else null;
+    var warn_owned = true;
+    defer if (warn_owned) {
+        if (warn_list) |wl| gpa.free(wl);
+    };
+
     const graph = try buildGraph(gpa, n_nodes, &geo);
     defer graph.deinit(gpa);
     const order = try rcmOrder(gpa, n_nodes, graph);
@@ -676,7 +793,7 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
 
     // assembly
     for (0..n_mem) |k| {
-        const kl = localStiffness(geo.ea[k], geo.ei[k], geo.len[k]);
+        const kl = memberLocal(&geo, k, 0).k;
         const kg = globalStiffness(&kl, geo.c[k], geo.s[k]);
         var di: [6]u32 = undefined;
         for (0..3) |c| {
@@ -693,6 +810,10 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
             }
         }
     }
+    for (0..n_nodes * 3) |q| {
+        const d = dofidx[q];
+        if (d != unset and geo.spring[q] != 0) store[colptr[d + 1] - 1] += geo.spring[q];
+    }
     var max_diag: f64 = 0;
     for (0..n_free) |j| max_diag = @max(max_diag, sk.diag(j));
 
@@ -708,7 +829,7 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
     const t_fac = clock_ns();
 
     var n_react: usize = 0;
-    for (geo.fixed) |f| n_react += @intFromBool(f != 0);
+    for (geo.reac) |f| n_react += @intFromBool(f != 0);
 
     const cases = try gpa.alloc(CaseResult, m.load_cases.len);
     var built: usize = 0;
@@ -742,7 +863,7 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
         for (lc.member_udl) |ld| wv[findMember(m.members, ld.member).?] += ld.w;
         for (0..n_mem) |k| {
             if (wv[k] == 0) continue;
-            const fe = toGlobal(geo.c[k], geo.s[k], fixedEndForces(wv[k], geo.len[k]));
+            const fe = toGlobal(geo.c[k], geo.s[k], memberLocal(&geo, k, wv[k]).f);
             for (0..3) |c| {
                 const d1 = dofidx[geo.mi[k] * 3 + c];
                 if (d1 != unset) rhs[d1] -= fe[c];
@@ -758,7 +879,7 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
 
         // reactions: member end forces summed at restrained dofs, minus applied loads
         var ri: usize = 0;
-        for (geo.fixed, 0..) |f, nd| {
+        for (geo.reac, 0..) |f, nd| {
             if (f != 0) {
                 react[ri] = .{ .node = @intCast(nd), .f = .{ 0, 0, 0 } };
                 ri += 1;
@@ -770,8 +891,9 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
                 u[geo.mj[k] * 3], u[geo.mj[k] * 3 + 1], u[geo.mj[k] * 3 + 2],
             };
             const ul = toLocal(geo.c[k], geo.s[k], ug);
-            const kl = localStiffness(geo.ea[k], geo.ei[k], geo.len[k]);
-            const ff = fixedEndForces(wv[k], geo.len[k]);
+            const ml = memberLocal(&geo, k, wv[k]);
+            const kl = ml.k;
+            const ff = ml.f;
             var f6: [6]f64 = undefined;
             for (0..6) |r| {
                 var sum: f64 = ff[r];
@@ -781,7 +903,7 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
             }
             const gl = toGlobal(geo.c[k], geo.s[k], f6);
             for ([2]u32{ geo.mi[k], geo.mj[k] }, 0..) |nd, side| {
-                const fx = geo.fixed[nd];
+                const fx = geo.reac[nd];
                 if (fx == 0) continue;
                 const r = findReaction(react, nd);
                 for (0..3) |c| {
@@ -791,7 +913,7 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
         }
         for (lc.nodal) |ld| {
             const nd = findNode(m.nodes, ld.node).?;
-            const fx = geo.fixed[nd];
+            const fx = geo.reac[nd];
             if (fx == 0) continue;
             const r = findReaction(react, nd);
             const vals = [3]f64{ ld.fx, ld.fy, ld.mz };
@@ -828,11 +950,13 @@ pub fn solve(gpa: Allocator, m: *Model, err: *ErrorInfo) SolveError!Results {
         built += 1;
     }
     const t_end = clock_ns();
+    warn_owned = false;
 
     return .{
         .gpa = gpa,
         .cases = cases,
         .length = length,
+        .warnings = warn_list orelse try gpa.alloc(u32, 0),
         .stats = .{
             .nodes = n_nodes,
             .members = n_mem,

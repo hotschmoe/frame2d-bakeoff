@@ -11,7 +11,10 @@ pub const Node = struct {
     bench_pad: u32 = 0, // BENCH-EDIT:struct
 };
 pub const Support = struct { node: i64, ux: bool = false, uy: bool = false, rz: bool = false };
-pub const Member = struct { id: i64, i: i64, j: i64, material: []const u8, section: []const u8 };
+pub const Spring = struct { node: i64, kx: ?f64 = null, ky: ?f64 = null, kr: ?f64 = null };
+/// End releases: names of released local dofs at each end (only "mz" is supported).
+pub const Release = struct { i: []const []const u8 = &.{}, j: []const []const u8 = &.{} };
+pub const Member = struct { id: i64, i: i64, j: i64, material: []const u8, section: []const u8, release: ?Release = null };
 pub const NodalLoad = struct { node: i64, fx: f64 = 0, fy: f64 = 0, mz: f64 = 0 };
 pub const MemberUdl = struct { member: i64, w: f64 };
 pub const LoadCase = struct {
@@ -25,6 +28,7 @@ pub const Model = struct {
     sections: []const Section = &.{},
     nodes: []Node = &.{},
     supports: []const Support = &.{},
+    springs: []const Spring = &.{},
     members: []Member = &.{},
     load_cases: []const LoadCase = &.{},
 };
@@ -60,10 +64,27 @@ pub fn write(w: *std.Io.Writer, m: *const Model) std.Io.Writer.Error!void {
         if (k > 0) try w.writeByte(',');
         try w.print("{{\"node\":{},\"ux\":{},\"uy\":{},\"rz\":{}}}", .{ x.node, x.ux, x.uy, x.rz });
     }
+    try w.writeAll("],\"springs\":[");
+    for (m.springs, 0..) |x, k| {
+        if (k > 0) try w.writeByte(',');
+        try w.print("{{\"node\":{}", .{x.node});
+        if (x.kx) |v| try w.print(",\"kx\":{}", .{v});
+        if (x.ky) |v| try w.print(",\"ky\":{}", .{v});
+        if (x.kr) |v| try w.print(",\"kr\":{}", .{v});
+        try w.writeByte('}');
+    }
     try w.writeAll("],\"members\":[");
     for (m.members, 0..) |x, k| {
         if (k > 0) try w.writeByte(',');
-        try w.print("{{\"id\":{},\"i\":{},\"j\":{},\"material\":\"{s}\",\"section\":\"{s}\"}}", .{ x.id, x.i, x.j, x.material, x.section });
+        try w.print("{{\"id\":{},\"i\":{},\"j\":{},\"material\":\"{s}\",\"section\":\"{s}\"", .{ x.id, x.i, x.j, x.material, x.section });
+        if (x.release) |r| {
+            try w.writeAll(",\"release\":{\"i\":[");
+            for (r.i, 0..) |d, q| try w.print("{s}\"{s}\"", .{ if (q > 0) "," else "", d });
+            try w.writeAll("],\"j\":[");
+            for (r.j, 0..) |d, q| try w.print("{s}\"{s}\"", .{ if (q > 0) "," else "", d });
+            try w.writeAll("]}");
+        }
+        try w.writeByte('}');
     }
     try w.writeAll("],\"load_cases\":[");
     for (m.load_cases, 0..) |lc, k| {

@@ -37,3 +37,11 @@ P1 status (finished well inside the time box, about 1 h 15 min wall):
 - Note for the harness: `conformance.py` without `--bin` initially hit the WSL bash stub (fixed by the orchestrator, e99a3f6).
 - Cold build note: with an empty cache the first `zig build` compiles the build runner (about 50 s) before anything else.
 - No Emscripten; web build is wasm32-freestanding with the dvui web backend and a custom index.html loader (web/index.html).
+
+## P2 (change request SPEC 4.7)
+
+Started: Fri Oct 23 23:38:56 MST 2026 (finished in about 15 min wall; no problems over 10 minutes).
+- Files touched: model.zig (Spring, Release, JSON round trip), solver.zig (support_conflict, static condensation, springs on the diagonal, auto-restraint pre-pass, warnings), report.zig (warnings output).
+- Static condensation is done on the local 6x6 stiffness and fixed-end forces by eliminating released dofs one at a time; end forces are then `kc*u + fc`, which gives zero at released ends with no back-substitution.
+- Auto-restraint runs a stiffness pre-pass only when some member has a release (P1 path unchanged). Reactions stay on user-declared supports only.
+- `conformance.py zig p2`: 7/7; `zig p1`: 17/17. Desktop/web UI not extended for springs/releases (not required by the P2 conformance).

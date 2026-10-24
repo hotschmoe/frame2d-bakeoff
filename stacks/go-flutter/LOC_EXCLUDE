@@ -1,0 +1,10 @@
+app/lib/generated/
+app/windows/
+app/web/index.html
+app/web/manifest.json
+app/web/icons/
+app/web/favicon.png
+app/ffigen/
+app/pubspec.lock
+.tools/
+go.sum

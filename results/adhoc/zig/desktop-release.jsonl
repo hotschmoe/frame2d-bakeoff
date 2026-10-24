@@ -1,0 +1,1 @@
+{"wall_s": 58.627781499992125, "cpu_s": 155.140625, "parallelism": 2.6461964111676446, "mem_peak_mb": 1710.44140625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 42, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "desktop-release"}

@@ -1,0 +1,5 @@
+zig-out/
+.zig-cache/
+.zig-global/
+zig-pkg/
+*.sqlite

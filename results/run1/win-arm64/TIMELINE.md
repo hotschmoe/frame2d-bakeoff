@@ -17,9 +17,10 @@ Times are local (UTC-07:00). `overlapping` lists the other agents running at any
 
 | stack | phase | start | end | result | overlapping |
 |-------|-------|-------|-----|--------|-------------|
-| zig-flutter | P1 | 2026-10-23 22:53 | | running | dvui-smoke, rust P1, zig P1, rust P2, rust-flutter P1 |
+| zig-flutter | P1 | 2026-10-23 22:53 | | running | dvui-smoke, rust P1, zig P1, rust P2, rust-flutter P1, zig P2 |
 | zig (dvui smoke, SPEC 15.6) | smoke | 2026-10-23 22:53 | 2026-10-23 23:00 | PASS (dvui 275c248f) | zig-flutter P1, rust P1 |
 | rust | P1 | 2026-10-23 22:53 | 2026-10-23 23:18 | GREEN (conformance p1 15/15, server all passed; verified by orchestrator) | zig-flutter P1, dvui-smoke, zig P1 |
 | rust | P2 | 2026-10-23 23:19 | 2026-10-23 23:22 | GREEN (p2 5/5, p1 15/15, server all passed; verified by orchestrator) | zig-flutter P1, zig P1 |
-| rust-flutter | P1 | 2026-10-23 23:23 | | running | zig-flutter P1, zig P1 |
-| zig | P1 | 2026-10-23 23:01 | | running | zig-flutter P1, rust P1, rust P2, rust-flutter P1 |
+| rust-flutter | P1 | 2026-10-23 23:23 | | running | zig-flutter P1, zig P1, zig P2 |
+| zig | P1 | 2026-10-23 23:01 | 2026-10-23 23:38 | GREEN (p1 17/17 incl. goldens, server all passed; verified by orchestrator) | zig-flutter P1, rust P1, rust P2, rust-flutter P1 |
+| zig | P2 | 2026-10-23 23:38 | | running | zig-flutter P1, rust-flutter P1 |

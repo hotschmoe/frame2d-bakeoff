@@ -1,0 +1,17 @@
+.{
+    .name = .frame2d,
+    .fingerprint = 0xb74d83b388bc9454,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{
+        .sqlite = .{
+            .url = "https://www.sqlite.org/2026/sqlite-amalgamation-3540100.zip",
+            .hash = "N-V-__8AAETTsABEodUZZFAyfdAm9hEyqBXuLw9pRSO0vFh9",
+        },
+        .dvui = .{
+            .url = "git+https://github.com/david-vanderson/dvui#275c248f6a2a80f92723ac93242310e16201a49b",
+            .hash = "dvui-0.6.0-dev-AQFJmWZLBAG6E9WSTCqdouXXCC8gF91z6oiLmZvh3e-5",
+        },
+    },
+    .paths = .{ "build.zig", "build.zig.zon", "src" },
+}

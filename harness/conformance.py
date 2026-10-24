@@ -16,13 +16,36 @@ import argparse
 import json
 import os
 import pathlib
+import re
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REL, ABS = 1e-9, 1e-12
+
+
+def bash_exe():
+    """bash for subprocess calls. On Windows a bare "bash" resolves to System32/bash.exe (the WSL stub), so
+    prefer $F2D_BASH, then Git for Windows' bash."""
+    if os.name != "nt":
+        return "bash"
+    cands = [os.environ.get("F2D_BASH")]
+    git = shutil.which("git")
+    if git:  # <git>/cmd/git.exe -> <git>/bin/bash.exe
+        cands.append(str(pathlib.Path(git).resolve().parent.parent / "bin" / "bash.exe"))
+    cands.append(r"C:\Program Files\Git\bin\bash.exe")
+    return next((c for c in cands if c and os.path.exists(c)), "bash")
+
+
+def native_path(p):
+    """/c/Users/... (MSYS form printed by stack.sh under Git bash) -> C:/Users/... on Windows."""
+    m = re.match(r"^/([a-zA-Z])/(.*)$", p) if os.name == "nt" else None
+    return f"{m.group(1).upper()}:/{m.group(2)}" if m else p
+
+
 G_REL, G_ABS = 1e-8, 1e-10
 GOLDEN = ["gen_10_10", "gen_50_50"]
 VOLATILE_STATS = {"assemble_ms", "factor_ms", "solve_ms", "alloc_count", "alloc_bytes", "peak_heap_bytes"}
@@ -55,11 +78,11 @@ def find_bin(stack, override):
     if override:
         return override
     sh = ROOT / "stacks" / stack / "stack.sh"
-    out = subprocess.run(["bash", "-c", f'cd "{sh.parent.as_posix()}" && source stack.sh && build_cli_release'],
+    out = subprocess.run([bash_exe(), "-c", f'cd "{sh.parent.as_posix()}" && source stack.sh && build_cli_release'],
                          capture_output=True, text=True)
     if out.returncode != 0:
         sys.exit(f"build_cli_release failed:\n{out.stdout}\n{out.stderr}")
-    return out.stdout.strip().splitlines()[-1]
+    return native_path(out.stdout.strip().splitlines()[-1])
 
 
 def run_solve(binary, model):
@@ -154,7 +177,7 @@ def main():
     ap.add_argument("--no-golden", action="store_true")
     a = ap.parse_args()
 
-    binary = find_bin(a.stack, a.bin)
+    binary = native_path(find_bin(a.stack, a.bin))
     binary = [binary] if os.path.exists(binary) else shlex.split(binary)
     phases = ["p1", "p2"] if a.phase == "all" else [a.phase]
     failed = total = 0

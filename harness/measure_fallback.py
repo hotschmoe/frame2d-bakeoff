@@ -7,11 +7,20 @@ including children that have exited while they were observed). Without psutil th
 cgroup-only fields (swap_peak_mb, io_*) are always null here.
 """
 import json
+import os
+import pathlib
+import shutil
 import subprocess
 import sys
 import time
 
 out, cmd = sys.argv[1], sys.argv[2:]
+if os.name == "nt" and cmd and cmd[0] == "bash":
+    # a bare "bash" resolves to System32/bash.exe (the WSL stub) on Windows; use $F2D_BASH or Git bash
+    git = shutil.which("git")
+    cands = [os.environ.get("F2D_BASH"), git and str(pathlib.Path(git).resolve().parent.parent / "bin" / "bash.exe"),
+             r"C:\Program Files\Git\bin\bash.exe"]
+    cmd[0] = next((c for c in cands if c and os.path.exists(c)), "bash")
 try:
     import psutil
 except ImportError:

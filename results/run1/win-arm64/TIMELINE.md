@@ -32,3 +32,5 @@ Times are local (UTC-07:00). `overlapping` lists the other agents running at any
 | zig | P2 | 2026-10-23 23:38 | 2026-10-23 23:40 | GREEN (p2 7/7, p1 17/17, server all passed, test_all rc 0; verified by orchestrator) | zig-flutter P1, rust-flutter P1 |
 | go-flutter | P1 | 2026-10-23 23:40 | 2026-10-24 01:16 | GREEN (p1 17/17 incl. goldens, server all passed; verified by orchestrator) | zig-flutter P1, rust-flutter P1, zig-flutter P2, go P1, rust-flutter P2, go P2 |
 | go-flutter | P2 | 2026-10-24 01:16 | 2026-10-24 01:18 | GREEN (all 22/22 incl. p2 + goldens, server all passed; verified by orchestrator) | (none) |
+| go-zig-flutter | fork | 2026-10-24 01:19 | 2026-10-24 01:19 | forked from tag p2-done-go-flutter (tracked files via git archive); baseline all 22/22 + server passed in the new dir | (none) |
+| go-zig-flutter | P3 | 2026-10-24 01:19 | | running | (none) |

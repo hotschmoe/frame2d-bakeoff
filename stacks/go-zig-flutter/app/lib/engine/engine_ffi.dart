@@ -1,0 +1,107 @@
+import 'dart:convert';
+import 'dart:ffi' as ffi;
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:ffi/ffi.dart';
+
+import '../generated/engine_bindings.dart';
+import 'engine.dart';
+
+Future<Engine> createEngine() async => FfiEngine();
+
+/// dart:ffi bridge to the Go c-shared library. Result buffers are pinned Go memory exposed as
+/// zero-copy Float64List views; they stay valid until the next solve or free of that session.
+class FfiEngine implements Engine {
+  FfiEngine() : _b = EngineBindings(ffi.DynamicLibrary.open(_libName()));
+  final EngineBindings _b;
+
+  static String _libName() {
+    if (Platform.isWindows) return 'frame2d_engine.dll';
+    if (Platform.isMacOS) return 'libframe2d_engine.dylib';
+    return 'libframe2d_engine.so';
+  }
+
+  @override
+  String get mechanism => 'zero-copy view';
+
+  @override
+  void noop() => _b.f2d_noop();
+
+  @override
+  Float64List echo(int n) => _b.f2d_echo(n).cast<ffi.Double>().asTypedList(n);
+
+  @override
+  double processAgeMs() => _b.f2d_process_age_ms();
+
+  @override
+  int loadJson(String json) {
+    final bytes = utf8.encode(json);
+    final p = malloc<ffi.Uint8>(bytes.length);
+    try {
+      p.asTypedList(bytes.length).setAll(0, bytes);
+      return _b.f2d_load_json(p.cast(), bytes.length);
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  @override
+  int gen(int bays, int stories) => _b.f2d_gen(bays, stories);
+
+  @override
+  void free(int h) => _b.f2d_free(h);
+
+  @override
+  String lastError() => _b.f2d_last_error().cast<Utf8>().toDartString();
+
+  @override
+  (int, int, int) counts(int h) {
+    final out = malloc<ffi.Int>(3);
+    try {
+      _b.f2d_counts(h, out);
+      return (out[0], out[1], out[2]);
+    } finally {
+      malloc.free(out);
+    }
+  }
+
+  @override
+  Float64List geometry(int h, int length) => _b.f2d_geometry(h).cast<ffi.Double>().asTypedList(length);
+
+  @override
+  Float64List result(int h, int length) => _b.f2d_result(h).cast<ffi.Double>().asTypedList(length);
+
+  @override
+  Float64List stats(int h) => _b.f2d_stats(h).cast<ffi.Double>().asTypedList(Layout.statCount);
+
+  @override
+  List<String> caseIds(int h) {
+    const cap = 4096;
+    final buf = malloc<ffi.Char>(cap);
+    try {
+      final n = _b.f2d_case_ids(h, buf, cap);
+      if (n < 0) return const [];
+      return (jsonDecode(buf.cast<Utf8>().toDartString(length: n)) as List).cast<String>();
+    } finally {
+      malloc.free(buf);
+    }
+  }
+
+  @override
+  void setNode(int h, int index, double x, double y) => _b.f2d_set_node(h, index, x, y);
+
+  @override
+  int solve(int h, int caseIndex) => _b.f2d_solve(h, caseIndex);
+
+  @override
+  String toJson(int h) {
+    final len = malloc<ffi.Int>(1);
+    try {
+      final p = _b.f2d_to_json(h, len);
+      return utf8.decode(p.cast<ffi.Uint8>().asTypedList(len[0]));
+    } finally {
+      malloc.free(len);
+    }
+  }
+}

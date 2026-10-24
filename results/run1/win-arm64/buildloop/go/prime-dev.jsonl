@@ -1,0 +1,1 @@
+{"wall_s": 1.1768210000009276, "cpu_s": 1.140625, "parallelism": 0.9692425611024115, "mem_peak_mb": 85.48828125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 5, "exit_code": 0, "method": "psutil", "stack": "go", "label": "prime-dev"}

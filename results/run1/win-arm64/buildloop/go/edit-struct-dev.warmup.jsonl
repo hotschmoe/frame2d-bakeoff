@@ -1,0 +1,1 @@
+{"wall_s": 1.2323209999885876, "cpu_s": 0.71875, "parallelism": 0.5832490073663082, "mem_peak_mb": 82.85546875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 5, "exit_code": 0, "method": "psutil", "stack": "go", "label": "edit-struct-dev"}

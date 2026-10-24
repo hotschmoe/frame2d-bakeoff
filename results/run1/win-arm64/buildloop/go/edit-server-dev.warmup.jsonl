@@ -1,0 +1,1 @@
+{"wall_s": 1.1801161000039428, "cpu_s": 1.0, "parallelism": 0.8473742541065739, "mem_peak_mb": 84.6875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 5, "exit_code": 0, "method": "psutil", "stack": "go", "label": "edit-server-dev"}

@@ -1,0 +1,1 @@
+{"wall_s": 1.176023800013354, "cpu_s": 1.578125, "parallelism": 1.3419158693744804, "mem_peak_mb": 479.421875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 7, "exit_code": 0, "method": "psutil", "stack": "go", "label": "edit-leaf-check"}

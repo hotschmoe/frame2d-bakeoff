@@ -29,8 +29,9 @@ Zig:       0.17.0 (official aarch64-windows zip via winget, ziglang.org, release
            -> %LOCALAPPDATA%\Microsoft\WinGet\Links\zig.exe
            ALSO on PATH first: C:\zig\aarch64-patched\zig.exe = 0.16.0 (self-patched ARM64 build);
            C:\zig\x86_64-prism\zig.exe = upstream 0.16.0 x64 under Prism (via zig86.cmd).
-           PATH was NOT modified: bare `zig` still resolves to the patched 0.16.0. Use the full
-           WinGet\Links path, or reorder PATH, to get 0.17.0.
+           2026-10-24: user PATH changed so the WinGet Links entry replaces C:\zig\aarch64-patched; bare `zig`
+           is now 0.17.0 in new shells. Old PATH saved at C:\Users\hotschmoe\dev\user-path-backup-2026-10-24.txt.
+           The C:\zig folders remain on disk.
            Latest stable = 0.17.0. dvui main build.zig.zon: minimum_zig_version = "0.17.0" (dvui 0.6.0-dev).
            => latest stable == dvui-required. (dvui releases/tags pinned to older Zig were not checked.)
 Flutter:   3.47.8, channel stable, framework 737ba8f885 (2026-10-22), engine cf636b1dfb

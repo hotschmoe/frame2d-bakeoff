@@ -1,0 +1,638 @@
+{
+ "run": "run1",
+ "machine": "win-arm64",
+ "categories": [
+  "type",
+  "ownership",
+  "concurrency_types",
+  "comptime_sema",
+  "strictness",
+  "stale_api",
+  "ffi",
+  "link",
+  "build_config",
+  "runtime_crash",
+  "wrong_result"
+ ],
+ "stacks": [
+  {
+   "stack": "rust",
+   "phases": [
+    "P1",
+    "P2"
+   ],
+   "builds": 10,
+   "failures": 6,
+   "classified": 6,
+   "false_positive": 0,
+   "count": {
+    "type": 1,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 0,
+    "stale_api": 2,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 3,
+    "runtime_crash": 0,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.1,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.0,
+    "stale_api": 0.4,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 0.9,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 3,
+    "own_tests": 1,
+    "harness": 2,
+    "runtime_manual": 0
+   },
+   "caught_minutes": {
+    "compile": 0.6,
+    "own_tests": 0.1,
+    "harness": 0.7,
+    "runtime_manual": 0.0
+   },
+   "unscored_minutes_fallback": 4,
+   "total_classified_failures": 6,
+   "total_minutes": 1.4000000000000001,
+   "caught_share_count": {
+    "compile": 0.5,
+    "own_tests": 0.16666666666666666,
+    "harness": 0.3333333333333333,
+    "runtime_manual": 0.0
+   },
+   "caught_share_minutes": {
+    "compile": 0.4285714285714285,
+    "own_tests": 0.07142857142857142,
+    "harness": 0.49999999999999994,
+    "runtime_manual": 0.0
+   },
+   "stale_api_per_100_builds": 20.0
+  },
+  {
+   "stack": "zig",
+   "phases": [
+    "P1",
+    "P2"
+   ],
+   "builds": 27,
+   "failures": 20,
+   "classified": 18,
+   "false_positive": 2,
+   "count": {
+    "type": 1,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 3,
+    "stale_api": 4,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 10,
+    "runtime_crash": 0,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.3,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.8,
+    "stale_api": 1.5,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 5.6,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 15,
+    "own_tests": 0,
+    "harness": 3,
+    "runtime_manual": 0
+   },
+   "caught_minutes": {
+    "compile": 7.799999999999999,
+    "own_tests": 0.0,
+    "harness": 0.4,
+    "runtime_manual": 0.0
+   },
+   "unscored_minutes_fallback": 1,
+   "total_classified_failures": 18,
+   "total_minutes": 8.2,
+   "caught_share_count": {
+    "compile": 0.8333333333333334,
+    "own_tests": 0.0,
+    "harness": 0.16666666666666666,
+    "runtime_manual": 0.0
+   },
+   "caught_share_minutes": {
+    "compile": 0.9512195121951219,
+    "own_tests": 0.0,
+    "harness": 0.04878048780487806,
+    "runtime_manual": 0.0
+   },
+   "stale_api_per_100_builds": 14.814814814814815
+  },
+  {
+   "stack": "go",
+   "phases": [
+    "P1",
+    "P2"
+   ],
+   "builds": 19,
+   "failures": 0,
+   "classified": 0,
+   "false_positive": 0,
+   "count": {
+    "type": 0,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 0,
+    "stale_api": 0,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 0,
+    "runtime_crash": 0,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.0,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.0,
+    "stale_api": 0.0,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 0.0,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 0,
+    "own_tests": 0,
+    "harness": 0,
+    "runtime_manual": 0
+   },
+   "caught_minutes": {
+    "compile": 0.0,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 0.0
+   },
+   "unscored_minutes_fallback": 0,
+   "total_classified_failures": 0,
+   "total_minutes": 0.0,
+   "caught_share_count": {
+    "compile": null,
+    "own_tests": null,
+    "harness": null,
+    "runtime_manual": null
+   },
+   "caught_share_minutes": {
+    "compile": null,
+    "own_tests": null,
+    "harness": null,
+    "runtime_manual": null
+   },
+   "stale_api_per_100_builds": 0.0
+  },
+  {
+   "stack": "rust-flutter",
+   "phases": [
+    "P1",
+    "P2"
+   ],
+   "builds": 65,
+   "failures": 16,
+   "classified": 15,
+   "false_positive": 1,
+   "count": {
+    "type": 2,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 0,
+    "stale_api": 0,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 6,
+    "runtime_crash": 7,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.4,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.0,
+    "stale_api": 0.0,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 12.1,
+    "runtime_crash": 55.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 7,
+    "own_tests": 1,
+    "harness": 0,
+    "runtime_manual": 7
+   },
+   "caught_minutes": {
+    "compile": 12.4,
+    "own_tests": 0.1,
+    "harness": 0.0,
+    "runtime_manual": 55.0
+   },
+   "unscored_minutes_fallback": 2,
+   "total_classified_failures": 15,
+   "total_minutes": 67.5,
+   "caught_share_count": {
+    "compile": 0.4666666666666667,
+    "own_tests": 0.06666666666666667,
+    "harness": 0.0,
+    "runtime_manual": 0.4666666666666667
+   },
+   "caught_share_minutes": {
+    "compile": 0.1837037037037037,
+    "own_tests": 0.0014814814814814816,
+    "harness": 0.0,
+    "runtime_manual": 0.8148148148148148
+   },
+   "stale_api_per_100_builds": 0.0
+  },
+  {
+   "stack": "zig-flutter",
+   "phases": [
+    "P1",
+    "P2"
+   ],
+   "builds": 14,
+   "failures": 8,
+   "classified": 8,
+   "false_positive": 0,
+   "count": {
+    "type": 0,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 1,
+    "strictness": 0,
+    "stale_api": 0,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 7,
+    "runtime_crash": 0,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.0,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.2,
+    "strictness": 0.0,
+    "stale_api": 0.0,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 4.3,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 7,
+    "own_tests": 0,
+    "harness": 1,
+    "runtime_manual": 0
+   },
+   "caught_minutes": {
+    "compile": 4.3999999999999995,
+    "own_tests": 0.0,
+    "harness": 0.1,
+    "runtime_manual": 0.0
+   },
+   "unscored_minutes_fallback": 1,
+   "total_classified_failures": 8,
+   "total_minutes": 4.5,
+   "caught_share_count": {
+    "compile": 0.875,
+    "own_tests": 0.0,
+    "harness": 0.125,
+    "runtime_manual": 0.0
+   },
+   "caught_share_minutes": {
+    "compile": 0.9777777777777776,
+    "own_tests": 0.0,
+    "harness": 0.022222222222222223,
+    "runtime_manual": 0.0
+   },
+   "stale_api_per_100_builds": 0.0
+  },
+  {
+   "stack": "go-flutter",
+   "phases": [
+    "P1",
+    "P2"
+   ],
+   "builds": 25,
+   "failures": 5,
+   "classified": 4,
+   "false_positive": 1,
+   "count": {
+    "type": 0,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 0,
+    "stale_api": 0,
+    "ffi": 1,
+    "link": 0,
+    "build_config": 2,
+    "runtime_crash": 0,
+    "wrong_result": 1
+   },
+   "minutes": {
+    "type": 0.0,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.0,
+    "stale_api": 0.0,
+    "ffi": 10.0,
+    "link": 0.0,
+    "build_config": 5.199999999999999,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.2
+   },
+   "caught_count": {
+    "compile": 1,
+    "own_tests": 1,
+    "harness": 1,
+    "runtime_manual": 1
+   },
+   "caught_minutes": {
+    "compile": 0.1,
+    "own_tests": 0.2,
+    "harness": 5.1,
+    "runtime_manual": 10.0
+   },
+   "unscored_minutes_fallback": 3,
+   "total_classified_failures": 4,
+   "total_minutes": 15.399999999999999,
+   "caught_share_count": {
+    "compile": 0.25,
+    "own_tests": 0.25,
+    "harness": 0.25,
+    "runtime_manual": 0.25
+   },
+   "caught_share_minutes": {
+    "compile": 0.006493506493506495,
+    "own_tests": 0.01298701298701299,
+    "harness": 0.33116883116883117,
+    "runtime_manual": 0.6493506493506495
+   },
+   "stale_api_per_100_builds": 0.0
+  },
+  {
+   "stack": "go-zig-flutter",
+   "phases": [
+    "P3"
+   ],
+   "builds": 10,
+   "failures": 2,
+   "classified": 2,
+   "false_positive": 0,
+   "count": {
+    "type": 0,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 1,
+    "stale_api": 0,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 1,
+    "runtime_crash": 0,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.0,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.1,
+    "stale_api": 0.0,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 1.0,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 1,
+    "own_tests": 0,
+    "harness": 0,
+    "runtime_manual": 1
+   },
+   "caught_minutes": {
+    "compile": 0.1,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 1.0
+   },
+   "unscored_minutes_fallback": 1,
+   "total_classified_failures": 2,
+   "total_minutes": 1.1,
+   "caught_share_count": {
+    "compile": 0.5,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 0.5
+   },
+   "caught_share_minutes": {
+    "compile": 0.09090909090909091,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 0.9090909090909091
+   },
+   "stale_api_per_100_builds": 0.0
+  },
+  {
+   "stack": "zig-dvui-smoke",
+   "phases": [
+    "smoke"
+   ],
+   "builds": 7,
+   "failures": 4,
+   "classified": 4,
+   "false_positive": 0,
+   "count": {
+    "type": 0,
+    "ownership": 0,
+    "concurrency_types": 0,
+    "comptime_sema": 0,
+    "strictness": 0,
+    "stale_api": 3,
+    "ffi": 0,
+    "link": 0,
+    "build_config": 1,
+    "runtime_crash": 0,
+    "wrong_result": 0
+   },
+   "minutes": {
+    "type": 0.0,
+    "ownership": 0.0,
+    "concurrency_types": 0.0,
+    "comptime_sema": 0.0,
+    "strictness": 0.0,
+    "stale_api": 2.6,
+    "ffi": 0.0,
+    "link": 0.0,
+    "build_config": 2.0,
+    "runtime_crash": 0.0,
+    "wrong_result": 0.0
+   },
+   "caught_count": {
+    "compile": 4,
+    "own_tests": 0,
+    "harness": 0,
+    "runtime_manual": 0
+   },
+   "caught_minutes": {
+    "compile": 4.6000000000000005,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 0.0
+   },
+   "unscored_minutes_fallback": 4,
+   "total_classified_failures": 4,
+   "total_minutes": 4.6,
+   "caught_share_count": {
+    "compile": 1.0,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 0.0
+   },
+   "caught_share_minutes": {
+    "compile": 1.0000000000000002,
+    "own_tests": 0.0,
+    "harness": 0.0,
+    "runtime_manual": 0.0
+   },
+   "stale_api_per_100_builds": 42.857142857142854
+  }
+ ],
+ "coverage": [
+  {
+   "stack": "go",
+   "phase": "P1",
+   "failures": 0,
+   "classified": 0,
+   "status": "complete"
+  },
+  {
+   "stack": "go",
+   "phase": "P2",
+   "failures": 0,
+   "classified": 0,
+   "status": "complete"
+  },
+  {
+   "stack": "go-flutter",
+   "phase": "P1",
+   "failures": 5,
+   "classified": 5,
+   "status": "complete"
+  },
+  {
+   "stack": "go-flutter",
+   "phase": "P2",
+   "failures": 0,
+   "classified": 0,
+   "status": "complete"
+  },
+  {
+   "stack": "go-zig-flutter",
+   "phase": "P3",
+   "failures": 2,
+   "classified": 2,
+   "status": "complete"
+  },
+  {
+   "stack": "rust",
+   "phase": "P1",
+   "failures": 5,
+   "classified": 5,
+   "status": "complete"
+  },
+  {
+   "stack": "rust",
+   "phase": "P2",
+   "failures": 1,
+   "classified": 1,
+   "status": "complete"
+  },
+  {
+   "stack": "rust-flutter",
+   "phase": "P1",
+   "failures": 15,
+   "classified": 15,
+   "status": "complete"
+  },
+  {
+   "stack": "rust-flutter",
+   "phase": "P2",
+   "failures": 1,
+   "classified": 1,
+   "status": "complete"
+  },
+  {
+   "stack": "zig",
+   "phase": "P1",
+   "failures": 19,
+   "classified": 19,
+   "status": "complete"
+  },
+  {
+   "stack": "zig",
+   "phase": "P2",
+   "failures": 1,
+   "classified": 1,
+   "status": "complete"
+  },
+  {
+   "stack": "zig-dvui-smoke",
+   "phase": "smoke",
+   "failures": 4,
+   "classified": 4,
+   "status": "complete"
+  },
+  {
+   "stack": "zig-flutter",
+   "phase": "P1",
+   "failures": 7,
+   "classified": 7,
+   "status": "complete"
+  },
+  {
+   "stack": "zig-flutter",
+   "phase": "P2",
+   "failures": 1,
+   "classified": 1,
+   "status": "complete"
+  }
+ ],
+ "problems": []
+}

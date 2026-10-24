@@ -1,0 +1,8 @@
+[
+ {
+  "id": "F1",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "wrong cwd for 'source stacks/zig/stack.sh' in a chained command"
+ }
+]

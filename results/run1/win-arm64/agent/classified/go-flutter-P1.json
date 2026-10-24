@@ -1,0 +1,34 @@
+[
+ {
+  "id": "F1",
+  "category": "build_config",
+  "caught_at": "harness",
+  "note": "conformance.py got a relative --bin path (subprocess cwd mismatch)"
+ },
+ {
+  "id": "F2",
+  "category": "false_positive",
+  "caught_at": "harness",
+  "note": "P1 build run against 'all' fixtures; F21-F25 are P2 scope and not yet implemented",
+  "minutes_to_fix": 0
+ },
+ {
+  "id": "F3",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "ffigen needed libclang: /tmp path wrong for python and system libclang.dll is arm64 not x64"
+ },
+ {
+  "id": "F4",
+  "category": "ffi",
+  "caught_at": "runtime_manual",
+  "note": "cgo result pointer into Go struct holding Go pointers rejected by cgocheck (unpinned)",
+  "minutes_to_fix": 10
+ },
+ {
+  "id": "F5",
+  "category": "wrong_result",
+  "caught_at": "own_tests",
+  "note": "agent's own unit test had a wrong expected member count (12 vs 10)"
+ }
+]

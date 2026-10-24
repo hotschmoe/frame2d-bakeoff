@@ -1,0 +1,8 @@
+[
+ {
+  "id": "F1",
+  "category": "type",
+  "caught_at": "compile",
+  "note": "Model initializer missing new P2 field 'springs'"
+ }
+]

@@ -1,0 +1,106 @@
+[
+ {
+  "id": "F1",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "shell quoting slip in heredoc/sed stopped the command from running",
+  "minutes_to_fix": 0.7
+ },
+ {
+  "id": "F2",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "cargo check run before FRB codegen created frb_generated.rs (expected ordering)",
+  "minutes_to_fix": 1.4
+ },
+ {
+  "id": "F3",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "flutter_rust_bridge_codegen on Windows: 'prefix not found' from \\?\\ paths",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F4",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "same FRB codegen Windows path bug (retry with yaml)",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F5",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "same FRB codegen Windows path bug (retry, \\?\\ prefix)",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F6",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "FRB rust_output setting caused path failure; fixed by using default rust_output",
+  "minutes_to_fix": 7
+ },
+ {
+  "id": "F7",
+  "category": "false_positive",
+  "caught_at": "compile",
+  "note": "grep output of member_length listing flagged as diagnostic; codegen succeeded",
+  "minutes_to_fix": 0
+ },
+ {
+  "id": "F8",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "release AOT app access violation on first model paint racing first async FRB solve (root cause not found)",
+  "minutes_to_fix": 30
+ },
+ {
+  "id": "F9",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "same intermittent native crash, retry after rebuild",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F10",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "same intermittent native crash, startup bench also crashes",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F11",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "same intermittent native crash after code change; analyze clean",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F12",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "same intermittent native crash with deflected shape off",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F13",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "same intermittent native crash with mesh drawing variant",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F14",
+  "category": "runtime_crash",
+  "caught_at": "runtime_manual",
+  "note": "same intermittent native crash narrowed via env flags; fixed by publishing model+results together",
+  "minutes_to_fix": 20
+ },
+ {
+  "id": "F15",
+  "category": "type",
+  "caught_at": "own_tests",
+  "note": "test unwrap needed Debug derive on ModelView/SolveView"
+ }
+]

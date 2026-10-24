@@ -1,0 +1,8 @@
+[
+ {
+  "id": "F1",
+  "category": "comptime_sema",
+  "caught_at": "compile",
+  "note": "comptime_float in if-else on runtime condition; needs @as(f64,...)"
+ }
+]

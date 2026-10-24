@@ -1,0 +1,135 @@
+[
+ {
+  "id": "F1",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "shell quoting slip in heredoc stopped the command from running",
+  "minutes_to_fix": 0.5
+ },
+ {
+  "id": "F2",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "build.zig.zon needs a fingerprint field",
+  "minutes_to_fix": 0.3
+ },
+ {
+  "id": "F3",
+  "category": "strictness",
+  "caught_at": "compile",
+  "note": "'** 36' array repeat needs symmetric whitespace",
+  "minutes_to_fix": 0.3
+ },
+ {
+  "id": "F4",
+  "category": "type",
+  "caught_at": "compile",
+  "note": "syntax error 'expected ;' from agent's edit of solver.zig",
+  "minutes_to_fix": 0.3
+ },
+ {
+  "id": "F5",
+  "category": "strictness",
+  "caught_at": "compile",
+  "note": "pointless discard of local variable",
+  "minutes_to_fix": 0.3
+ },
+ {
+  "id": "F6",
+  "category": "strictness",
+  "caught_at": "compile",
+  "note": "unused local constant",
+  "minutes_to_fix": 0.2
+ },
+ {
+  "id": "F7",
+  "category": "build_config",
+  "caught_at": "harness",
+  "note": "conformance.py got a relative --bin path",
+  "minutes_to_fix": 0.1
+ },
+ {
+  "id": "F8",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "std.mem.Allocator.dupeZ does not exist in zig 0.17",
+  "minutes_to_fix": 0.2
+ },
+ {
+  "id": "F9",
+  "category": "build_config",
+  "caught_at": "harness",
+  "note": "measure.sh resolved bash to the WSL stub",
+  "minutes_to_fix": 0.2
+ },
+ {
+  "id": "F10",
+  "category": "build_config",
+  "caught_at": "harness",
+  "note": "WSL bash stub again (PATH fix attempt)",
+  "minutes_to_fix": 0.1
+ },
+ {
+  "id": "F11",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "std.builtin optimize enum has no 'Debug' field in zig 0.17 (lowercase)",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F12",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "WSL bash stub again after Debug fix",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F13",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "dvui pinned API: enum Button has no 'touch'; also u1 shadows primitive and a pointless discard in same build",
+  "minutes_to_fix": 0.2
+ },
+ {
+  "id": "F14",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "dvui.dragEnd signature differs at pinned version (expected 1 argument)",
+  "minutes_to_fix": 0.1
+ },
+ {
+  "id": "F15",
+  "category": "false_positive",
+  "caught_at": "harness",
+  "note": "non-zero exit came from trailing 'ls' on a missing path; web build itself succeeded",
+  "minutes_to_fix": 0
+ },
+ {
+  "id": "F16",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "source corrupted by shell escape handling (invalid token) in appended test heredoc",
+  "minutes_to_fix": 3
+ },
+ {
+  "id": "F17",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "same corrupted escape in source persisted after python patch attempt",
+  "minutes_to_fix": 0.2
+ },
+ {
+  "id": "F18",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "same corrupted escape in source; fixed with Edit tool",
+  "minutes_to_fix": 0.1
+ },
+ {
+  "id": "F19",
+  "category": "false_positive",
+  "caught_at": "compile",
+  "note": "grep listing of fit_pending flagged as diagnostic; build succeeded",
+  "minutes_to_fix": 0
+ }
+]

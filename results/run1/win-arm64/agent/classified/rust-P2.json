@@ -1,0 +1,8 @@
+[
+ {
+  "id": "F1",
+  "category": "type",
+  "caught_at": "compile",
+  "note": "struct initializers missing new P2 fields (release, springs)"
+ }
+]

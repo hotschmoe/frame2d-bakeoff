@@ -1,0 +1,15 @@
+[
+ {
+  "id": "F1",
+  "category": "strictness",
+  "caught_at": "compile",
+  "note": "zig requires symmetric whitespace around '**' array repeat operator"
+ },
+ {
+  "id": "F2",
+  "category": "build_config",
+  "caught_at": "runtime_manual",
+  "note": "throwaway bench script got a relative exe path for Popen",
+  "minutes_to_fix": 1
+ }
+]

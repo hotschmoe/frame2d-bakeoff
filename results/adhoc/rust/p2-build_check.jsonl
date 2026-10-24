@@ -1,0 +1,1 @@
+{"wall_s": 0.06400159999611787, "cpu_s": 0.0, "parallelism": null, "mem_peak_mb": 9.234375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 1, "exit_code": 1, "method": "psutil", "stack": "rust", "label": "p2-build_check"}

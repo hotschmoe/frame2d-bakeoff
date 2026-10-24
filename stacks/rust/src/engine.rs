@@ -21,12 +21,16 @@ struct Elem {
     s: f64,
     ea: f64,
     ei: f64,
+    rel: [bool; 6], // released local DOFs (SPEC 4.7)
 }
 
 struct Prepared<'a> {
     nodes: Vec<&'a Node>,  // sorted by id
     elems: Vec<Elem>,      // sorted by id
-    restrained: Vec<bool>, // 3 per node
+    restrained: Vec<bool>,  // 3 per node, as given (reactions are reported here)
+    solve_restr: Vec<bool>, // restrained plus auto-restrained DOFs
+    springs: Vec<[f64; 3]>, // 3 per node
+    warnings: Vec<serde_json::Value>,
     cases: Vec<CaseData<'a>>,
 }
 
@@ -67,7 +71,16 @@ fn prepare<'a>(model: &'a Model, only: Option<&str>) -> Result<Prepared<'a>, Mod
         let sec = secs.get(m.section.as_str()).ok_or_else(|| {
             ModelError::new("invalid_ref", format!("member {} references missing section {}", m.id, m.section))
         })?;
-        elems.push(Elem { id: m.id, ni, nj, len: 0.0, c: 1.0, s: 0.0, ea: mat.e * sec.a, ei: mat.e * sec.i });
+        let mut rel = [false; 6];
+        for (list, off) in [(&m.release.i, 0), (&m.release.j, 3)] {
+            for d in list {
+                if d != "mz" {
+                    return Err(ModelError::new("invalid_ref", format!("member {} has unsupported release {}", m.id, d)));
+                }
+                rel[off + 2] = true;
+            }
+        }
+        elems.push(Elem { id: m.id, ni, nj, len: 0.0, c: 1.0, s: 0.0, ea: mat.e * sec.a, ei: mat.e * sec.i, rel });
     }
 
     let mut restrained = vec![false; 3 * nodes.len()];
@@ -78,6 +91,24 @@ fn prepare<'a>(model: &'a Model, only: Option<&str>) -> Result<Prepared<'a>, Mod
         restrained[3 * k] |= s.ux;
         restrained[3 * k + 1] |= s.uy;
         restrained[3 * k + 2] |= s.rz;
+    }
+
+    let mut springs = vec![[0.0; 3]; nodes.len()];
+    for sp in &model.springs {
+        let k = *nidx
+            .get(&sp.node)
+            .ok_or_else(|| ModelError::new("invalid_ref", format!("spring references missing node {}", sp.node)))?;
+        for (c, v) in [sp.kx, sp.ky, sp.kr].into_iter().enumerate() {
+            if let Some(v) = v {
+                if restrained[3 * k + c] {
+                    return Err(ModelError::new(
+                        "support_conflict",
+                        format!("node {} {} is both restrained and sprung", sp.node, ["ux", "uy", "rz"][c]),
+                    ));
+                }
+                springs[k][c] += v;
+            }
+        }
     }
 
     let mut cases = Vec::with_capacity(model.load_cases.len());
@@ -115,7 +146,33 @@ fn prepare<'a>(model: &'a Model, only: Option<&str>) -> Result<Prepared<'a>, Mod
         e.c = dx / len;
         e.s = dy / len;
     }
-    Ok(Prepared { nodes, elems, restrained, cases })
+    let (solve_restr, warnings) = auto_restrain(&nodes, &elems, &restrained, &springs);
+    Ok(Prepared { nodes, elems, restrained, solve_restr, springs, warnings, cases })
+}
+
+/// Auto-restraint (SPEC 4.7): a free rz with (numerically) zero stiffness is restrained, with a warning.
+fn auto_restrain(
+    nodes: &[&Node],
+    elems: &[Elem],
+    restrained: &[bool],
+    springs: &[[f64; 3]],
+) -> (Vec<bool>, Vec<serde_json::Value>) {
+    let mut rot = vec![0.0f64; nodes.len()];
+    for e in elems {
+        let k = local_k(e);
+        rot[e.ni] += k[2][2];
+        rot[e.nj] += k[5][5];
+    }
+    let mut out = restrained.to_vec();
+    let mut warnings = Vec::new();
+    let scale = (0..nodes.len()).filter(|&n| !restrained[3 * n + 2]).map(|n| rot[n] + springs[n][2]).fold(0.0, f64::max);
+    for n in 0..nodes.len() {
+        if !restrained[3 * n + 2] && rot[n] + springs[n][2] <= 1e-12 * scale {
+            out[3 * n + 2] = true;
+            warnings.push(serde_json::json!({"warning": "auto_restrained", "node": nodes[n].id, "dof": "rz"}));
+        }
+    }
+    (out, warnings)
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -381,6 +438,39 @@ fn dot(a: &[f64], b: &[f64]) -> f64 {
 type M6 = [[f64; 6]; 6];
 
 fn local_k(e: &Elem) -> M6 {
+    let k = full_k(e);
+    if e.rel.iter().any(|&r| r) { condense(&k, &[0.0; 6], &e.rel).0 } else { k }
+}
+
+/// Static condensation of released local DOFs out of k and the fixed-end vector f (SPEC 4.7).
+fn condense(k: &M6, f: &[f64; 6], rel: &[bool; 6]) -> (M6, [f64; 6]) {
+    let r: Vec<usize> = (0..6).filter(|&i| rel[i]).collect();
+    if r.is_empty() {
+        return (*k, *f);
+    }
+    let inv: [[f64; 2]; 2] = if r.len() == 1 {
+        [[1.0 / k[r[0]][r[0]], 0.0], [0.0, 0.0]]
+    } else {
+        let (a, b, c, d) = (k[r[0]][r[0]], k[r[0]][r[1]], k[r[1]][r[0]], k[r[1]][r[1]]);
+        let det = a * d - b * c;
+        [[d / det, -b / det], [-c / det, a / det]]
+    };
+    let mut kc = [[0.0; 6]; 6];
+    let mut fc = [0.0; 6];
+    for a in (0..6).filter(|&i| !rel[i]) {
+        let mut w = [0.0; 2];
+        for q in 0..r.len() {
+            w[q] = (0..r.len()).map(|p| k[a][r[p]] * inv[p][q]).sum();
+        }
+        for b in (0..6).filter(|&i| !rel[i]) {
+            kc[a][b] = k[a][b] - (0..r.len()).map(|q| w[q] * k[r[q]][b]).sum::<f64>();
+        }
+        fc[a] = f[a] - (0..r.len()).map(|q| w[q] * f[r[q]]).sum::<f64>();
+    }
+    (kc, fc)
+}
+
+fn full_k(e: &Elem) -> M6 {
     let (l, ea, ei) = (e.len, e.ea, e.ei);
     let a = ea / l;
     let b1 = 12.0 * ei / (l * l * l);
@@ -431,8 +521,10 @@ fn global_k(e: &Elem) -> M6 {
     out
 }
 
-fn fixed_end(w: f64, l: f64) -> [f64; 6] {
-    [0.0, -w * l / 2.0, -w * l * l / 12.0, 0.0, -w * l / 2.0, w * l * l / 12.0]
+fn fixed_end(e: &Elem, w: f64) -> [f64; 6] {
+    let l = e.len;
+    let f = [0.0, -w * l / 2.0, -w * l * l / 12.0, 0.0, -w * l / 2.0, w * l * l / 12.0];
+    if e.rel.iter().any(|&r| r) { condense(&full_k(e), &f, &e.rel).1 } else { f }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -456,16 +548,16 @@ pub fn solve_filtered(model: &Model, only: Option<&str>) -> Result<Results, Mode
 
     // Orderings: original id order (profile_before) and RCM (used for the solve).
     let identity: Vec<usize> = (0..nn).collect();
-    let num_before = number_dofs(&identity, &p.restrained);
+    let num_before = number_dofs(&identity, &p.solve_restr);
     let n = num_before.owner.len();
-    if n == 0 {
+    if p.restrained.iter().all(|&r| r) || n == 0 {
         return Err(ModelError::new("no_free_dofs", "every DOF is restrained"));
     }
     let profile_before = profile_of(&column_tops(&num_before, &p.elems));
     drop(num_before);
 
     let order = rcm(nn, &p.elems);
-    let num = number_dofs(&order, &p.restrained);
+    let num = number_dofs(&order, &p.solve_restr);
     let top = column_tops(&num, &p.elems);
     let profile_after = profile_of(&top);
 
@@ -482,6 +574,14 @@ pub fn solve_filtered(model: &Model, only: Option<&str>) -> Result<Results, Mode
                 if d[b] >= 0 && d[a] <= d[b] {
                     sky.add(d[a] as usize, d[b] as usize, k[a][b]);
                 }
+            }
+        }
+    }
+    for nd in 0..nn {
+        for c in 0..3 {
+            let d = num.free[3 * nd + c];
+            if d >= 0 && p.springs[nd][c] != 0.0 {
+                sky.add(d as usize, d as usize, p.springs[nd][c]);
             }
         }
     }
@@ -506,7 +606,7 @@ pub fn solve_filtered(model: &Model, only: Option<&str>) -> Result<Results, Mode
 
     Ok(Results {
         load_cases: case_results,
-        warnings: Vec::new(),
+        warnings: p.warnings.clone(),
         stats: Stats {
             nodes: nn,
             members: p.elems.len(),
@@ -541,7 +641,7 @@ fn solve_case(p: &Prepared, num: &Numbering, sky: &Skyline, cd: &CaseData) -> Ca
         if w == 0.0 {
             continue;
         }
-        let eq = to_global(e, &fixed_end(w, e.len));
+        let eq = to_global(e, &fixed_end(e, w));
         let d = member_dofs(num, e);
         for a in 0..6 {
             if d[a] >= 0 {
@@ -565,11 +665,18 @@ fn solve_case(p: &Prepared, num: &Numbering, sky: &Skyline, cd: &CaseData) -> Ca
     let mut members = Vec::with_capacity(p.elems.len());
     let (mut sx, mut sy) = (0.0f64, 0.0f64);
     let mut mag = 1.0f64;
+    // Spring support forces act on the structure as -k*u (reactions for the equilibrium check).
+    for nd in 0..nn {
+        let (fx, fy) = (-p.springs[nd][0] * u[3 * nd], -p.springs[nd][1] * u[3 * nd + 1]);
+        sx += fx;
+        sy += fy;
+        mag += fx.abs() + fy.abs();
+    }
     for (e, &w) in p.elems.iter().zip(&cd.udl) {
         let ug = [u[3 * e.ni], u[3 * e.ni + 1], u[3 * e.ni + 2], u[3 * e.nj], u[3 * e.nj + 1], u[3 * e.nj + 2]];
         let ul = to_local(e, &ug);
         let k = local_k(e);
-        let ff = fixed_end(w, e.len);
+        let ff = fixed_end(e, w);
         let mut ef = [0.0; 6];
         for r in 0..6 {
             ef[r] = (0..6).map(|m| k[r][m] * ul[m]).sum::<f64>() + ff[r];
@@ -637,9 +744,10 @@ mod tests {
             .map(|k| Node { id: k as i64 + 1, x: 5.0 * k as f64 / nmem as f64, ..Default::default() })
             .collect();
         let members = (0..nmem)
-            .map(|k| Member { id: k as i64 + 1, i: k as i64 + 1, j: k as i64 + 2, material: "s".into(), section: "b".into() })
+            .map(|k| Member { id: k as i64 + 1, i: k as i64 + 1, j: k as i64 + 2, material: "s".into(), section: "b".into(), release: Default::default() })
             .collect();
         Model {
+            springs: vec![],
             materials: vec![Material { id: "s".into(), e: 200e9 }],
             sections: vec![Section { id: "b".into(), a: 0.01, i: 8e-5 }],
             nodes,

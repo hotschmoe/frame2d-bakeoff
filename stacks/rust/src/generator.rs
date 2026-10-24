@@ -15,7 +15,7 @@ pub fn generate(bays: usize, stories: usize) -> Model {
     let mut members: Vec<Member> = Vec::with_capacity(bays * (stories + 1) + stories * (bays + 1));
     let mut push = |i: i64, j: i64, sec: &str| -> i64 {
         let mid = members.len() as i64 + 1;
-        members.push(Member { id: mid, i, j, material: "steel".into(), section: sec.into() });
+        members.push(Member { id: mid, i, j, material: "steel".into(), section: sec.into(), release: Default::default() });
         mid
     };
     for b in 0..=bays {
@@ -40,6 +40,7 @@ pub fn generate(bays: usize, stories: usize) -> Model {
         },
     ];
     Model {
+        springs: Vec::new(),
         materials: vec![Material { id: "steel".into(), e: 200e9 }],
         sections: vec![Section { id: "COL".into(), a: 0.015, i: 1.2e-4 }, Section { id: "BM".into(), a: 0.010, i: 8.0e-5 }],
         nodes,

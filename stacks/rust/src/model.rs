@@ -45,6 +45,29 @@ pub struct Member {
     pub j: i64,
     pub material: String,
     pub section: String,
+    #[serde(default)]
+    pub release: Release,
+}
+
+/// Member end releases (SPEC 4.7); only "mz" is supported.
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct Release {
+    #[serde(default)]
+    pub i: Vec<String>,
+    #[serde(default)]
+    pub j: Vec<String>,
+}
+
+/// Spring support (SPEC 4.7); any of the three stiffnesses may be present.
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct Spring {
+    pub node: i64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kx: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ky: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kr: Option<f64>,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
@@ -83,6 +106,8 @@ pub struct Model {
     pub nodes: Vec<Node>,
     #[serde(default)]
     pub supports: Vec<Support>,
+    #[serde(default)]
+    pub springs: Vec<Spring>,
     #[serde(default)]
     pub members: Vec<Member>,
     #[serde(default)]

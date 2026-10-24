@@ -47,3 +47,12 @@ P1 state at hand-off (win-arm64, native arm64 Windows, Chromium x64 emulated, so
 - Wasm size: 4.24 MB uncompressed (after wasm-opt -O3).
 - Cold builds seen (not a controlled measurement): CLI release 2-3 s, server release 23 s, desktop release 30 s, web release 45 s, build_dev (all bins) 15 s, build_check 0.6 s warm.
 - Build wait is a small share of wall time; no ownership/lifetime errors cost time. The only compile errors were the `gen` keyword and two deprecation warnings (egui 0.37 renamed `show_inside` to `show`).
+
+## P2 (spring supports, member releases, auto-restraint)
+
+Started: Fri Oct 23 23:19:54 2026 (local, `date` at start). Done in roughly 15 minutes of wall time.
+
+- `harness/conformance.py rust p2 --bin <abs frame2d.exe>`: 5/5; p1: 15/15. Unit tests pass. No problems over ~10 minutes.
+- Files touched: `src/model.rs` (Spring, Release types, `springs`/`release` fields), `src/engine.rs` (validation `support_conflict`, static condensation in `local_k`/`fixed_end`, spring diagonal add, `auto_restrain` pre-pass, warnings, spring forces in the equilibrium sum), `src/generator.rs` (struct initializers only).
+- Design: auto-restraint detects a free rz whose summed condensed rotational diagonal plus kr is <= 1e-12 x the largest such diagonal, before DOF numbering. Reactions are reported at the given restraints only (auto-restrained DOFs report no reaction), as in the reference. Profiles are computed with the auto-restrained DOFs removed (reference computes them with the original restraints; only differs for models with warnings).
+- Builds: `build_check` and a cargo release CLI build were run directly (not under measure.sh); the measure.sh attempt failed because the fallback launches the WSL `bash` stub (same harness issue as in P1), so P2 build timings are not recorded.

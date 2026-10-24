@@ -72,3 +72,7 @@ Codebase: about 47.8k lines of Zig (src, test, tools, examples; vendored and zig
 
 - **dvui**: SDL/raylib/web backends, tracks recent Zig, has scroll areas with virtual sizing and a grid widget, and path/polygon drawing. Its required Zig version and virtualized sortable table support are unconfirmed. SPEC 15.6 makes it the primary, so its smoke test comes first.
 - **Dear ImGui via cimgui**: mature table API with sorting and clipper virtualization, a draw list with circles and polylines. It needs a C++ build and a per-platform renderer backend (including web), and it is not pure Zig.
+
+## Filed Teak issues
+
+Each Teak-side gap above is tracked in hotschmoe/teak: [#125 canvas primitives/transform](https://github.com/hotschmoe/teak/issues/125), [#126 table widget](https://github.com/hotschmoe/teak/issues/126), [#127 frame timing](https://github.com/hotschmoe/teak/issues/127), [#128 web pinch/touch](https://github.com/hotschmoe/teak/issues/128), [#129 file dialogs](https://github.com/hotschmoe/teak/issues/129), [#130 glyph cap and DPI](https://github.com/hotschmoe/teak/issues/130), [#131 Zig 0.17](https://github.com/hotschmoe/teak/issues/131), [#132 zunk pin](https://github.com/hotschmoe/teak/issues/132).

@@ -1,0 +1,1 @@
+{"wall_s": 40.53694230000838, "cpu_s": 2.3125, "parallelism": 0.05704672994044551, "mem_peak_mb": 231.25390625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 5, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "p3-web-wasm"}

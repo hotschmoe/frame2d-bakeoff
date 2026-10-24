@@ -75,3 +75,106 @@ Started: Sat Oct 24 01:17:00 2026 (local `date`). Done within ~10 minutes; no pr
 - Releases: `Member.Release`; `condense` does static condensation of the local k and fixed-end forces (`fixedEndM`). Skyline stays structural.
 - Auto-restraint: in `Prepare`, a free rz with no kr spring whose attached members all release mz there is restrained and a `auto_restrained` warning is emitted. Such DOFs are hidden from `Restrained()` and the reactions list.
 - Result: conformance p2 7/7, p1 17/17, `test_all` green.
+
+# Phase P3 (SPEC 3: port the engine to Zig)
+
+Started: Sat Oct 24 01:19:26 2026 (local `date`; the machine clock later jumped, so wall time is estimated at about 1.5 h of work). Run id run1, win-arm64, claude-sonnet-5-5. No human interventions.
+
+## Profile of the Go solver (before)
+
+`frame2d bench 100 100` under pprof (CPU samples, 2.3 s): `engine.dot` 66% flat (inlined skyline inner product), `factor` 71% cumulative, `solveInPlace` 7%, runtime/GC/preempt (the heap-sampler goroutine) about 15%, assembly under 1%. Allocation: 55,742 mallocs / 73 MB for 100x100. Factorization is the hot path. The Zig port keeps the algorithm (SPEC 4.4) and changes only: a 4-wide `@Vector` dot product (Go has no vectorized reduction), an arena per model (17 allocations instead of about 55k), a preallocated solve workspace, and flat CSR adjacency for RCM. The profile file is kept at `build/baseline/cpu.prof` (git-ignored).
+
+## What was built
+
+- `zig/src/` engine in Zig 0.17.0, std only: `json.zig` (DOM parser), `model.zig` (types, JSON in/out, generator, error codes), `engine.zig` (prepare, RCM, skyline LDL^T, post-processing; `pivot_tol` carries `BENCH-EDIT:leaf`, `Node.bench_pad` carries `BENCH-EDIT:struct`), `results.zig` (results JSON, sweep), `session.zig` (flat-buffer session for Flutter, same layout as before), `lib.zig` (C ABI, header `zig/include/frame2d_engine.h`), `tests.zig` (6 unit tests via `zig test`).
+- One source, three artifacts built by `stack.sh`: `build/libframe2d.a` (static, host arch, linked into the Go CLI/server through cgo with `CC="zig cc -target <host>"`), `build/frame2d_engine.dll` (x86_64 shared lib for dart:ffi, same `f2d_*` ABI as the old Go c-shared lib, so the Dart code and ffigen flow are unchanged), `build/engine.wasm` (wasm32-freestanding, no Emscripten, loaded by the hand-written `app/web/f2d_loader.js`, which exposes the same `f2dEngine` object the Dart web engine already used).
+- Go is now HTTP + SQLite (`cmd/server`), CLI argument handling (`cmd/frame2d`) and `bridge/zig` (cgo wrapper that only moves bytes; sweep concurrency is goroutines that each own a Zig-side forked model). The Go `engine/`, `bridge/session`, `bridge/native`, `bridge/wasm` packages and `wasm_exec.js` are deleted: no Go engine remains in the client. The server binary has a `bench-boundary` subcommand (Go to Zig through cgo).
+- `stack.sh`: Zig caches are stack-local (`.zig-global`, `.zig-cache`), so `clean_all` never touches a global cache shared with other agents. `CC` is scoped to Go commands only (Flutter CMake would pick up a global `CC`). `go build` does not hash a library contents into the link action, so the lib md5 is passed with `-ldflags -X frame2d/bridge/zig.libStamp=...` to force a relink.
+- Conformance: `harness/conformance.py go-zig-flutter all` 22/22, `harness/server_conformance.sh go-zig-flutter` all passed, `test_all` (zig tests, go test, flutter test) green, `build_check` green.
+
+## Problems over about 10 minutes
+
+None. Notes for the report: Zig `{d}` float formatting printed a non-shortest result (`0.30000000000000000000000000000000004`) in 0.17.0, so JSON numbers use `{e}` (shortest round-trip, valid JSON, tested). Writing files through shell heredocs that contain apostrophes broke the shell tool, so the editor tool was used (tooling friction, not stack friction).
+
+## Deviations
+
+- No Emscripten. The static library is consumed by Go; Flutter desktop loads a shared library built from the same Zig sources (dart:ffi needs a dynamic library). Web uses `wasm32-freestanding` with one import (`env.f2d_now_ms`).
+- CLI `alloc_count`/`alloc_bytes`/`peak_heap_bytes` come from a counting allocator wrapped around the allocator passed to the engine, below the per-model arena, so counts are arena chunk allocations (few, large), not per-array allocations; the peak is live requested bytes (virtual), which can exceed RSS for untouched pages.
+- Web `result`/`geometry` still cross as a memcpy into a fresh Float64Array (wasm memory can grow and detach views).
+
+## Before / after (run1, win-arm64; indicative, other agents shared the machine)
+
+"before" = the go-flutter fork at `p2-done-go-flutter`, rebuilt unchanged (kept in `build/baseline/`, git-ignored). Raw per-run lines: `results/adhoc/go-zig-flutter/bench/`.
+
+### 8.3 Desktop performance
+
+CLI `frame2d bench B S --reps 5`, medians, native arm64:
+
+| Size | factor_ms before | after | solve_ms before | after | assemble_ms before | after | peak RSS before | after |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 10x10 | 0.0 | 0.03 | 0.51 | 0.02 | 0.0 | 0.006 | 34.5 MB | 8.8 MB |
+| 50x50 | 17.06 | 6.24 | 3.13 | 1.68 | 0.55 | 0.27 | 55.6 MB | 45.4 MB |
+| 100x100 | 332.1 | 101.6 | 35.2 | 23.7 | 4.09 | 2.96 | 136 MB | 94.6 MB |
+| 200x200 | 6107.8 | 1557.7 | 257.2 | 167.5 | 21.6 | 21.1 | 619 MB | 449 MB |
+
+Factor is 2.7x to 3.9x faster; the whole 200x200 bench went from 32.3 s to 9.0 s wall. Allocations (CLI stats): 50x50 14,926 mallocs / 12.2 MB before, 17 / 14.6 MB after; 200x200 220,249 / 489 MB before, 17 / 663 MB after (arena slack). The Go GC sampler is gone.
+
+App (Flutter desktop release, x64 emulated, 5 runs, medians):
+
+| Mode | metric | before (Go c-shared) | after (Zig dll) |
+|---|---|---:|---:|
+| drag | frame p50 / p95 / p99 / max (ms) | 46.2 / 52.1 / 54.7 / 73.9 | 29.8 / 36.4 / 37.5 / 39.6 |
+| drag | solve_p50 (ms) | 24.7 | 8.4 |
+| drag | rss_mb | 365 | 358 |
+| render | frame p50 / p95 / p99 (ms) | 15.9 / 20.6 / 32.0 | 15.9 / 20.8 / 32.1 |
+| startup | first_frame_ms | 950 | 933 |
+| boundary | noop_ns / transfer_us | 1022.7 / 1.20 | 5.5 / 0.036 (zero-copy view both) |
+
+### 8.4 Web performance (headless Chromium 156.0.8078.4 x64 under emulation, Playwright 1.64.1, cache off, 5 runs, `--wasm` Flutter build)
+
+| metric | before (Go js/wasm) | after (Zig wasm) |
+|---|---:|---:|
+| drag frame p50 / p95 / p99 (ms) | 121 / 173 / 315 | 25.3 / 65.9 / 183 |
+| drag solve_p50 (ms) | 111 | 13.6 |
+| render frame p50 (ms) | 17.1 | 17.1 |
+| tti_ms (`ready`) | 1904 | 2401 (noisy; the engine is 17x smaller, so this delta is not the engine) |
+| startup first_frame_ms | 3227 | 2648 |
+| boundary noop_ns / transfer_us | 11,726 / 78.5 | 16.1 / 46.9 (memcpy) |
+| engine .wasm bytes raw / brotli q11 | 4,646,484 / 942,480 | 267,672 / 77,705 |
+| total web dir raw / brotli q11 | 48.6 MB / 12.21 MB | 44.2 MB / 11.34 MB |
+
+Transfer share of a 50x50 solve (8.8): web 46.9 us / 13.6 ms = 0.34%; desktop 0.036 us / 8.4 ms, about 0%. The default (dart2js) web build was not re-measured after the port; it uses the same engine.wasm.
+
+### 8.5 Server (Go net/http + SQLite, cgo into Zig; release builds, 64 connections, 20 s oha, `POST /solve` gen 50x50)
+
+| metric | before | after |
+|---|---:|---:|
+| requests/s | 162 | 230 |
+| p50 / p99 latency (ms) | 327 / 1347 | 208 / 987 |
+| CPU-seconds per 1000 requests | 98.7 | 70.8 |
+| peak RSS during oha | 2969 MB | 2191 MB |
+| idle RSS | 50.7 MB | 12.3 MB |
+| `/sweep` 1000 variants gen 10x10: wall s / CPU s | 0.106 / 0.75 | 0.026 / 0.14 |
+| `/sweep` 200 variants gen 50x50: wall s / CPU s | 0.425 / 6.45 | 0.199 / 2.88 |
+
+Server peak RSS is high in both because every request builds a full 50x50 skyline and serializes a multi-MB response. CPU figures are psutil process CPU times (no cgroups on Windows).
+
+### 8.8 Boundary from Go into Zig
+
+`frame2d-server bench-boundary` prints a `BENCH` line (noop_ns, transfer_us as a copy into a Go slice, transfer_view_us zero-copy). Result: noop 14.8 ns per cgo call, transfer 3.63 us per 38,103-double copy (0.04% of a 8 ms solve), zero-copy view about 0 us.
+
+### 8.6 Binary size (release, stripped; flags: Zig `-OReleaseFast -fstrip`, Go `-trimpath -ldflags="-s -w"`)
+
+| Artifact | before (bytes) | after (bytes) |
+|---|---:|---:|
+| `frame2d` CLI | 2,731,008 | 3,024,384 |
+| server | 10,351,104 | 10,730,496 |
+| desktop engine library alone | 3,074,560 (Go c-shared dll) | 340,480 (Zig dll) |
+| web engine .wasm raw / brotli | 4,646,484 / 942,480 | 267,672 / 77,705 |
+| web total brotli | 12.21 MB | 11.34 MB |
+
+The CLI and server grow slightly: they still carry the Go runtime and now also the Zig object plus the mingw C runtime that cgo needs; the engine itself no longer costs Go code size.
+
+### Build-loop notes (not a full 9.x measurement)
+
+`measure.sh` records are in `results/adhoc/go-zig-flutter/` (`p3-*.jsonl`): `build_check` 16.1 s wall, `test_all` 23.6 s wall. The loop now has three toolchains (Zig, Go with zig cc as the C compiler, Flutter), and the Go link must be forced to rebuild when the Zig library changes (libStamp above). Cross-compile (8.7) was not run in this phase; `zig cc` accepted `-target aarch64-windows-gnu` (cgo) and the Zig shared library built for `x86_64-windows-gnu` on the same arm64 host.

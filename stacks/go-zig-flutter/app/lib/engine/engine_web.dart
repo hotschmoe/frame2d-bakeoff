@@ -28,7 +28,7 @@ extension type F2dApi(JSObject _) implements JSObject {
   external String toJson(int h);
 }
 
-/// Go js/wasm engine. Every buffer is copied into a fresh JS Float64Array by the Go side (memcpy).
+/// Zig wasm32 engine (web/f2d_loader.js). Every buffer is copied into a fresh JS Float64Array (memcpy).
 class WasmEngine implements Engine {
   WasmEngine(this._a);
   final F2dApi _a;

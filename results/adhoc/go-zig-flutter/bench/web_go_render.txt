@@ -1,0 +1,5 @@
+BENCH {"mode":"render","p50":17.1,"p95":26.509,"p99":43.214,"max":86.976,"solve_p50":0.0,"lag_max":0,"rss_mb":null,"paint_p50":6.645,"build_p50":12.801,"raster_p50":35.47}
+BENCH {"mode":"render","p50":17.385,"p95":28.27,"p99":39.289,"max":87.664,"solve_p50":0.0,"lag_max":0,"rss_mb":null,"paint_p50":7.076,"build_p50":15.04,"raster_p50":39.37}
+BENCH {"mode":"render","p50":17.174,"p95":27.11,"p99":38.784,"max":77.49,"solve_p50":0.0,"lag_max":0,"rss_mb":null,"paint_p50":7.03,"build_p50":13.695,"raster_p50":42.81}
+BENCH {"mode":"render","p50":17.03,"p95":27.834,"p99":40.495,"max":79.345,"solve_p50":0.0,"lag_max":0,"rss_mb":null,"paint_p50":6.8,"build_p50":13.544,"raster_p50":33.875}
+BENCH {"mode":"render","p50":16.984,"p95":30.981,"p99":41.81,"max":94.755,"solve_p50":0.0,"lag_max":0,"rss_mb":null,"paint_p50":7.095,"build_p50":14.554,"raster_p50":35.815}

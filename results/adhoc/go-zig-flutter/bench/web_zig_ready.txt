@@ -1,0 +1,5 @@
+BENCH {"mode":"ready","tti_ms":2400.734999984503}
+BENCH {"mode":"ready","tti_ms":3192.895000010729}
+BENCH {"mode":"ready","tti_ms":2213.6149999797344}
+BENCH {"mode":"ready","tti_ms":3273.0399999916553}
+BENCH {"mode":"ready","tti_ms":2214.330000013113}

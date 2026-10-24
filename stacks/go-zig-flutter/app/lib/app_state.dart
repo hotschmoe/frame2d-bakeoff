@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import 'engine/engine.dart';
 
-/// Holds the loaded model session, its latest results (flat buffers owned by the Go engine) and the view.
+/// Holds the loaded model session, its latest results (flat buffers owned by the Zig engine) and the view.
 /// No analysis happens here: Dart only does state, geometry-to-screen mapping and drawing.
 class AppState extends ChangeNotifier {
   AppState(this.engine);

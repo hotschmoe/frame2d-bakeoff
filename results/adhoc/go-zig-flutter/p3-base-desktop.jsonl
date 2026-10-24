@@ -1,0 +1,1 @@
+{"wall_s": 41.728950399992755, "cpu_s": 10.859375, "parallelism": 0.2602359967338619, "mem_peak_mb": 394.7734375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 13, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "p3-base-desktop"}

@@ -1,0 +1,5 @@
+BENCH {"mode":"startup","first_frame_ms":921.3755}
+BENCH {"mode":"startup","first_frame_ms":943.8805}
+BENCH {"mode":"startup","first_frame_ms":933.4451}
+BENCH {"mode":"startup","first_frame_ms":937.0251}
+BENCH {"mode":"startup","first_frame_ms":929.2814}

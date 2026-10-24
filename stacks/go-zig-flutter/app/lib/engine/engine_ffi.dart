@@ -10,7 +10,7 @@ import 'engine.dart';
 
 Future<Engine> createEngine() async => FfiEngine();
 
-/// dart:ffi bridge to the Go c-shared library. Result buffers are pinned Go memory exposed as
+/// dart:ffi bridge to the Zig shared library. Result buffers are session-owned Zig memory exposed as
 /// zero-copy Float64List views; they stay valid until the next solve or free of that session.
 class FfiEngine implements Engine {
   FfiEngine() : _b = EngineBindings(ffi.DynamicLibrary.open(_libName()));

@@ -1,20 +1,14 @@
-// Command frame2d is the Frame2D CLI: solve, gen, bench (SPEC 5.3).
+// Command frame2d is the Frame2D CLI: solve, gen, bench (SPEC 5.3). All analysis runs in the Zig engine (cgo).
 package main
 
 import (
-	"bufio"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"os"
-	"runtime"
-	"sort"
 	"strconv"
-	"sync"
-	"time"
 
-	"frame2d/engine"
+	zigengine "frame2d/bridge/zig"
 )
 
 func main() {
@@ -41,9 +35,9 @@ func usage() {
 }
 
 func fail(err error) int {
-	var me *engine.ModelError
+	var me *zigengine.ModelError
 	if errors.As(err, &me) {
-		_ = json.NewEncoder(os.Stdout).Encode(me)
+		fmt.Fprintf(os.Stdout, "{\"error\":%q,\"detail\":%q}%c", me.Code, me.Detail, '\n')
 		return 2
 	}
 	fmt.Fprintln(os.Stderr, "error:", err)
@@ -66,75 +60,14 @@ func splitArgs(fs *flag.FlagSet, args []string) ([]string, error) {
 	return pos, nil
 }
 
-func writeJSON(path string, v any) error {
-	f := os.Stdout
-	if path != "" {
-		var err error
-		if f, err = os.Create(path); err != nil {
-			return err
-		}
-		defer f.Close()
-	}
-	w := bufio.NewWriterSize(f, 1<<20)
-	if err := json.NewEncoder(w).Encode(v); err != nil {
+// writeBytes writes b (plus a newline) to path, or to stdout when path is empty.
+func writeBytes(path string, b []byte) error {
+	b = append(b, '\n')
+	if path == "" {
+		_, err := os.Stdout.Write(b)
 		return err
 	}
-	return w.Flush()
-}
-
-// memSampler tracks the peak HeapInuse while a solve runs.
-type memSampler struct {
-	stop chan struct{}
-	wg   sync.WaitGroup
-	peak uint64
-}
-
-func startSampler() *memSampler {
-	s := &memSampler{stop: make(chan struct{})}
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
-		var ms runtime.MemStats
-		for {
-			runtime.ReadMemStats(&ms)
-			if ms.HeapInuse > s.peak {
-				s.peak = ms.HeapInuse
-			}
-			select {
-			case <-s.stop:
-				return
-			case <-time.After(2 * time.Millisecond):
-			}
-		}
-	}()
-	return s
-}
-
-func (s *memSampler) finish() uint64 { close(s.stop); s.wg.Wait(); return s.peak }
-
-// measuredSolve solves and fills the allocation stats (Go: MemStats deltas, sampled peak HeapInuse).
-func measuredSolve(m *engine.Model) (*engine.Results, error) {
-	var before, after runtime.MemStats
-	runtime.GC()
-	runtime.ReadMemStats(&before)
-	smp := startSampler()
-	p, err := engine.Prepare(m)
-	var out *engine.Out
-	if err == nil {
-		out, err = p.Solve()
-	}
-	runtime.ReadMemStats(&after)
-	peak := smp.finish()
-	if err != nil {
-		return nil, err
-	}
-	res := p.ResultsJSON(out)
-	cnt, byt := after.Mallocs-before.Mallocs, after.TotalAlloc-before.TotalAlloc
-	if after.HeapInuse > peak {
-		peak = after.HeapInuse
-	}
-	res.Stats.AllocCount, res.Stats.AllocBytes, res.Stats.PeakHeapBytes = &cnt, &byt, &peak
-	return res, nil
+	return os.WriteFile(path, b, 0o644)
 }
 
 func cmdSolve(args []string) int {
@@ -148,15 +81,11 @@ func cmdSolve(args []string) int {
 	if err != nil {
 		return fail(err)
 	}
-	var m engine.Model
-	if err := json.Unmarshal(data, &m); err != nil {
-		return fail(err)
-	}
-	res, err := measuredSolve(&m)
+	res, err := zigengine.SolveJSON(data, true)
 	if err != nil {
 		return fail(err)
 	}
-	if err := writeJSON(*out, res); err != nil {
+	if err := writeBytes(*out, res); err != nil {
 		return fail(err)
 	}
 	return 0
@@ -182,15 +111,14 @@ func cmdGen(args []string) int {
 		usage()
 	}
 	b, s := parseBS(pos)
-	if err := writeJSON(*out, engine.Gen(b, s)); err != nil {
+	model, err := zigengine.GenJSON(b, s)
+	if err != nil {
+		return fail(err)
+	}
+	if err := writeBytes(*out, model); err != nil {
 		return fail(err)
 	}
 	return 0
-}
-
-func median(v []float64) float64 {
-	sort.Float64s(v)
-	return v[len(v)/2]
 }
 
 func cmdBench(args []string) int {
@@ -201,19 +129,11 @@ func cmdBench(args []string) int {
 		usage()
 	}
 	b, s := parseBS(pos)
-	var asm, fac, sol []float64
-	var last *engine.Results
-	for r := 0; r < *reps; r++ {
-		res, err := measuredSolve(engine.Gen(b, s))
-		if err != nil {
-			return fail(err)
-		}
-		asm, fac, sol = append(asm, res.Stats.AssembleMS), append(fac, res.Stats.FactorMS), append(sol, res.Stats.SolveMS)
-		last = res
+	res, err := zigengine.Bench(b, s, *reps)
+	if err != nil {
+		return fail(err)
 	}
-	st := last.Stats
-	st.AssembleMS, st.FactorMS, st.SolveMS = median(asm), median(fac), median(sol)
-	if err := writeJSON("", map[string]any{"bays": b, "stories": s, "reps": *reps, "stats": st}); err != nil {
+	if err := writeBytes("", res); err != nil {
 		return fail(err)
 	}
 	return 0

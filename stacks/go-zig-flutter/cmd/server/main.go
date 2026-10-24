@@ -1,4 +1,5 @@
-// Command server is the Frame2D HTTP server (SPEC 5.4).
+// Command server is the Frame2D HTTP server (SPEC 5.4). HTTP and SQLite are Go; every model is parsed,
+// analysed and serialized by the Zig engine through cgo. `server bench-boundary` measures the Go -> Zig call cost.
 package main
 
 import (
@@ -12,10 +13,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	_ "modernc.org/sqlite"
 
-	"frame2d/engine"
+	zigengine "frame2d/bridge/zig"
 )
 
 const serverHeader = "x-frame2d: a" // BENCH-EDIT:server
@@ -25,6 +27,10 @@ const maxBody = 64 << 20
 type server struct{ db *sql.DB }
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "bench-boundary" {
+		benchBoundary()
+		return
+	}
 	addr := os.Getenv("FRAME2D_ADDR")
 	if addr == "" {
 		addr = "127.0.0.1:8080"
@@ -68,10 +74,13 @@ func reply(w http.ResponseWriter, status int, v any) {
 }
 
 func replyErr(w http.ResponseWriter, err error) {
-	var me *engine.ModelError
+	var me *zigengine.ModelError
+	var br *zigengine.BadRequestError
 	switch {
 	case errors.As(err, &me):
 		reply(w, http.StatusUnprocessableEntity, me)
+	case errors.As(err, &br):
+		reply(w, http.StatusBadRequest, map[string]string{"error": "bad_request", "detail": br.Detail})
 	default:
 		var mbe *http.MaxBytesError
 		if errors.As(err, &mbe) {
@@ -91,17 +100,14 @@ func (s *server) health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) solveBytes(w http.ResponseWriter, body []byte) {
-	var m engine.Model
-	if err := json.Unmarshal(body, &m); err != nil {
-		replyErr(w, err)
-		return
-	}
-	res, err := engine.SolveModel(&m)
+	res, err := zigengine.SolveJSON(body, false)
 	if err != nil {
 		replyErr(w, err)
 		return
 	}
-	reply(w, 200, res)
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(200)
+	_, _ = w.Write(res)
 }
 
 func (s *server) solve(w http.ResponseWriter, r *http.Request) {
@@ -119,8 +125,7 @@ func (s *server) putModel(w http.ResponseWriter, r *http.Request) {
 		replyErr(w, err)
 		return
 	}
-	var m engine.Model
-	if err := json.Unmarshal(body, &m); err != nil {
+	if err := zigengine.Check(body); err != nil {
 		replyErr(w, err)
 		return
 	}
@@ -160,10 +165,10 @@ func (s *server) solveStored(w http.ResponseWriter, r *http.Request) {
 }
 
 type sweepReq struct {
-	Model     *engine.Model `json:"model"`
-	ModelID   string        `json:"model_id"`
-	Variants  int           `json:"variants"`
-	BeamIScle [2]float64    `json:"beam_I_scale"`
+	Model     json.RawMessage `json:"model"`
+	ModelID   string          `json:"model_id"`
+	Variants  int             `json:"variants"`
+	BeamIScle [2]float64      `json:"beam_I_scale"`
 }
 
 func (s *server) sweep(w http.ResponseWriter, r *http.Request) {
@@ -177,23 +182,45 @@ func (s *server) sweep(w http.ResponseWriter, r *http.Request) {
 		replyErr(w, err)
 		return
 	}
-	m := req.Model
-	if m == nil {
+	m := []byte(req.Model)
+	if len(m) == 0 || string(m) == "null" {
 		stored, err := s.load(req.ModelID)
 		if err != nil {
 			reply(w, 404, map[string]string{"error": "not_found", "detail": "no such model"})
 			return
 		}
-		m = new(engine.Model)
-		if err := json.Unmarshal(stored, m); err != nil {
-			replyErr(w, err)
-			return
-		}
+		m = stored
 	}
-	res, err := engine.Sweep(m, req.Variants, req.BeamIScle[0], req.BeamIScle[1])
+	res, err := zigengine.Sweep(m, req.Variants, req.BeamIScle[0], req.BeamIScle[1])
 	if err != nil {
 		replyErr(w, err)
 		return
 	}
 	reply(w, 200, res)
+}
+
+// benchBoundary measures the cgo boundary Go -> Zig (SPEC 5.5 `boundary`): 1,000,000 no-op calls, then 1,000
+// calls that return 38,103 f64 values, copied into a Go slice (and, separately, viewed zero-copy).
+func benchBoundary() {
+	const noopCalls, echoCalls, n = 1_000_000, 1_000, 38103
+	t0 := time.Now()
+	for i := 0; i < noopCalls; i++ {
+		zigengine.Noop()
+	}
+	noopNS := float64(time.Since(t0).Nanoseconds()) / noopCalls
+	dst := make([]float64, n)
+	t0 = time.Now()
+	for i := 0; i < echoCalls; i++ {
+		zigengine.Echo(dst)
+	}
+	copyUS := float64(time.Since(t0).Nanoseconds()) / echoCalls / 1e3
+	sink := 0.0
+	t0 = time.Now()
+	for i := 0; i < echoCalls; i++ {
+		sink += zigengine.EchoView(n)[i]
+	}
+	viewUS := float64(time.Since(t0).Nanoseconds()) / echoCalls / 1e3
+	out, _ := json.Marshal(map[string]any{"mode": "boundary", "noop_ns": noopNS, "transfer_us": copyUS,
+		"mechanism": "memcpy (cgo call, copy into Go slice)", "transfer_view_us": viewUS, "check": sink + dst[n-1]})
+	os.Stdout.WriteString("BENCH " + string(out) + "\n")
 }

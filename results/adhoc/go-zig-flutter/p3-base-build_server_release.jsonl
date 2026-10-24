@@ -1,0 +1,1 @@
+{"wall_s": 5.281069999997271, "cpu_s": 18.390625, "parallelism": 3.482367209677111, "mem_peak_mb": 919.94140625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 16, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "p3-base-build_server_release"}

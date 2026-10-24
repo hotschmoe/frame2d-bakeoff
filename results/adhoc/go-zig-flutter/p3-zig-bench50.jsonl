@@ -1,0 +1,1 @@
+{"wall_s": 0.11739340002532117, "cpu_s": 0.0625, "parallelism": 0.5323979030040791, "mem_peak_mb": 45.4296875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 3, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "p3-zig-bench50"}

@@ -2,3 +2,5 @@ build/
 .tools/
 app/build/
 app/.dart_tool/
+.zig-cache/
+.zig-global/

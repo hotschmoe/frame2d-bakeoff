@@ -4,7 +4,7 @@ import 'engine_stub.dart'
     if (dart.library.ffi) 'engine_ffi.dart'
     if (dart.library.js_interop) 'engine_web.dart' as impl;
 
-/// Layout constants shared with the Go session package (bridge/session).
+/// Layout constants shared with the Zig session API (zig/src/session.zig).
 class Layout {
   static const nodeStride = 4; // id, x, y, restraint bitmask
   static const memberStride = 3; // id, node index i, node index j
@@ -12,9 +12,9 @@ class Layout {
   static const statCount = 7;
 }
 
-/// Thin typed view of the Go engine bridge. All analysis happens behind this interface.
+/// Thin typed view of the Zig engine bridge. All analysis happens behind this interface.
 abstract class Engine {
-  /// Creates the platform engine: dart:ffi on desktop, Go js/wasm on web.
+  /// Creates the platform engine: dart:ffi on desktop, Zig wasm32 module on web.
   static Future<Engine> create() => impl.createEngine();
 
   /// "zero-copy view" (desktop) or "memcpy" (web): how result buffers cross the boundary.

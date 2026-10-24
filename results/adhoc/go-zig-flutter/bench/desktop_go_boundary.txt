@@ -1,0 +1,5 @@
+BENCH {"mode":"boundary","noop_ns":1076.316,"transfer_us":1.261,"mechanism":"zero-copy view","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":1003.117,"transfer_us":1.234,"mechanism":"zero-copy view","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":993.758,"transfer_us":1.152,"mechanism":"zero-copy view","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":1022.664,"transfer_us":1.11,"mechanism":"zero-copy view","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":1040.037,"transfer_us":1.201,"mechanism":"zero-copy view","check":38102000.0}

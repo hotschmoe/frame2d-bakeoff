@@ -1,0 +1,5 @@
+BENCH {"mode":"boundary","noop_ns":11731.206,"transfer_us":76.265,"mechanism":"memcpy","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":11701.06,"transfer_us":75.26,"mechanism":"memcpy","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":16130.981,"transfer_us":83.926,"mechanism":"memcpy","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":11481.705,"transfer_us":78.46,"mechanism":"memcpy","check":38102000.0}
+BENCH {"mode":"boundary","noop_ns":11725.69,"transfer_us":79.024,"mechanism":"memcpy","check":38102000.0}

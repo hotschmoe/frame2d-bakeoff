@@ -12,7 +12,7 @@ String? benchMode(List<String> args) {
   return null;
 }
 
-/// Milliseconds since process start (measured inside the Go library from the OS process creation time).
+/// Milliseconds since process start (measured inside the Zig library from the OS process creation time).
 double sinceStartMs(Engine e) => e.processAgeMs();
 
 double? rssMb() => ProcessInfo.currentRss / (1024 * 1024);

@@ -1,0 +1,7 @@
+target/
+.zig-cache/
+zig-out/
+.dart_tool/
+build/
+node_modules/
+*.log

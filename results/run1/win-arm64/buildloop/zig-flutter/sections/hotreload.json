@@ -1,0 +1,1 @@
+{"section":"hotreload","status":"not-implemented","reason":"stack.sh defines no hot_reload_probe (SPEC 9.2: recorded, not added to stacks)","wall_s":0,"finished":"2026-10-24T11:13:37-0700"}

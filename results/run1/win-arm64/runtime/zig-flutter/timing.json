@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "wall_s": 2,
+    "rc": 0
+  },
+  "build": {
+    "wall_s": 115,
+    "rc": 0
+  },
+  "loc": {
+    "wall_s": 0,
+    "rc": 0
+  },
+  "cli": {
+    "wall_s": 9,
+    "rc": 0
+  },
+  "desktop": {
+    "wall_s": 193,
+    "rc": 0
+  },
+  "web": {
+    "wall_s": 468,
+    "rc": 0
+  },
+  "server": {
+    "wall_s": 39,
+    "rc": 0
+  },
+  "binsize": {
+    "wall_s": 2,
+    "rc": 0
+  },
+  "hood": {
+    "wall_s": 5,
+    "rc": 0
+  },
+  "xcompile": {
+    "wall_s": 51,
+    "rc": 0
+  }
+}

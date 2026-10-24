@@ -1,0 +1,1 @@
+{"wall_s": 35.73408969998127, "cpu_s": 7.375, "parallelism": 0.206385556814782, "mem_peak_mb": 1076.01171875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 9, "exit_code": 0, "method": "psutil", "stack": "zig-flutter", "label": "edit-leaf-dev"}

@@ -1,0 +1,1766 @@
+{
+  "stack": "zig-flutter",
+  "label": "wasm",
+  "root": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\webdist\\alt-wasm",
+  "runs": 3,
+  "modes": [
+    "ready",
+    "startup",
+    "drag",
+    "render",
+    "boundary"
+  ],
+  "date": "2026-10-24T17:35:54.708Z",
+  "server": {
+    "kind": "node static_server (harness/runtime/web_common.mjs)",
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "headers": {
+      "Content-Encoding": "br (precompressed)",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp"
+    },
+    "cache": "Cache-Control: no-store + CDP Network.setCacheDisabled + fresh browser per run + service workers blocked"
+  },
+  "manifest": {
+    "total_raw": 45834816,
+    "total_br": 11759198,
+    "files": [
+      {
+        "path": ".last_build_id",
+        "raw": 32,
+        "br": 33,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/AssetManifest.bin",
+        "raw": 2,
+        "br": 6,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/AssetManifest.bin.json",
+        "raw": 6,
+        "br": 10,
+        "type": "application/json"
+      },
+      {
+        "path": "assets/FontManifest.json",
+        "raw": 158,
+        "br": 95,
+        "type": "application/json"
+      },
+      {
+        "path": "assets/NOTICES",
+        "raw": 1335342,
+        "br": 41223,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/fonts/MaterialIcons-Regular.otf",
+        "raw": 7736,
+        "br": 3350,
+        "type": "font/otf"
+      },
+      {
+        "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+        "raw": 171676,
+        "br": 74845,
+        "type": "font/ttf"
+      },
+      {
+        "path": "assets/shaders/ink_sparkle.frag",
+        "raw": 8890,
+        "br": 1787,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/shaders/stretch_effect.frag",
+        "raw": 6737,
+        "br": 1204,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "canvaskit/canvaskit.js",
+        "raw": 86987,
+        "br": 24371,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/canvaskit.js.symbols",
+        "raw": 1356926,
+        "br": 137423,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/canvaskit.wasm",
+        "raw": 7284602,
+        "br": 2257085,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js",
+        "raw": 86226,
+        "br": 24146,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js.symbols",
+        "raw": 1235870,
+        "br": 120287,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.wasm",
+        "raw": 5428806,
+        "br": 1540246,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/skwasm.js",
+        "raw": 63537,
+        "br": 14886,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm.js.symbols",
+        "raw": 1540006,
+        "br": 149549,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm.wasm",
+        "raw": 3593715,
+        "br": 1209789,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.js",
+        "raw": 63650,
+        "br": 14903,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.js.symbols",
+        "raw": 1672152,
+        "br": 167664,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.wasm",
+        "raw": 5216217,
+        "br": 1858459,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.js",
+        "raw": 76114,
+        "br": 21952,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.js.symbols",
+        "raw": 963641,
+        "br": 95720,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.wasm",
+        "raw": 3729129,
+        "br": 1055638,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/wimp.js",
+        "raw": 59127,
+        "br": 14653,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/wimp.js.symbols",
+        "raw": 1813030,
+        "br": 134058,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/wimp.wasm",
+        "raw": 3581677,
+        "br": 1132927,
+        "type": "application/wasm"
+      },
+      {
+        "path": "favicon.png",
+        "raw": 917,
+        "br": 917,
+        "type": "image/png"
+      },
+      {
+        "path": "flutter.js",
+        "raw": 12136,
+        "br": 4074,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "flutter_bootstrap.js",
+        "raw": 13070,
+        "br": 4460,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "flutter_service_worker.js",
+        "raw": 0,
+        "br": 0,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "frame2d_engine.wasm",
+        "raw": 1728850,
+        "br": 421750,
+        "type": "application/wasm"
+      },
+      {
+        "path": "icons/Icon-192.png",
+        "raw": 5292,
+        "br": 5292,
+        "type": "image/png"
+      },
+      {
+        "path": "icons/Icon-512.png",
+        "raw": 8252,
+        "br": 8252,
+        "type": "image/png"
+      },
+      {
+        "path": "icons/Icon-maskable-192.png",
+        "raw": 5594,
+        "br": 5594,
+        "type": "image/png"
+      },
+      {
+        "path": "icons/Icon-maskable-512.png",
+        "raw": 20998,
+        "br": 20998,
+        "type": "image/png"
+      },
+      {
+        "path": "index.html",
+        "raw": 1556,
+        "br": 546,
+        "type": "text/html; charset=utf-8"
+      },
+      {
+        "path": "main.dart.js",
+        "raw": 2524074,
+        "br": 576458,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "main.dart.mjs",
+        "raw": 32968,
+        "br": 6701,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "main.dart.wasm",
+        "raw": 2098073,
+        "br": 607525,
+        "type": "application/wasm"
+      },
+      {
+        "path": "manifest.json",
+        "raw": 953,
+        "br": 245,
+        "type": "application/json"
+      },
+      {
+        "path": "version.json",
+        "raw": 92,
+        "br": 77,
+        "type": "application/json"
+      }
+    ]
+  },
+  "env": {
+    "browser_version": "156.0.8078.4",
+    "playwright_version": "1.64.1",
+    "launch_args": [
+      "--ignore-gpu-blocklist",
+      "--enable-unsafe-swiftshader",
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows"
+    ],
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "node": "v24.22.1",
+    "platform": "win32/arm64",
+    "gl": {
+      "webgl2": true,
+      "webgl2_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl2_vendor": "Google Inc. (Google)",
+      "webgl": true,
+      "webgl_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl_vendor": "Google Inc. (Google)",
+      "webgpu": false,
+      "crossOriginIsolated": true,
+      "hardwareConcurrency": 18,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+    },
+    "software_rendering_suspected": true,
+    "chrome_gpu_error": "Error: page.goto: net::ERR_FAILED at chrome://gpu"
+  },
+  "modes_out": {
+    "ready": {
+      "ok_runs": 3,
+      "median": {
+        "tti_ms": 537.12
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2358833,
+      "uncompressed_bytes_median": 7774876,
+      "wire_bytes_cdp_median": 2347537,
+      "nav_to_bench_wall_ms_median": 540,
+      "runs": [
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 534.025,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 538,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2347537,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 548.56,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 551,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2347537,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 537.12,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 540,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2347537,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 2875.855
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2358833,
+      "uncompressed_bytes_median": 7774876,
+      "wire_bytes_cdp_median": 2387022,
+      "nav_to_bench_wall_ms_median": 3076,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 3026.724,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 3240,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387022,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 2875.855,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 3076,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387022,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 2611.26,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 2818,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387022,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "ui_p50": 33.921,
+        "raster_p50": 55.23,
+        "p50": 97.335,
+        "p95": 163.08,
+        "p99": 231.63,
+        "max": 2216.68,
+        "solve_p50": 13.446,
+        "lag_max": 0,
+        "rss_mb": 17.35687255859375
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2358833,
+      "uncompressed_bytes_median": 7774876,
+      "wire_bytes_cdp_median": 2387022,
+      "nav_to_bench_wall_ms_median": 28347,
+      "runs": [
+        {
+          "bench": {
+            "ui_p50": 37.655,
+            "raster_p50": 55.23,
+            "mode": "drag",
+            "p50": 97.64,
+            "p95": 163.08,
+            "p99": 231.63,
+            "max": 2428.32,
+            "solve_p50": 13.085,
+            "lag_max": 0,
+            "rss_mb": 11.348724365234375,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 28347,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387022,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 33.195,
+            "raster_p50": 50.89,
+            "mode": "drag",
+            "p50": 90.195,
+            "p95": 141.12,
+            "p99": 178.276,
+            "max": 2208.995,
+            "solve_p50": 13.446,
+            "lag_max": 0,
+            "rss_mb": 17.35687255859375,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 26984,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387022,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 33.921,
+            "raster_p50": 65.456,
+            "mode": "drag",
+            "p50": 97.335,
+            "p95": 182.565,
+            "p99": 259.191,
+            "max": 2216.68,
+            "solve_p50": 18.106,
+            "lag_max": 0,
+            "rss_mb": 42.629241943359375,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 30230,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387026,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "ui_p50": 13.12,
+        "raster_p50": 61.479,
+        "p50": 76.891,
+        "p95": 162.431,
+        "p99": 552.109,
+        "max": 1907.949,
+        "rss_mb": 35.572052001953125
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2358833,
+      "uncompressed_bytes_median": 7774876,
+      "wire_bytes_cdp_median": 2387021,
+      "nav_to_bench_wall_ms_median": 21044,
+      "runs": [
+        {
+          "bench": {
+            "ui_p50": 12.94,
+            "raster_p50": 61.479,
+            "mode": "render",
+            "p50": 76.891,
+            "p95": 162.431,
+            "p99": 552.109,
+            "max": 1947.201,
+            "rss_mb": 24.7955322265625,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 21213,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387021,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 13.295,
+            "raster_p50": 63.046,
+            "mode": "render",
+            "p50": 77.845,
+            "p95": 160.645,
+            "p99": 578.39,
+            "max": 1894.025,
+            "rss_mb": 61.03515625,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 21044,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387021,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 13.12,
+            "raster_p50": 57.85,
+            "mode": "render",
+            "p50": 72.405,
+            "p95": 163.641,
+            "p99": 486.745,
+            "max": 1907.949,
+            "rss_mb": 35.572052001953125,
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 20799,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2387021,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 12.13,
+        "transfer_us": 31.519
+      },
+      "mechanism": "memcpy",
+      "transferred_body_bytes_median": 2358833,
+      "uncompressed_bytes_median": 7774876,
+      "wire_bytes_cdp_median": 2347537,
+      "nav_to_bench_wall_ms_median": 283,
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 11.07,
+            "transfer_us": 31.519,
+            "mechanism": "memcpy",
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 290,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2347537,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.13,
+            "transfer_us": 32.12,
+            "mechanism": "memcpy",
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 283,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2347537,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.255,
+            "transfer_us": 30.785,
+            "mechanism": "memcpy",
+            "backend": "wasm (dart2wasm)"
+          },
+          "nav_to_bench_wall_ms": 281,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 2358833,
+            "uncompressed_bytes": 7774876,
+            "wire_bytes_cdp": 2347537,
+            "requests": 11,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4460,
+                "raw": 13070,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.wasm",
+                "sent": 1209789,
+                "raw": 3593715,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.mjs",
+                "sent": 6701,
+                "raw": 32968,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.wasm",
+                "sent": 607525,
+                "raw": 2098073,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 421750,
+                "raw": 1728850,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/skwasm.js",
+                "sent": 14886,
+                "raw": 63537,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "transferred_br_bytes": 2358833,
+    "uncompressed_bytes": 7774876,
+    "tti_ms": 537.12,
+    "startup_first_frame_ms": 2875.855,
+    "drag": {
+      "p50": 97.335,
+      "p95": 163.08,
+      "p99": 231.63,
+      "max": 2216.68,
+      "lag_max": 0
+    },
+    "render": {
+      "p50": 76.891,
+      "p95": 162.431,
+      "p99": 552.109,
+      "max": 1907.949
+    },
+    "solve_p50_ms": 13.446,
+    "boundary": {
+      "noop_ns": 12.13,
+      "transfer_us": 31.519,
+      "mechanism": "memcpy"
+    },
+    "directory_total_br_bytes": 11759198,
+    "directory_total_raw_bytes": 45834816
+  },
+  "what": "build_web_wasm_release",
+  "is_alternate_extra": true
+}

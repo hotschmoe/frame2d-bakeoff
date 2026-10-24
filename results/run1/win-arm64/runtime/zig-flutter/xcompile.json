@@ -1,0 +1,75 @@
+{
+  "stack": "zig-flutter",
+  "host": "windows-arm64",
+  "attempts": [
+    {
+      "target": "windows-x64",
+      "host": "windows-arm64",
+      "kind": "zig",
+      "cold": true,
+      "steps_beyond_native_build": [],
+      "artifacts": {
+        "frame2d": {
+          "path": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\x\\windows-x64\\out\\bin\\frame2d.exe",
+          "bytes": 1109504
+        },
+        "frame2d-server": {
+          "path": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\x\\windows-x64\\out\\bin\\frame2d-server.exe",
+          "bytes": 2234368
+        }
+      },
+      "target_triple": "x86_64-windows-gnu",
+      "command": "zig build install -Dtarget=x86_64-windows-gnu -Doptimize=ReleaseFast -Ddesktop-target=x86_64-windows-gnu --prefix C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/runtime/.work/zig-flutter/x/windows-x64/out --cache-dir C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/runtime/.work/zig-flutter/x/windows-x64/zig-local-cache",
+      "env": {
+        "ZIG_LOCAL_CACHE": "fresh",
+        "ZIG_GLOBAL_CACHE_DIR": "stack's own (package sources kept; compiled std/compiler-rt for the new target are built into it)"
+      },
+      "rc": 0,
+      "first_error_lines": null,
+      "cold_build_wall_s": 29.466,
+      "error_tail": null,
+      "success": true,
+      "runs": {
+        "ran": true,
+        "how": "x64 under Windows-on-ARM emulation",
+        "ok": true,
+        "rc": 0,
+        "stdout_head": "{\"materials\":[{\"id\":\"steel\",\"E\":200000000000}],\"sections\":[{\"id\":\"COL\",\"A\":0.015,\"I\":0.00012},{\"id\":\"BM\",\"A\":0.01,\"I\":0.",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "target": "linux-arm64",
+      "host": "windows-arm64",
+      "kind": "zig",
+      "cold": true,
+      "steps_beyond_native_build": [],
+      "artifacts": {
+        "frame2d": {
+          "path": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\x\\linux-arm64\\out\\bin\\frame2d",
+          "bytes": 5554184
+        },
+        "frame2d-server": {
+          "path": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\x\\linux-arm64\\out\\bin\\frame2d-server",
+          "bytes": 10923392
+        }
+      },
+      "target_triple": "aarch64-linux-gnu",
+      "command": "zig build install -Dtarget=aarch64-linux-gnu -Doptimize=ReleaseFast -Ddesktop-target=aarch64-linux-gnu --prefix C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/runtime/.work/zig-flutter/x/linux-arm64/out --cache-dir C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/runtime/.work/zig-flutter/x/linux-arm64/zig-local-cache",
+      "env": {
+        "ZIG_LOCAL_CACHE": "fresh",
+        "ZIG_GLOBAL_CACHE_DIR": "stack's own (package sources kept; compiled std/compiler-rt for the new target are built into it)"
+      },
+      "rc": 0,
+      "first_error_lines": null,
+      "cold_build_wall_s": 21.859,
+      "error_tail": null,
+      "success": true,
+      "runs": {
+        "ran": false,
+        "reason": "linux binary cannot run on a windows host"
+      }
+    }
+  ],
+  "note": "cold = fresh target dir / GOCACHE / Zig local cache; downloaded sources (cargo registry, Go module cache, Zig packages) are kept. Failures are recorded as results, not retried with extra installs."
+}

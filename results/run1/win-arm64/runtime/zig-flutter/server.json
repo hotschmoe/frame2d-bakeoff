@@ -1,0 +1,87 @@
+{
+  "stack": "zig-flutter",
+  "port": 18084,
+  "cores_logical": 18,
+  "quick": false,
+  "started_via": "run_server",
+  "oha": {
+    "cmd": "C:\\Users\\hotschmoe\\AppData\\Local\\Microsoft\\WinGet\\Links\\oha.EXE -z 30s -c 64 -m POST -D C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\gen_50_50.json -H Content-Type: application/json --output-format json --no-tui http://127.0.0.1:18084/solve",
+    "duration": "30s",
+    "connections": 64,
+    "rps": 249.43013292930638,
+    "success_rate": 1.0,
+    "p50_ms": 226.981,
+    "p95_ms": 535.166,
+    "p99_ms": 682.786,
+    "latency_avg_ms": 256.649,
+    "slowest_ms": 1399.637,
+    "status_codes": {
+      "200": 7439
+    },
+    "errors": {
+      "aborted due to deadline": 64
+    },
+    "total_responses": 7439,
+    "response_bytes_per_req": 16215387,
+    "cpu_s_per_1000_req": 65.8271,
+    "wall_s": 30.184,
+    "cpu_s": 489.688,
+    "core_utilization": 0.9013,
+    "avg_cores_busy": 16.22,
+    "peak_rss_mb": 1611.301,
+    "peak_threads": 66,
+    "rss_end_mb": 914.977,
+    "oha_rc": 0,
+    "oha_stderr_tail": ""
+  },
+  "tools": {
+    "oha": "C:\\Users\\hotschmoe\\AppData\\Local\\Microsoft\\WinGet\\Links\\oha.EXE"
+  },
+  "server_process": {
+    "pid_measured": 14196,
+    "name": "frame2d-server.exe",
+    "startup_to_healthy_s": 0.53,
+    "note": "startup includes the build step run_server performs"
+  },
+  "idle_rss_mb": 6.461,
+  "idle_threads": 2,
+  "sweep_1000_gen10x10": {
+    "variants": 1000,
+    "model": "gen 10 10",
+    "http_status": 200,
+    "idle_rss_mb": 6.449,
+    "wall_s": 0.025,
+    "cpu_s": 0.281,
+    "core_utilization": 0.6301,
+    "avg_cores_busy": 11.34,
+    "peak_rss_mb": 12.086,
+    "peak_threads": 2,
+    "rss_end_mb": 8.492,
+    "variants_returned": 1000,
+    "envelope": {
+      "max_roof_drift_W": 0.06513898679887756,
+      "max_abs_M": 63916.26029657893
+    },
+    "ok": true
+  },
+  "sweep_200_gen50x50": {
+    "variants": 200,
+    "model": "gen 50 50",
+    "http_status": 200,
+    "idle_rss_mb": 6.449,
+    "wall_s": 0.19,
+    "cpu_s": 2.812,
+    "core_utilization": 0.8242,
+    "avg_cores_busy": 14.84,
+    "peak_rss_mb": 180.73,
+    "peak_threads": 21,
+    "rss_end_mb": 18.793,
+    "variants_returned": 200,
+    "envelope": {
+      "max_roof_drift_W": 0.3435116642871733,
+      "max_abs_M": 149993.5950810018
+    },
+    "ok": true
+  },
+  "notes": "Each phase is a fresh server process (run_server rebuilds if needed; that time is excluded from the metrics). peak_rss_mb = OS-maintained peak (Windows PeakWorkingSetSize / Linux VmHWM) of the listening server process; cpu_s = psutil user+system of that process delta over the phase; core_utilization = cpu_s / (wall * logical cores); cpu_s_per_1000_req = cpu_s / responses * 1000. Client and server share this machine."
+}

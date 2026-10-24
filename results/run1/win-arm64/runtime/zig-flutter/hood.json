@@ -1,0 +1,512 @@
+{
+  "stack": "zig-flutter",
+  "alloc_stats": {
+    "50x50": {
+      "alloc_count": 36,
+      "alloc_bytes": 9777355,
+      "peak_heap_bytes": 9473174
+    },
+    "200x200": {
+      "alloc_count": 36,
+      "alloc_bytes": 443806405,
+      "peak_heap_bytes": 439021124
+    }
+  },
+  "go_gc": "n/a (not a Go-runtime engine path)",
+  "boundary_table": [
+    {
+      "platform": "desktop",
+      "noop_ns": 5.413,
+      "transfer_us": 8.123,
+      "mechanism": "zero-copy view",
+      "solve_p50_ms_used": 8.166,
+      "transfer_share_of_50x50_solve": 0.000995,
+      "extra_fields": {
+        "peak_rss_mb_tree_sampled": 89.312
+      }
+    },
+    {
+      "platform": "web (default build) [default]",
+      "noop_ns": 5.841,
+      "transfer_us": 10.974,
+      "mechanism": "zero-copy view",
+      "solve_p50_ms_used": 14.845,
+      "transfer_share_of_50x50_solve": 0.000739,
+      "extra_fields": {}
+    },
+    {
+      "platform": "web (alternate build) [wasm]",
+      "noop_ns": 12.13,
+      "transfer_us": 31.519,
+      "mechanism": "memcpy",
+      "solve_p50_ms_used": 13.446,
+      "transfer_share_of_50x50_solve": 0.002344,
+      "extra_fields": {}
+    }
+  ],
+  "boundary_note": "transfer share = transfer_us / (solve_p50_ms * 1000); solve_p50 is the same platform's drag solve_p50 when available, else the CLI 50x50 solve_ms. Pure stacks have no language boundary on desktop; their web 'boundary' row is the WASM call path.",
+  "binary_composition": {
+    "tools": {
+      "bloaty": null,
+      "twiggy": "C:\\Users\\hotschmoe\\.cargo\\bin\\twiggy.EXE",
+      "llvm-nm": "C:\\Program Files\\LLVM\\bin\\llvm-nm.EXE",
+      "llvm-size": "C:\\Program Files\\LLVM\\bin\\llvm-size.EXE",
+      "llvm-objdump": "C:\\Program Files\\LLVM\\bin\\llvm-objdump.EXE",
+      "nm": null,
+      "size": null
+    },
+    "grouping": "heuristic by symbol name: own | runtime_std | third_party | other (see classify() in hood.py)",
+    "fallback": "bloaty is not installed: wasm uses `twiggy top -n 30`, native binaries use LLVM tools (llvm-size -A sections; llvm-nm --size-sort symbol sizes when the binary still has symbols). The release binaries are stripped, so native symbol attribution is usually unavailable; real compile-unit attribution needs unstripped builds (TODO, needs per-stack flags).",
+    "cli": {
+      "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d.exe",
+      "bytes": 1042944,
+      "sections": [
+        {
+          "section": ".text",
+          "bytes": 617912
+        },
+        {
+          "section": ".rdata",
+          "bytes": 360852
+        },
+        {
+          "section": ".data",
+          "bytes": 53248
+        },
+        {
+          "section": ".pdata",
+          "bytes": 6872
+        },
+        {
+          "section": ".reloc",
+          "bytes": 1156
+        },
+        {
+          "section": ".buildid",
+          "bytes": 92
+        },
+        {
+          "section": ".tls",
+          "bytes": 40
+        }
+      ],
+      "symbols_available": false,
+      "symbols_note": "stripped: no usable symbol table"
+    },
+    "server": {
+      "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d-server.exe",
+      "bytes": 2090496,
+      "sections": [
+        {
+          "section": ".text",
+          "bytes": 1550348
+        },
+        {
+          "section": ".rdata",
+          "bytes": 449300
+        },
+        {
+          "section": ".data",
+          "bytes": 67584
+        },
+        {
+          "section": ".pdata",
+          "bytes": 16888
+        },
+        {
+          "section": ".reloc",
+          "bytes": 3480
+        },
+        {
+          "section": ".buildid",
+          "bytes": 99
+        },
+        {
+          "section": ".tls",
+          "bytes": 32
+        }
+      ],
+      "symbols_available": false,
+      "symbols_note": "stripped: no usable symbol table"
+    },
+    "wasm_engine": [
+      {
+        "path": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\webdist\\default\\frame2d_engine.wasm",
+        "bytes": 1728850,
+        "twiggy_top30": [
+          {
+            "name": "custom section '.debug_loc'",
+            "shallow_size": 457983,
+            "shallow_pct": 26.490615148798334
+          },
+          {
+            "name": "custom section '.debug_info'",
+            "shallow_size": 418031,
+            "shallow_pct": 24.179714839344072
+          },
+          {
+            "name": "custom section '.debug_line'",
+            "shallow_size": 342827,
+            "shallow_pct": 19.82977123521416
+          },
+          {
+            "name": "custom section '.debug_str'",
+            "shallow_size": 86725,
+            "shallow_pct": 5.016340341845735
+          },
+          {
+            "name": "custom section '.debug_ranges'",
+            "shallow_size": 79168,
+            "shallow_pct": 4.579228967232553
+          },
+          {
+            "name": "custom section '.debug_pubnames'",
+            "shallow_size": 36110,
+            "shallow_pct": 2.088671660352257
+          },
+          {
+            "name": "data segment \".rodata\"",
+            "shallow_size": 33306,
+            "shallow_pct": 1.9264829221736994
+          },
+          {
+            "name": "solver.Solver.solve",
+            "shallow_size": 23860,
+            "shallow_pct": 1.380108164386731
+          },
+          {
+            "name": "sort.block.block__func_242",
+            "shallow_size": 21105,
+            "shallow_pct": 1.2207536801920351
+          },
+          {
+            "name": "sort.block.block__func_206",
+            "shallow_size": 20826,
+            "shallow_pct": 1.2046157850594326
+          },
+          {
+            "name": "sort.block.block__func_102",
+            "shallow_size": 19911,
+            "shallow_pct": 1.1516904300546607
+          },
+          {
+            "name": "rcm.buildAdjacency",
+            "shallow_size": 18391,
+            "shallow_pct": 1.0637707146368973
+          },
+          {
+            "name": "model_json.writeModel",
+            "shallow_size": 16085,
+            "shallow_pct": 0.9303872516412645
+          },
+          {
+            "name": "json.static.parseFromSliceLeaky__func_166",
+            "shallow_size": 16029,
+            "shallow_pct": 0.9271481042311362
+          },
+          {
+            "name": "custom section '.debug_pubtypes'",
+            "shallow_size": 15875,
+            "shallow_pct": 0.9182404488532839
+          },
+          {
+            "name": "exports.f2d_export_results",
+            "shallow_size": 11428,
+            "shallow_pct": 0.6610174393382884
+          },
+          {
+            "name": "json.Scanner.next",
+            "shallow_size": 9575,
+            "shallow_pct": 0.5538363652138705
+          },
+          {
+            "name": "exports.f2d_load_json",
+            "shallow_size": 7373,
+            "shallow_pct": 0.42646846169418984
+          },
+          {
+            "name": "Io.Writer.printFloat__func_27",
+            "shallow_size": 6636,
+            "shallow_pct": 0.3838389681001822
+          },
+          {
+            "name": "fmt.parse_float.parseFloat__func_299",
+            "shallow_size": 5922,
+            "shallow_pct": 0.3425398386210487
+          },
+          {
+            "name": "json.static.innerParse__func_294",
+            "shallow_size": 5259,
+            "shallow_pct": 0.3041906469618533
+          },
+          {
+            "name": "\"function names\" subsection",
+            "shallow_size": 3799,
+            "shallow_pct": 0.21974144662637013
+          },
+          {
+            "name": "exports.adopt",
+            "shallow_size": 3434,
+            "shallow_pct": 0.19862914654249936
+          },
+          {
+            "name": "exports.f2d_generate",
+            "shallow_size": 3378,
+            "shallow_pct": 0.1953899991323712
+          },
+          {
+            "name": "json.Scanner.nextAllocMax",
+            "shallow_size": 3070,
+            "shallow_pct": 0.17757468837666657
+          },
+          {
+            "name": "custom section '.debug_abbrev'",
+            "shallow_size": 2736,
+            "shallow_pct": 0.15825548775197387
+          },
+          {
+            "name": "fmt.parse_float.convert_slow.convertSlow__func_311",
+            "shallow_size": 2467,
+            "shallow_pct": 0.14269601179975128
+          },
+          {
+            "name": "__divtf3",
+            "shallow_size": 2450,
+            "shallow_pct": 0.14171269919310525
+          },
+          {
+            "name": "json.static.innerParse__func_280",
+            "shallow_size": 2141,
+            "shallow_pct": 0.12383954651936258
+          },
+          {
+            "name": "fmt.parse_float.convert_slow.convertSlow__func_306",
+            "shallow_size": 2044,
+            "shallow_pct": 0.11822888046967638
+          }
+        ],
+        "top30_grouped_bytes": {
+          "own": 225606,
+          "runtime_std": 12883
+        },
+        "names_available": true,
+        "web_build": "default"
+      },
+      {
+        "path": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\webdist\\alt-wasm\\frame2d_engine.wasm",
+        "bytes": 1728850,
+        "twiggy_top30": [
+          {
+            "name": "custom section '.debug_loc'",
+            "shallow_size": 457983,
+            "shallow_pct": 26.490615148798334
+          },
+          {
+            "name": "custom section '.debug_info'",
+            "shallow_size": 418031,
+            "shallow_pct": 24.179714839344072
+          },
+          {
+            "name": "custom section '.debug_line'",
+            "shallow_size": 342827,
+            "shallow_pct": 19.82977123521416
+          },
+          {
+            "name": "custom section '.debug_str'",
+            "shallow_size": 86725,
+            "shallow_pct": 5.016340341845735
+          },
+          {
+            "name": "custom section '.debug_ranges'",
+            "shallow_size": 79168,
+            "shallow_pct": 4.579228967232553
+          },
+          {
+            "name": "custom section '.debug_pubnames'",
+            "shallow_size": 36110,
+            "shallow_pct": 2.088671660352257
+          },
+          {
+            "name": "data segment \".rodata\"",
+            "shallow_size": 33306,
+            "shallow_pct": 1.9264829221736994
+          },
+          {
+            "name": "solver.Solver.solve",
+            "shallow_size": 23860,
+            "shallow_pct": 1.380108164386731
+          },
+          {
+            "name": "sort.block.block__func_242",
+            "shallow_size": 21105,
+            "shallow_pct": 1.2207536801920351
+          },
+          {
+            "name": "sort.block.block__func_206",
+            "shallow_size": 20826,
+            "shallow_pct": 1.2046157850594326
+          },
+          {
+            "name": "sort.block.block__func_102",
+            "shallow_size": 19911,
+            "shallow_pct": 1.1516904300546607
+          },
+          {
+            "name": "rcm.buildAdjacency",
+            "shallow_size": 18391,
+            "shallow_pct": 1.0637707146368973
+          },
+          {
+            "name": "model_json.writeModel",
+            "shallow_size": 16085,
+            "shallow_pct": 0.9303872516412645
+          },
+          {
+            "name": "json.static.parseFromSliceLeaky__func_166",
+            "shallow_size": 16029,
+            "shallow_pct": 0.9271481042311362
+          },
+          {
+            "name": "custom section '.debug_pubtypes'",
+            "shallow_size": 15875,
+            "shallow_pct": 0.9182404488532839
+          },
+          {
+            "name": "exports.f2d_export_results",
+            "shallow_size": 11428,
+            "shallow_pct": 0.6610174393382884
+          },
+          {
+            "name": "json.Scanner.next",
+            "shallow_size": 9575,
+            "shallow_pct": 0.5538363652138705
+          },
+          {
+            "name": "exports.f2d_load_json",
+            "shallow_size": 7373,
+            "shallow_pct": 0.42646846169418984
+          },
+          {
+            "name": "Io.Writer.printFloat__func_27",
+            "shallow_size": 6636,
+            "shallow_pct": 0.3838389681001822
+          },
+          {
+            "name": "fmt.parse_float.parseFloat__func_299",
+            "shallow_size": 5922,
+            "shallow_pct": 0.3425398386210487
+          },
+          {
+            "name": "json.static.innerParse__func_294",
+            "shallow_size": 5259,
+            "shallow_pct": 0.3041906469618533
+          },
+          {
+            "name": "\"function names\" subsection",
+            "shallow_size": 3799,
+            "shallow_pct": 0.21974144662637013
+          },
+          {
+            "name": "exports.adopt",
+            "shallow_size": 3434,
+            "shallow_pct": 0.19862914654249936
+          },
+          {
+            "name": "exports.f2d_generate",
+            "shallow_size": 3378,
+            "shallow_pct": 0.1953899991323712
+          },
+          {
+            "name": "json.Scanner.nextAllocMax",
+            "shallow_size": 3070,
+            "shallow_pct": 0.17757468837666657
+          },
+          {
+            "name": "custom section '.debug_abbrev'",
+            "shallow_size": 2736,
+            "shallow_pct": 0.15825548775197387
+          },
+          {
+            "name": "fmt.parse_float.convert_slow.convertSlow__func_311",
+            "shallow_size": 2467,
+            "shallow_pct": 0.14269601179975128
+          },
+          {
+            "name": "__divtf3",
+            "shallow_size": 2450,
+            "shallow_pct": 0.14171269919310525
+          },
+          {
+            "name": "json.static.innerParse__func_280",
+            "shallow_size": 2141,
+            "shallow_pct": 0.12383954651936258
+          },
+          {
+            "name": "fmt.parse_float.convert_slow.convertSlow__func_306",
+            "shallow_size": 2044,
+            "shallow_pct": 0.11822888046967638
+          }
+        ],
+        "top30_grouped_bytes": {
+          "own": 225606,
+          "runtime_std": 12883
+        },
+        "names_available": true,
+        "web_build": "wasm"
+      }
+    ]
+  },
+  "dependencies": {
+    "deps_report_rc": 0,
+    "transitive_count": 30,
+    "list_head": [
+      "pub:async 2.13.1",
+      "pub:characters 1.4.1",
+      "pub:collection 1.19.1",
+      "pub:cross_file 0.3.5+5",
+      "pub:file_selector 1.1.0",
+      "pub:file_selector_android 0.5.2+11",
+      "pub:file_selector_ios 0.5.3+7",
+      "pub:file_selector_linux 0.9.4+1",
+      "pub:file_selector_macos 0.9.5+2",
+      "pub:file_selector_platform_interface 2.7.0",
+      "pub:file_selector_web 0.9.5",
+      "pub:file_selector_windows 0.9.3+6",
+      "pub:flutter 0.0.0",
+      "pub:flutter_web_plugins 0.0.0",
+      "pub:http 1.6.0",
+      "pub:http_parser 4.1.2",
+      "pub:material_color_utilities 0.13.0",
+      "pub:meta 1.19.0",
+      "pub:path 1.9.1",
+      "pub:plugin_platform_interface 2.1.8",
+      "pub:sky_engine 0.0.0",
+      "pub:source_span 1.10.2",
+      "pub:string_scanner 1.4.1",
+      "pub:term_glyph 1.2.2",
+      "pub:typed_data 1.4.0",
+      "pub:vector_math 2.4.0",
+      "pub:web 1.1.2",
+      "zig:dependencies (sqlite amalgamation 3.50.4)",
+      "zig:paths (sqlite amalgamation 3.50.4)",
+      "zig:sqlite (sqlite amalgamation 3.50.4)"
+    ],
+    "note": "count = unique non-empty lines of deps_report (formats differ per stack: some list name@version, some bare names; Flutter stacks include pub packages, Rust stacks include crates for host+wasm targets)",
+    "dependency_source_loc": {
+      "zig_packages": {
+        "files": 4,
+        "code_lines": 193582,
+        "dirs": 1
+      },
+      "zig_package_dirs": 1,
+      "pub_packages": {
+        "files": 563,
+        "code_lines": 71453,
+        "dirs": 24
+      },
+      "pub_package_dirs": 24,
+      "note_pub": "hosted pub.dev packages found in the pub cache; Flutter SDK packages (flutter, flutter_test, sky_engine) are not included",
+      "vendoring": "not done: sources are counted in place (module cache / cargo registry / zig packages / pub cache), nothing is vendored into the stack dirs"
+    }
+  }
+}

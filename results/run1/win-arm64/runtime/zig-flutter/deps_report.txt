@@ -1,0 +1,30 @@
+pub:async 2.13.1
+pub:characters 1.4.1
+pub:collection 1.19.1
+pub:cross_file 0.3.5+5
+pub:file_selector 1.1.0
+pub:file_selector_android 0.5.2+11
+pub:file_selector_ios 0.5.3+7
+pub:file_selector_linux 0.9.4+1
+pub:file_selector_macos 0.9.5+2
+pub:file_selector_platform_interface 2.7.0
+pub:file_selector_web 0.9.5
+pub:file_selector_windows 0.9.3+6
+pub:flutter 0.0.0
+pub:flutter_web_plugins 0.0.0
+pub:http 1.6.0
+pub:http_parser 4.1.2
+pub:material_color_utilities 0.13.0
+pub:meta 1.19.0
+pub:path 1.9.1
+pub:plugin_platform_interface 2.1.8
+pub:sky_engine 0.0.0
+pub:source_span 1.10.2
+pub:string_scanner 1.4.1
+pub:term_glyph 1.2.2
+pub:typed_data 1.4.0
+pub:vector_math 2.4.0
+pub:web 1.1.2
+zig:dependencies (sqlite amalgamation 3.50.4)
+zig:paths (sqlite amalgamation 3.50.4)
+zig:sqlite (sqlite amalgamation 3.50.4)

@@ -1,0 +1,5 @@
+zig-pkg
+app/lib/generated
+app/windows
+app/web
+.tools

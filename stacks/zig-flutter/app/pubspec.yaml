@@ -1,0 +1,21 @@
+name: frame2d_app
+description: "Frame2D, an interactive 2D frame analyzer (Flutter UI, Zig engine)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_selector: ^1.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  ffigen: ^23.0.0
+
+flutter:
+  uses-material-design: true

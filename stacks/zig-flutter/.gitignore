@@ -1,0 +1,10 @@
+zig-out/
+.zig-cache/
+.zig-global/
+.tools/
+zig-pkg/
+*.db
+app/build/
+app/.dart_tool/
+app/web/frame2d_engine.wasm
+app/windows/frame2d_engine.dll

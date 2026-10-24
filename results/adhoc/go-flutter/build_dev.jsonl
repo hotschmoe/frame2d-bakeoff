@@ -1,0 +1,2 @@
+{"wall_s": 33.64253329997882, "cpu_s": 3.875, "parallelism": 0.11518157581796729, "mem_peak_mb": 289.015625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 13, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "build_dev"}
+{"wall_s": 16.238967200013576, "cpu_s": 3.640625, "parallelism": 0.22419067389932018, "mem_peak_mb": 282.12109375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 14, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "build_dev"}

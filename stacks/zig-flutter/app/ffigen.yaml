@@ -1,0 +1,16 @@
+# Generates lib/generated/frame2d_bindings.dart from the engine's C header (desktop dart:ffi bridge).
+name: Frame2dBindings
+description: dart:ffi bindings for the Zig engine library (src/bridge/frame2d.h).
+output: 'lib/generated/frame2d_bindings.dart'
+headers:
+  entry-points:
+    - '../src/bridge/frame2d.h'
+  include-directives:
+    - '**frame2d.h'
+functions:
+  leaf:
+    include:
+      - 'f2d_.*'
+comments: false
+llvm-path:
+  - '../.tools/libclang-x64'

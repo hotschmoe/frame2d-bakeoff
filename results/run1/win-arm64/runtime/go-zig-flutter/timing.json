@@ -1,6 +1,6 @@
 {
   "build": {
-    "wall_s": 100,
+    "wall_s": 118,
     "rc": 0
   },
   "meta": {
@@ -28,7 +28,7 @@
     "rc": 0
   },
   "binsize": {
-    "wall_s": 2,
+    "wall_s": 4,
     "rc": 0
   }
 }

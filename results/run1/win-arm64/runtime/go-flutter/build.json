@@ -3,28 +3,28 @@
     "fn": "build_cli_release",
     "env": {},
     "rc": 0,
-    "wall_s": 0.622,
+    "wall_s": 2.813,
     "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d.exe"
   },
   "server": {
     "fn": "build_server_release",
     "env": {},
     "rc": 0,
-    "wall_s": 0.673,
+    "wall_s": 5.147,
     "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d-server.exe"
   },
   "desktop": {
     "fn": "build_desktop_release",
     "env": {},
     "rc": 0,
-    "wall_s": 40.09,
+    "wall_s": 39.42,
     "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/windows/x64/runner/Release/frame2d_app.exe"
   },
   "web": {
     "fn": "build_web_release",
     "env": {},
     "rc": 0,
-    "wall_s": 40.502,
+    "wall_s": 41.269,
     "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/web"
   },
   "web_alt": {
@@ -33,7 +33,7 @@
       "F2D_WEB_MODE": "default"
     },
     "rc": 0,
-    "wall_s": 27.932,
+    "wall_s": 28.086,
     "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/web"
   }
 }

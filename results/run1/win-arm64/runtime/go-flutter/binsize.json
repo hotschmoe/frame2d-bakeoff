@@ -20,7 +20,7 @@
   },
   "server": {
     "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d-server.exe",
-    "bytes": 15554560
+    "bytes": 10351104
   },
   "desktop": {
     "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
@@ -65,16 +65,16 @@
     "label": "default",
     "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-flutter\\webdist\\default",
     "files": 43,
-    "total_br_bytes": 12212614,
-    "total_raw_bytes": 48600037,
+    "total_br_bytes": 12212171,
+    "total_raw_bytes": 48600038,
     "engine_wasm": [
       {
         "path": "engine.wasm",
         "raw": 4646484,
-        "br": 943077
+        "br": 942628
       }
     ],
-    "engine_wasm_br_bytes": 943077,
+    "engine_wasm_br_bytes": 942628,
     "engine_wasm_raw_bytes": 4646484,
     "engine_note": null,
     "flutter_app_code": [
@@ -128,7 +128,7 @@
       {
         "path": "engine.wasm",
         "raw": 4646484,
-        "br": 943077
+        "br": 942628
       },
       {
         "path": "main.dart.wasm",
@@ -147,16 +147,16 @@
     "what": "build_web_release defaults to --wasm in this stack; the dart2js build is the extra",
     "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-flutter\\webdist\\alt-dart2js",
     "files": 41,
-    "total_br_bytes": 11597626,
+    "total_br_bytes": 11597180,
     "total_raw_bytes": 46462720,
     "engine_wasm": [
       {
         "path": "engine.wasm",
         "raw": 4646484,
-        "br": 943077
+        "br": 942628
       }
     ],
-    "engine_wasm_br_bytes": 943077,
+    "engine_wasm_br_bytes": 942628,
     "engine_wasm_raw_bytes": 4646484,
     "engine_note": null,
     "flutter_app_code": [
@@ -200,7 +200,7 @@
       {
         "path": "engine.wasm",
         "raw": 4646484,
-        "br": 943077
+        "br": 942628
       },
       {
         "path": "main.dart.js",

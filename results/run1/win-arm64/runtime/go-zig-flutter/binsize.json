@@ -20,13 +20,13 @@
   },
   "server": {
     "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter/build/frame2d-server.exe",
-    "bytes": 22785024
+    "bytes": 10730496
   },
   "desktop": {
     "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-zig-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
     "exe_bytes": 90624,
     "bundle_dir": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-zig-flutter\\app\\build\\windows\\x64\\runner\\Release",
-    "bundle_bytes": 28166697,
+    "bundle_bytes": 28166652,
     "engine_lib": [
       {
         "name": "frame2d_engine.dll",
@@ -65,7 +65,7 @@
     "label": "default",
     "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-zig-flutter\\webdist\\default",
     "files": 42,
-    "total_br_bytes": 11344180,
+    "total_br_bytes": 11344183,
     "total_raw_bytes": 44206055,
     "engine_wasm": [
       {

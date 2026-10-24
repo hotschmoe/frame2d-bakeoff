@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runtime / size harness driver (SPEC 8.2-8.8). usage:
 #   harness/runtime/run.sh <stack> [sections...] [--quick] [--no-alt] [--runs N]
-# sections: meta build loc cli desktop web server binsize xcompile hood      (default: all, in that order)
+# sections: meta build loc cli desktop web binsize server hood xcompile   (default: all, in that order; binsize always runs before server)
 # --quick : 1 run each, oha 5 s, small sweeps; output goes to results/<run>/<machine>/runtime-smoke/<stack>/ instead of .../runtime/<stack>/
 # env     : F2D_RUN (run1) F2D_MACHINE_ID (from machine-env.sh) F2D_PLAYWRIGHT_DIR F2D_PW_ARGS F2D_PORT F2D_RESULTS_SUBDIR PYTHON
 # Builds only via stack.sh build_*_release (section `build`); the other sections read artifacts.json written there.
@@ -21,7 +21,12 @@ while [ $# -gt 0 ]; do
     *) echo "unknown argument $1" >&2; exit 2;;
   esac; shift
 done
-[ ${#SECTIONS[@]} -gt 0 ] || SECTIONS=(meta build loc cli desktop web server binsize hood xcompile)
+[ ${#SECTIONS[@]} -gt 0 ] || SECTIONS=(meta build loc cli desktop web binsize server hood xcompile)
+# binsize must run before server: some stacks' run_server rebuilds a dev binary over the release one
+if [[ " ${SECTIONS[*]} " == *" server "* && " ${SECTIONS[*]} " == *" binsize "* ]]; then
+  _s=(); for s in "${SECTIONS[@]}"; do [ "$s" = binsize ] || _s+=("$s"); [ "$s" = server ] && { _s=("${_s[@]:0:${#_s[@]}-1}" binsize server); }; done
+  SECTIONS=("${_s[@]}"); unset _s
+fi
 
 # toolchain PATH pins + machine id (Windows); nothing on Linux
 source "$ROOT/harness/machine-env.sh"

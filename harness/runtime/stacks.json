@@ -1,0 +1,686 @@
+{
+  "_comment": "Per-stack facts the runtime harness needs and stack.sh does not expose (SPEC 5.6 only defines build/run functions). Derived from each stack's layout, stack.sh and LOC_EXCLUDE as of run1. stack_sh_sha256 values are not stored here; meta.json records the current hash so drift is visible. loc_buckets: first matching regex (against the stack-relative posix path) wins. 'cli' rolls up into 'engine' in totals (the CLI is a thin front end of the engine) and is also reported alone. Tests are bucketed by file path only: inline Rust/Zig test modules cannot be separated by scc and stay in their source bucket.",
+  "common": {
+    "loc_ignore_languages": [
+      "Markdown",
+      "JSON",
+      "YAML",
+      "TOML",
+      "Plain Text",
+      "License",
+      "gitignore",
+      "Properties",
+      "Systemd",
+      "SVG",
+      "Dockerfile",
+      "Document",
+      "Lockfile"
+    ],
+    "loc_hard_excludes": [
+      "^target/",
+      "^build/",
+      "^\\.zig-cache/",
+      "^\\.zig-global/",
+      "^zig-pkg/",
+      "^zig-out/",
+      "^app/build/",
+      "^app/\\.dart_tool/",
+      "^\\.tools/",
+      "^node_modules/",
+      "^vendor/",
+      "^app/ios/",
+      "^app/android/",
+      "^app/macos/",
+      "^app/linux/",
+      "^\\.git/"
+    ],
+    "generated_regex": "(^|/)generated/|frb_generated|app/web/engine/|app/ffigen/|\\.g\\.dart$|\\.freezed\\.dart$|pubspec\\.lock$|Cargo\\.lock$|go\\.sum$"
+  },
+  "stacks": {
+    "rust": {
+      "family": "rust",
+      "port_offset": 0,
+      "ui": "egui/eframe (glow)",
+      "server_lang": "rust",
+      "loc_buckets": [
+        [
+          "ui",
+          "^src/app/"
+        ],
+        [
+          "ui",
+          "^src/bin/frame2d-app\\.rs$"
+        ],
+        [
+          "server",
+          "^src/bin/frame2d-server\\.rs$"
+        ],
+        [
+          "cli",
+          "^src/bin/frame2d\\.rs$"
+        ],
+        [
+          "cli",
+          "^src/alloc_count\\.rs$"
+        ],
+        [
+          "glue",
+          "^web/"
+        ],
+        [
+          "glue",
+          "^Cargo\\.toml$"
+        ],
+        [
+          "glue",
+          "^build\\.rs$"
+        ],
+        [
+          "engine",
+          "^src/"
+        ]
+      ],
+      "desktop_bundle": "file",
+      "engine_lib_globs": [],
+      "engine_lib_note": "engine is linked statically into the app; the CLI binary (engine only, no UI or server deps) is the engine-alone proxy",
+      "web_engine_globs": [
+        "frame2d_bg.wasm"
+      ],
+      "web_engine_note": "the whole eframe app is the wasm module (engine not separable)",
+      "flags": {
+        "cli": "cargo build --release --bin frame2d",
+        "server": "cargo build --release --bin frame2d-server --features server",
+        "desktop": "cargo build --release --bin frame2d-app --features ui",
+        "web": "cargo build --release --target wasm32-unknown-unknown --features ui; wasm-bindgen --target web; wasm-opt -O3 (if available)",
+        "profile": "opt-level=3, lto=thin, codegen-units=1, strip=true (Cargo.toml)"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": "wasm-opt only; name section state not verified"
+      },
+      "gctrace": {
+        "cli": false,
+        "app": false
+      },
+      "xcompile": {
+        "kind": "cargo",
+        "args": [
+          "--bin",
+          "frame2d",
+          "--bin",
+          "frame2d-server",
+          "--features",
+          "server"
+        ],
+        "bins": [
+          "frame2d",
+          "frame2d-server"
+        ]
+      },
+      "deps_loc": "cargo"
+    },
+    "go": {
+      "family": "go",
+      "port_offset": 1,
+      "ui": "Gio",
+      "server_lang": "go",
+      "loc_buckets": [
+        [
+          "tests",
+          "_test\\.go$"
+        ],
+        [
+          "ui",
+          "^cmd/app/"
+        ],
+        [
+          "server",
+          "^cmd/server/"
+        ],
+        [
+          "cli",
+          "^cmd/frame2d/"
+        ],
+        [
+          "glue",
+          "^web/"
+        ],
+        [
+          "glue",
+          "^go\\.mod$"
+        ],
+        [
+          "engine",
+          "^engine/"
+        ]
+      ],
+      "desktop_bundle": "file",
+      "engine_lib_globs": [],
+      "engine_lib_note": "engine is linked statically into the app; CLI binary is the engine-alone proxy",
+      "web_engine_globs": [
+        "main.wasm"
+      ],
+      "web_engine_note": "the whole Gio app is the wasm module (engine not separable)",
+      "flags": {
+        "cli": "go build -trimpath -ldflags '-s -w' ./cmd/frame2d (CGO_ENABLED=0)",
+        "server": "go build -trimpath -ldflags '-s -w' ./cmd/server (CGO_ENABLED=0)",
+        "desktop": "go build -trimpath -ldflags '-s -w' ./cmd/app (CGO_ENABLED=0 on windows)",
+        "web": "GOOS=js GOARCH=wasm go build -trimpath -ldflags '-s -w' ./cmd/app"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": true
+      },
+      "gctrace": {
+        "cli": true,
+        "app": true
+      },
+      "xcompile": {
+        "kind": "go",
+        "pkgs": {
+          "frame2d": "./cmd/frame2d",
+          "server": "./cmd/server"
+        },
+        "cgo": false
+      },
+      "deps_loc": "go"
+    },
+    "zig": {
+      "family": "zig",
+      "port_offset": 2,
+      "ui": "dvui (SDL3 desktop, wasm32-freestanding web)",
+      "server_lang": "zig",
+      "loc_buckets": [
+        [
+          "server",
+          "^src/(server|store|sweep)\\.zig$"
+        ],
+        [
+          "cli",
+          "^src/(cli|counting)\\.zig$"
+        ],
+        [
+          "glue",
+          "^src/platform\\.zig$"
+        ],
+        [
+          "glue",
+          "^build\\.zig"
+        ],
+        [
+          "glue",
+          "^web/"
+        ],
+        [
+          "ui",
+          "^src/(ui|canvas|table|state|bench)\\.zig$"
+        ],
+        [
+          "engine",
+          "^src/(engine|model|solver|report)\\.zig$"
+        ]
+      ],
+      "desktop_bundle": "file",
+      "engine_lib_globs": [],
+      "engine_lib_note": "engine is compiled into the app; the CLI binary is the engine-alone proxy",
+      "web_engine_globs": [
+        "web.wasm"
+      ],
+      "web_engine_note": "the whole dvui app is the wasm module (engine not separable)",
+      "flags": {
+        "cli": "zig build cli -Doptimize=ReleaseFast (strip=true unless debug, build.zig)",
+        "server": "zig build server -Doptimize=ReleaseFast",
+        "desktop": "zig build desktop -Doptimize=ReleaseFast",
+        "web": "zig build web -Doptimize=ReleaseFast (wasm32-freestanding)"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": true
+      },
+      "gctrace": {
+        "cli": false,
+        "app": false
+      },
+      "xcompile": {
+        "kind": "zig",
+        "steps": [
+          "cli",
+          "server"
+        ],
+        "extra": [],
+        "bins": [
+          "frame2d",
+          "frame2d-server"
+        ]
+      },
+      "deps_loc": "zig"
+    },
+    "rust-flutter": {
+      "family": "rust",
+      "flutter": true,
+      "port_offset": 3,
+      "ui": "Flutter 3.47.8",
+      "server_lang": "rust",
+      "loc_buckets": [
+        [
+          "tests",
+          "^crates/engine/tests/"
+        ],
+        [
+          "tests",
+          "^app/test/"
+        ],
+        [
+          "cli",
+          "^crates/cli/"
+        ],
+        [
+          "server",
+          "^crates/server/"
+        ],
+        [
+          "glue",
+          "^crates/bridge/"
+        ],
+        [
+          "glue",
+          "^app/lib/engine/"
+        ],
+        [
+          "glue",
+          "^app/lib/bench/bench_platform"
+        ],
+        [
+          "glue",
+          "^app/windows/CMakeLists\\.txt$"
+        ],
+        [
+          "glue",
+          "^app/web/"
+        ],
+        [
+          "glue",
+          "^Cargo\\.toml$"
+        ],
+        [
+          "engine",
+          "^crates/engine/"
+        ],
+        [
+          "ui",
+          "^app/lib/"
+        ]
+      ],
+      "desktop_bundle": "dir",
+      "engine_lib_globs": [
+        "frame2d_bridge.*",
+        "libframe2d_bridge.*"
+      ],
+      "web_engine_globs": [
+        "engine/frame2d_engine_bg.wasm"
+      ],
+      "web_app_globs": [
+        "main.dart.js",
+        "main.dart.wasm",
+        "main.dart.mjs"
+      ],
+      "web_alt": {
+        "label": "wasm",
+        "mode": "stdout_prefix",
+        "prefix": "wasm:"
+      },
+      "flags": {
+        "cli": "cargo build --release -p frame2d-cli",
+        "server": "cargo build --release -p frame2d-server",
+        "desktop": "cargo build --release -p frame2d-bridge --target x86_64-pc-windows-msvc (host target on Linux) + flutter build <os> --release",
+        "web": "RUSTFLAGS='-C target-feature=+simd128' cargo build --release -p frame2d-bridge --target wasm32-unknown-unknown; wasm-bindgen --target web; wasm-opt -O3 --enable-simd; flutter build web --release [--wasm]",
+        "profile": "opt-level=3, lto=true, codegen-units=1, strip=true (workspace Cargo.toml)"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": "wasm-opt only; name section state not verified"
+      },
+      "gctrace": {
+        "cli": false,
+        "app": false
+      },
+      "xcompile": {
+        "kind": "cargo",
+        "args": [
+          "-p",
+          "frame2d-cli",
+          "-p",
+          "frame2d-server"
+        ],
+        "bins": [
+          "frame2d",
+          "frame2d-server"
+        ]
+      },
+      "deps_loc": "cargo"
+    },
+    "zig-flutter": {
+      "family": "zig",
+      "flutter": true,
+      "port_offset": 4,
+      "ui": "Flutter 3.47.8",
+      "server_lang": "zig",
+      "loc_buckets": [
+        [
+          "tests",
+          "^src/engine/tests\\.zig$"
+        ],
+        [
+          "tests",
+          "^app/test/"
+        ],
+        [
+          "cli",
+          "^src/cli/"
+        ],
+        [
+          "server",
+          "^src/server/"
+        ],
+        [
+          "glue",
+          "^src/bridge/"
+        ],
+        [
+          "glue",
+          "^app/lib/engine/"
+        ],
+        [
+          "glue",
+          "^app/lib/bench/platform"
+        ],
+        [
+          "glue",
+          "^app/lib/files/save_"
+        ],
+        [
+          "glue",
+          "^build\\.zig"
+        ],
+        [
+          "glue",
+          "^app/web/"
+        ],
+        [
+          "engine",
+          "^src/engine/"
+        ],
+        [
+          "ui",
+          "^app/lib/"
+        ]
+      ],
+      "desktop_bundle": "dir",
+      "engine_lib_globs": [
+        "frame2d_engine.*",
+        "libframe2d_engine.*"
+      ],
+      "web_engine_globs": [
+        "frame2d_engine.wasm"
+      ],
+      "web_app_globs": [
+        "main.dart.js",
+        "main.dart.wasm",
+        "main.dart.mjs"
+      ],
+      "web_alt": {
+        "label": "wasm",
+        "mode": "fn",
+        "fn": "build_web_wasm_release"
+      },
+      "flags": {
+        "cli": "zig build -Doptimize=ReleaseFast install (cli step output)",
+        "server": "zig build -Doptimize=ReleaseFast install (server output)",
+        "desktop": "zig build -Doptimize=ReleaseFast install -Ddesktop-target=x86_64-windows-gnu (windows) + flutter build <os> --release",
+        "web": "zig build ... wasm32-freestanding+simd128; flutter build web --release --no-web-resources-cdn --pwa-strategy=none [--wasm]"
+      },
+      "stripped": {
+        "cli": "ReleaseFast default (zig strips only if build.zig sets strip; not set in zig-flutter build.zig: debug info may remain)",
+        "server": "same",
+        "desktop": "same",
+        "web": "same"
+      },
+      "gctrace": {
+        "cli": false,
+        "app": false
+      },
+      "xcompile": {
+        "kind": "zig",
+        "steps": [
+          "install"
+        ],
+        "extra": [
+          "desktop-target"
+        ],
+        "bins": [
+          "frame2d",
+          "frame2d-server"
+        ]
+      },
+      "deps_loc": "zig"
+    },
+    "go-flutter": {
+      "family": "go",
+      "flutter": true,
+      "port_offset": 5,
+      "ui": "Flutter 3.47.8",
+      "server_lang": "go",
+      "loc_buckets": [
+        [
+          "tests",
+          "_test\\.go$"
+        ],
+        [
+          "tests",
+          "^app/test/"
+        ],
+        [
+          "cli",
+          "^cmd/frame2d/"
+        ],
+        [
+          "server",
+          "^cmd/server/"
+        ],
+        [
+          "glue",
+          "^bridge/"
+        ],
+        [
+          "glue",
+          "^app/lib/engine/"
+        ],
+        [
+          "glue",
+          "^app/lib/io/"
+        ],
+        [
+          "glue",
+          "^app/web/f2d_loader\\.js$"
+        ],
+        [
+          "glue",
+          "^go\\.mod$"
+        ],
+        [
+          "engine",
+          "^engine/"
+        ],
+        [
+          "ui",
+          "^app/lib/"
+        ]
+      ],
+      "desktop_bundle": "dir",
+      "engine_lib_globs": [
+        "frame2d_engine.*",
+        "libframe2d_engine.*"
+      ],
+      "web_engine_globs": [
+        "engine.wasm"
+      ],
+      "web_app_globs": [
+        "main.dart.js",
+        "main.dart.wasm",
+        "main.dart.mjs"
+      ],
+      "web_alt": {
+        "label": "dart2js",
+        "mode": "env",
+        "env": {
+          "F2D_WEB_MODE": "default"
+        },
+        "note": "build_web_release defaults to --wasm in this stack; the dart2js build is the extra"
+      },
+      "flags": {
+        "cli": "go build -trimpath -ldflags '-s -w' ./cmd/frame2d (CGO_ENABLED=0)",
+        "server": "go build -trimpath -ldflags '-s -w' ./cmd/server (CGO_ENABLED=0)",
+        "desktop": "go build -buildmode=c-shared -trimpath -ldflags '-s -w' ./bridge/native (GOARCH=amd64 CC='zig cc -target x86_64-windows-gnu' on windows) + flutter build <os> --release",
+        "web": "GOOS=js GOARCH=wasm go build -trimpath -ldflags '-s -w' ./bridge/wasm; flutter build web --release --wasm (default) | (F2D_WEB_MODE=default: dart2js)"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": true
+      },
+      "gctrace": {
+        "cli": true,
+        "app": "try"
+      },
+      "xcompile": {
+        "kind": "go",
+        "pkgs": {
+          "frame2d": "./cmd/frame2d",
+          "frame2d-server": "./cmd/server"
+        },
+        "cgo": false
+      },
+      "deps_loc": "go"
+    },
+    "go-zig-flutter": {
+      "family": "go",
+      "flutter": true,
+      "port_offset": 6,
+      "ui": "Flutter 3.47.8",
+      "server_lang": "go (engine in Zig via cgo)",
+      "loc_buckets": [
+        [
+          "tests",
+          "_test\\.go$"
+        ],
+        [
+          "tests",
+          "^zig/src/tests\\.zig$"
+        ],
+        [
+          "tests",
+          "^app/test/"
+        ],
+        [
+          "cli",
+          "^cmd/frame2d/"
+        ],
+        [
+          "server",
+          "^cmd/server/"
+        ],
+        [
+          "glue",
+          "^bridge/"
+        ],
+        [
+          "glue",
+          "^zig/include/"
+        ],
+        [
+          "glue",
+          "^zig/src/lib\\.zig$"
+        ],
+        [
+          "glue",
+          "^app/lib/engine/"
+        ],
+        [
+          "glue",
+          "^app/lib/io/"
+        ],
+        [
+          "glue",
+          "^app/web/f2d_loader\\.js$"
+        ],
+        [
+          "glue",
+          "^go\\.mod$"
+        ],
+        [
+          "engine",
+          "^zig/src/"
+        ],
+        [
+          "ui",
+          "^app/lib/"
+        ]
+      ],
+      "desktop_bundle": "dir",
+      "engine_lib_globs": [
+        "frame2d_engine.*",
+        "libframe2d_engine.*"
+      ],
+      "web_engine_globs": [
+        "engine.wasm"
+      ],
+      "web_app_globs": [
+        "main.dart.js",
+        "main.dart.wasm",
+        "main.dart.mjs"
+      ],
+      "web_alt": {
+        "label": "dart2js",
+        "mode": "env",
+        "env": {
+          "F2D_WEB_MODE": "default"
+        },
+        "note": "build_web_release defaults to --wasm in this stack; the dart2js build is the extra"
+      },
+      "flags": {
+        "cli": "zig build-lib -OReleaseFast -fstrip (static) + CC='zig cc -target <host>' CGO_ENABLED=1 go build -trimpath -ldflags '-s -w -X ...libStamp' ./cmd/frame2d",
+        "server": "same pipeline, ./cmd/server",
+        "desktop": "zig build-lib -dynamic -OReleaseFast -fstrip -target x86_64-windows-gnu (windows) + flutter build <os> --release",
+        "web": "zig build-exe -fno-entry -rdynamic -target wasm32-freestanding -OReleaseFast -fstrip; flutter build web --release --wasm (default) | (F2D_WEB_MODE=default: dart2js)"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": true
+      },
+      "gctrace": {
+        "cli": true,
+        "app": false
+      },
+      "bench_boundary_server": true,
+      "xcompile": {
+        "kind": "gozig",
+        "pkgs": {
+          "frame2d": "./cmd/frame2d",
+          "frame2d-server": "./cmd/server"
+        }
+      },
+      "deps_loc": "go"
+    }
+  }
+}

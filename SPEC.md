@@ -556,9 +556,11 @@ Each codebase carries marker comments on specific lines. The harness edits `harn
 | Edit | Marker | Change | Ripple |
 |------|--------|--------|--------|
 | `leaf` | `BENCH-EDIT:leaf` on the pivot tolerance literal (§4.4) | `1e-12` ↔ `2e-12` | one function body |
-| `struct` | `BENCH-EDIT:struct` on a field of the node struct/type | add or remove `bench_pad: u32` (or the stack's equivalent) | every user of the type |
+| `struct` | `BENCH-EDIT:struct` on a field of the node struct/type | widen `bench_pad` between `u32` and `u64` (`uint32`/`uint64` in Go) | every user of the type |
 | `server` | `BENCH-EDIT:server` on a response header value | `"x-frame2d: a"` ↔ `"x-frame2d: b"` | one handler |
 | `ui` | `BENCH-EDIT:ui` on a toolbar label string | `"Solve"` ↔ `"Solve!"` | one widget |
+
+The `struct` marker goes on a dedicated padding field, `bench_pad`, of the node type, in the stack's 32-bit unsigned type (`u32`, `uint32`, `u32`). The field is always initialized to a literal `0` (use defaults or `..Default::default()`-style construction so initializers need no change), and nothing reads it. The harness swaps its width, so the type changes without adding or removing fields, and no stack-specific syntax is needed. (Dart-only code is exempt: Flutter stacks put the marker in the engine language.)
 
 For each edit, measure both the check loop and the dev build:
 

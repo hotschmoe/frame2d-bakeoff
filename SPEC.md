@@ -852,3 +852,9 @@ Web measurements use **Chromium via Playwright** on every machine, so the browse
 - **Benchmarks and conformance in the browser:** Playwright + Chromium (pinned, headless). It's cross-platform, reads `console.log` `BENCH` lines, and pins the browser build.
 - **Interactive diagnostics while building:** any browser tool the agent has (a built-in browser pane or Claude in Chrome) is fine for looking at the UI, but its numbers never go in results.
 - **Not used:** Lightpanda and other non-rendering headless browsers. There's no canvas, WebGL or real frame pacing, so `drag`/`render` can't be measured.
+
+### 15.6 UI framework fallback (Zig)
+
+Before the `zig` P1 run, a time-boxed smoke test (about 2 hours, throwaway code, not scored) checks dvui at the pinned Zig version on the run's machine: open a window, draw a pannable/zoomable canvas, show a virtualized scrolling list, and build to WASM. If dvui passes, the baseline is dvui.
+
+If it fails, record why in `results/<run-id>/versions.md` and fall back in this order: **Teak** (pure Zig, labeled `zig-teak`), then **Dear ImGui via cimgui** (labeled `zig-imgui`, not pure Zig). The fallback run is reported as a deviation from §1 and is never silently merged with a dvui result. Where dvui works, `zig-teak` may still run as the optional extra stack.

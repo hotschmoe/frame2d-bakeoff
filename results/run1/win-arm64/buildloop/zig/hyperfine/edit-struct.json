@@ -1,0 +1,216 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "hyperfine_version": "2.0.0",
+    "start_time": "2026-10-24T18:36:17Z",
+    "platform": {
+      "os": "Windows_NT",
+      "architecture": "x86_64"
+    }
+  },
+  "primary_metric": "time_wall_clock",
+  "results": [
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh zig edit-struct-check -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig build_check",
+      "name": "edit-struct-check",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 1.8479363000000002,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.140625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.23437500000000003,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 1.8443464999999999,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.265625,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.109375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.15625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 1.8570786,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.296875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.140625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.15625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.3125,
+          "stddev": 0.05633673867912483,
+          "median": 0.296875,
+          "min": 0.265625,
+          "max": 0.375
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.18229166666666666,
+          "stddev": 0.04510548978043953,
+          "median": 0.15625,
+          "min": 0.15625,
+          "max": 0.23437500000000003
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.13020833333333334,
+          "stddev": 0.018042195912175808,
+          "median": 0.140625,
+          "min": 0.109375,
+          "max": 0.140625
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.8497871333333336,
+          "stddev": 0.006564737665994958,
+          "median": 1.8479363000000002,
+          "min": 1.8443464999999999,
+          "max": 1.8570786
+        }
+      }
+    },
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh zig edit-struct-dev -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig build_dev",
+      "name": "edit-struct-dev",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 7.0402716,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.3125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.09375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.21875,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 7.0038487,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.359375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.15625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.203125,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 7.0821429,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.34375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.109375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.23437500000000003,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.3385416666666667,
+          "stddev": 0.023867581744561668,
+          "median": 0.34375,
+          "min": 0.3125,
+          "max": 0.359375
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.21875,
+          "stddev": 0.015625000000000014,
+          "median": 0.21875,
+          "min": 0.203125,
+          "max": 0.23437500000000003
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.11979166666666667,
+          "stddev": 0.03252603124165832,
+          "median": 0.109375,
+          "min": 0.09375,
+          "max": 0.15625
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 7.042087733333333,
+          "stddev": 0.03917868289801664,
+          "median": 7.0402716,
+          "min": 7.0038487,
+          "max": 7.0821429
+        }
+      }
+    }
+  ]
+}

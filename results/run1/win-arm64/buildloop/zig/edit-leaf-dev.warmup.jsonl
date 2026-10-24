@@ -1,0 +1,1 @@
+{"wall_s": 6.798198300006334, "cpu_s": 14.96875, "parallelism": 2.201870163155737, "mem_peak_mb": 1722.69140625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 10, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "edit-leaf-dev"}

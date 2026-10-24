@@ -1,0 +1,96 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "hyperfine_version": "2.0.0",
+    "start_time": "2026-10-24T18:23:59Z",
+    "platform": {
+      "os": "Windows_NT",
+      "architecture": "x86_64"
+    }
+  },
+  "primary_metric": "time_wall_clock",
+  "results": [
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh zig cold-cli -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig build_cli_release",
+      "name": "cold-cli",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 45.9722756,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.4375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.140625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.296875,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 43.6489401,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 0.28125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.15625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.125,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 2,
+          "mean": 0.359375,
+          "stddev": 0.11048543456039805,
+          "median": 0.359375,
+          "min": 0.28125,
+          "max": 0.4375
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 2,
+          "mean": 0.2109375,
+          "stddev": 0.12153397801643785,
+          "median": 0.2109375,
+          "min": 0.125,
+          "max": 0.296875
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 2,
+          "mean": 0.1484375,
+          "stddev": 0.011048543456039806,
+          "median": 0.1484375,
+          "min": 0.140625,
+          "max": 0.15625
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 2,
+          "mean": 44.81060785,
+          "stddev": 1.6428462870214422,
+          "median": 44.81060785,
+          "min": 43.6489401,
+          "max": 45.9722756
+        }
+      }
+    }
+  ]
+}

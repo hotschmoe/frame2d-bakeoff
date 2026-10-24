@@ -1,0 +1,300 @@
+{
+  "stack": "zig",
+  "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\zig\\zig-out\\bin\\frame2d-app.exe",
+  "runs_per_mode": 3,
+  "host_arch": "ARM64",
+  "emulation_note": null,
+  "modes": {
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 63.8,
+        "peak_rss_mb_tree_sampled": 11.488
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 79.6
+          },
+          "rc": 0,
+          "wall_s": 0.144,
+          "peak_rss_mb_tree": 6.895,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 62.8
+          },
+          "rc": 0,
+          "wall_s": 0.122,
+          "peak_rss_mb_tree": 12.188,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 63.8
+          },
+          "rc": 0,
+          "wall_s": 0.118,
+          "peak_rss_mb_tree": 11.488,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 8.736,
+        "p95": 9.45,
+        "p99": 10.395,
+        "max": 14.818,
+        "solve_p50": 7.854,
+        "lag_max": 0,
+        "rss_mb": 71.5,
+        "peak_rss_mb_tree_sampled": 78.824
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 8.736,
+            "p95": 9.45,
+            "p99": 10.683,
+            "max": 14.818,
+            "solve_p50": 7.854,
+            "lag_max": 0,
+            "rss_mb": 71.5
+          },
+          "rc": 0,
+          "wall_s": 5.448,
+          "peak_rss_mb_tree": 78.742,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 8.738,
+            "p95": 9.316,
+            "p99": 9.867,
+            "max": 12.825,
+            "solve_p50": 7.857,
+            "lag_max": 0,
+            "rss_mb": 71.5
+          },
+          "rc": 0,
+          "wall_s": 5.458,
+          "peak_rss_mb_tree": 78.824,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 8.726,
+            "p95": 9.451,
+            "p99": 10.395,
+            "max": 15.638,
+            "solve_p50": 7.853,
+            "lag_max": 0,
+            "rss_mb": 71.5
+          },
+          "rc": 0,
+          "wall_s": 5.451,
+          "peak_rss_mb_tree": 78.836,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 1.365,
+        "p95": 3.31,
+        "p99": 4.777,
+        "max": 6.667,
+        "solve_p50": 0.0,
+        "lag_max": 0,
+        "rss_mb": 388.7,
+        "peak_rss_mb_tree_sampled": 444.422
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 1.332,
+            "p95": 3.26,
+            "p99": 4.777,
+            "max": 6.351,
+            "solve_p50": 0.0,
+            "lag_max": 0,
+            "rss_mb": 388.7
+          },
+          "rc": 0,
+          "wall_s": 2.746,
+          "peak_rss_mb_tree": 444.422,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 1.365,
+            "p95": 3.417,
+            "p99": 5.046,
+            "max": 11.969,
+            "solve_p50": 0.0,
+            "lag_max": 0,
+            "rss_mb": 388.8
+          },
+          "rc": 0,
+          "wall_s": 2.841,
+          "peak_rss_mb_tree": 444.5,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 1.38,
+            "p95": 3.31,
+            "p99": 4.522,
+            "max": 6.667,
+            "solve_p50": 0.0,
+            "lag_max": 0,
+            "rss_mb": 388.5
+          },
+          "rc": 0,
+          "wall_s": 2.736,
+          "peak_rss_mb_tree": 444.215,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 1.54,
+        "transfer_us": 4.321,
+        "peak_rss_mb_tree_sampled": 12.82
+      },
+      "mechanism": "in-process (no boundary)",
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 1.54,
+            "transfer_us": 4.327,
+            "mechanism": "in-process (no boundary)"
+          },
+          "rc": 0,
+          "wall_s": 0.12,
+          "peak_rss_mb_tree": 11.121,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 1.543,
+            "transfer_us": 4.296,
+            "mechanism": "in-process (no boundary)"
+          },
+          "rc": 0,
+          "wall_s": 0.225,
+          "peak_rss_mb_tree": 42.633,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 1.537,
+            "transfer_us": 4.321,
+            "mechanism": "in-process (no boundary)"
+          },
+          "rc": 0,
+          "wall_s": 0.125,
+          "peak_rss_mb_tree": 12.82,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "info(SDL_RENDER): Created renderer: direct3d11"
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "info(SDL_SYSTEM): App version: 0.1\ninfo(SDL_SYSTEM): App ID: com.example.dvui.app\ninfo(SDL_SYSTEM): SDL revision: https://github.com/allyourcodebase/SDL 1.0.6+3.4.18\ninfo(SDLBackend): SDL3 backend scale 2\ninfo(SDL_RENDER): Created renderer: direct3d11\ninfo(dvui): window logical Size.Natural{ 2560 1600 } pixels Size.Physical{ 2560 1600 } pixel scale 1 initial content scale 2 snap_to_pixels true accesskit false",
+          "timed_out": false
+        }
+      ]
+    }
+  },
+  "renderer_lines": [
+    "info(SDL_RENDER): Created renderer: direct3d11"
+  ],
+  "renderer_note": "renderer lines are whatever the app printed matching impeller/opengl/d3d/vulkan/software/...; empty means the app does not report its renderer (see AGENT_LOG.md / env.md for GPU)"
+}

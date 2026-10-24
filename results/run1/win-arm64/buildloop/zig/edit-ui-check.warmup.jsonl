@@ -1,0 +1,1 @@
+{"wall_s": 1.181990200013388, "cpu_s": 1.6875, "parallelism": 1.4276768115174612, "mem_peak_mb": 324.36328125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 7, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "edit-ui-check"}

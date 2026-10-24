@@ -1,0 +1,247 @@
+{
+  "stack": "zig",
+  "tool": "scc scc version 4.1.0",
+  "metric": "code lines (not blank, not comment)",
+  "totals_code": {
+    "engine": 1396,
+    "ui": 1033,
+    "server": 356,
+    "glue": 298,
+    "tests": 0,
+    "other": 0,
+    "total_excluding_generated": 3083
+  },
+  "engine_of_which_cli": 265,
+  "buckets": {
+    "engine": {
+      "files": 4,
+      "code": 1131,
+      "comment": 57,
+      "blank": 94
+    },
+    "ui": {
+      "files": 5,
+      "code": 1033,
+      "comment": 45,
+      "blank": 109
+    },
+    "server": {
+      "files": 3,
+      "code": 356,
+      "comment": 10,
+      "blank": 39
+    },
+    "glue": {
+      "files": 4,
+      "code": 298,
+      "comment": 29,
+      "blank": 48
+    },
+    "cli": {
+      "files": 2,
+      "code": 265,
+      "comment": 2,
+      "blank": 13
+    },
+    "tests": {
+      "files": 0,
+      "code": 0,
+      "comment": 0,
+      "blank": 0
+    },
+    "generated": {
+      "files": 0,
+      "code": 0,
+      "comment": 0,
+      "blank": 0
+    }
+  },
+  "generated_code_not_in_totals": 0,
+  "loc_exclude_entries": [],
+  "loc_exclude_dropped": {
+    "files": 0,
+    "code": 0,
+    "by_entry": {}
+  },
+  "ignored": {
+    "hard_excluded_files": 0,
+    "data_or_doc_language_files": 1,
+    "languages": [
+      "Dockerfile",
+      "Document",
+      "JSON",
+      "License",
+      "Lockfile",
+      "Markdown",
+      "Plain Text",
+      "Properties",
+      "SVG",
+      "Systemd",
+      "TOML",
+      "YAML",
+      "gitignore"
+    ]
+  },
+  "by_language_code": {
+    "Zig": {
+      "code": 3011,
+      "files": 16
+    },
+    "HTML": {
+      "code": 40,
+      "files": 1
+    },
+    "Shell": {
+      "code": 32,
+      "files": 1
+    }
+  },
+  "unbucketed_files": [],
+  "notes": "cli is part of engine in totals_code. tests bucket is path-based only; inline #[cfg(test)]/test blocks stay in their source bucket.",
+  "files": [
+    {
+      "path": "src/bench.zig",
+      "language": "Zig",
+      "bucket": "ui",
+      "code": 150,
+      "comment": 3,
+      "blank": 12
+    },
+    {
+      "path": "src/counting.zig",
+      "language": "Zig",
+      "bucket": "cli",
+      "code": 52,
+      "comment": 1,
+      "blank": 10
+    },
+    {
+      "path": "build.zig",
+      "language": "Zig",
+      "bucket": "glue",
+      "code": 113,
+      "comment": 3,
+      "blank": 15
+    },
+    {
+      "path": "src/canvas.zig",
+      "language": "Zig",
+      "bucket": "ui",
+      "code": 445,
+      "comment": 22,
+      "blank": 42
+    },
+    {
+      "path": "src/cli.zig",
+      "language": "Zig",
+      "bucket": "cli",
+      "code": 213,
+      "comment": 1,
+      "blank": 3
+    },
+    {
+      "path": "src/server.zig",
+      "language": "Zig",
+      "bucket": "server",
+      "code": 188,
+      "comment": 1,
+      "blank": 19
+    },
+    {
+      "path": "src/platform.zig",
+      "language": "Zig",
+      "bucket": "glue",
+      "code": 113,
+      "comment": 12,
+      "blank": 18
+    },
+    {
+      "path": "src/table.zig",
+      "language": "Zig",
+      "bucket": "ui",
+      "code": 51,
+      "comment": 1,
+      "blank": 4
+    },
+    {
+      "path": "src/model.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 154,
+      "comment": 6,
+      "blank": 12
+    },
+    {
+      "path": "src/sweep.zig",
+      "language": "Zig",
+      "bucket": "server",
+      "code": 103,
+      "comment": 3,
+      "blank": 10
+    },
+    {
+      "path": "src/store.zig",
+      "language": "Zig",
+      "bucket": "server",
+      "code": 65,
+      "comment": 6,
+      "blank": 10
+    },
+    {
+      "path": "src/engine.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 41,
+      "comment": 1,
+      "blank": 2
+    },
+    {
+      "path": "src/report.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 67,
+      "comment": 1,
+      "blank": 5
+    },
+    {
+      "path": "src/ui.zig",
+      "language": "Zig",
+      "bucket": "ui",
+      "code": 179,
+      "comment": 5,
+      "blank": 23
+    },
+    {
+      "path": "src/state.zig",
+      "language": "Zig",
+      "bucket": "ui",
+      "code": 208,
+      "comment": 14,
+      "blank": 28
+    },
+    {
+      "path": "src/solver.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 869,
+      "comment": 49,
+      "blank": 75
+    },
+    {
+      "path": "web/index.html",
+      "language": "HTML",
+      "bucket": "glue",
+      "code": 40,
+      "comment": 0,
+      "blank": 4
+    },
+    {
+      "path": "stack.sh",
+      "language": "Shell",
+      "bucket": "glue",
+      "code": 32,
+      "comment": 14,
+      "blank": 11
+    }
+  ]
+}

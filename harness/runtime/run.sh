@@ -11,12 +11,12 @@ ROOT="$(cd "$HERE/../.." && pwd)"
 STACK="${1:-}"; [ -n "$STACK" ] || { sed -n '2,8p' "$0"; exit 2; }; shift
 case "$STACK" in rust|go|zig|rust-flutter|zig-flutter|go-flutter|go-zig-flutter) ;; *) echo "unknown stack $STACK" >&2; exit 2;; esac
 
-SECTIONS=(); QUICK=""; PYARGS=()
+SECTIONS=(); QUICK=""; NOALT=""; RUNS=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --quick) QUICK=1;;
-    --no-alt) PYARGS+=("--no-alt");;
-    --runs) PYARGS+=("--runs" "$2"); shift;;
+    --no-alt) NOALT=1;;
+    --runs) RUNS="$2"; shift;;
     meta|build|loc|cli|desktop|web|server|binsize|xcompile|hood) SECTIONS+=("$1");;
     *) echo "unknown argument $1" >&2; exit 2;;
   esac; shift
@@ -54,7 +54,11 @@ for s in "${SECTIONS[@]}"; do
     hood)     script=hood.py;;
   esac
   extra=()
-  case "$s" in desktop|web|cli) extra=("${PYARGS[@]}");; esac
+  case "$s" in
+    cli)     [ -n "$RUNS" ] && extra=(--reps "$RUNS");;
+    desktop) [ -n "$RUNS" ] && extra=(--runs "$RUNS");;
+    web)     [ -n "$RUNS" ] && extra=(--runs "$RUNS"); [ -n "$NOALT" ] && extra+=(--no-alt);;
+  esac
   "$PYTHON" "$HERE/$script" "$STACK" "${QARG[@]}" "${extra[@]}" --out "$OUT" 2>&1 | tee -a "$OUT/logs/driver.log"
   rc=${PIPESTATUS[0]}
   t1=$(date +%s)

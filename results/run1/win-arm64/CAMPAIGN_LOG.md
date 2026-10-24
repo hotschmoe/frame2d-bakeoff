@@ -10,3 +10,12 @@
 - Anomalies: web alt (wasm) drag max 2.2 s / render max 1.9 s (startup outliers, p50 97/77 ms); web default drag p50 65 ms. Desktop drag p50 27 ms (no throttling). Server 50x50 oha: all 200, no errors.
 - Buildloop: cold(2 runs), edits(3 runs), engine(3 reps) ok; hotreload not-implemented (no hot_reload_probe); footprint stopped at its first step (11:16, SIGTERM ignored while child ran, killed by PID) and its partial output deleted; footprint/breakdown/zigincr/contention DROPPED per instruction #2. git status --porcelain stacks empty.
 - end: Sat Oct 24 ~11:20
+
+## zig
+
+- start: Sat Oct 24 11:18 USMST 2026; end: Sat Oct 24 11:39 USMST 2026
+- Runtime: `harness/runtime/run.sh zig build meta loc cli desktop web server binsize --runs 3 --no-alt`. First attempt: `cli` and `desktop` FAILED (rc=2): `run.sh` forwarded `--runs 3 --no-alt` to cli_bench.py (accepts `--reps`) and desktop_bench.py (no `--no-alt`). Other sections (build, meta, loc, web, server, binsize) ran fine in that attempt.
+- Harness fix: `harness/runtime/run.sh` now routes options per section (cli: `--runs N` -> `--reps N`; desktop: `--runs N`; web: `--runs N` and `--no-alt`). Rerun: `harness/runtime/run.sh zig cli desktop --runs 3 --no-alt` (ok; cli 3 reps, desktop 3 runs).
+- Sanity: desktop drag p50 8.7 ms, render p50 1.4 ms, startup 64 ms (no throttling). Web: tti 175-205 ms, drag p50 ~39 ms, render p50 ~19 ms, no outliers. Server 50x50 oha: 7501 x 200, 0 errors (64 "aborted due to deadline" are in-flight at the end of the 30 s run). Sweeps ok (1000 x 10x10, 200 x 50x50).
+- Buildloop: `harness/buildloop/run.sh zig cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3`. cold ok (2 runs x cli/server/desktop/web/dev, all exit 0), edits ok (all exit 0). hotreload/engine: skipped (not a Flutter stack). No reruns needed.
+- `git status --porcelain stacks` lists model.zig/solver.zig/ui.zig as M after the edits section although `git diff` (worktree and HEAD) is empty: content is identical to HEAD, only eol/stat noise (autocrlf) from the edit scripts' rewrites; not resolved by `git update-index --refresh`.

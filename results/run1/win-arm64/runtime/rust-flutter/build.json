@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "fn": "build_cli_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 0.607,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/target/release/frame2d.exe"
+  },
+  "server": {
+    "fn": "build_server_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 0.612,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/target/release/frame2d-server.exe"
+  },
+  "desktop": {
+    "fn": "build_desktop_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 22.026,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/app/build/windows/x64/runner/Release/frame2d_app.exe"
+  },
+  "web": {
+    "fn": "build_web_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 22.588,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/app/build/web_js"
+  }
+}

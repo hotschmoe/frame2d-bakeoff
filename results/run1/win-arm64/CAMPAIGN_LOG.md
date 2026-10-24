@@ -26,3 +26,11 @@
 - Runtime: `harness/runtime/run.sh rust build meta loc cli desktop web server binsize --runs 3 --no-alt` (11:39-11:55, rc=0, no reruns). Sanity: desktop drag p50 13.9 ms (matches AGENT_LOG ~14 ms; no throttling), render p50 8.4 ms, startup 149-254 ms (first run 254 ms cold). Web: tti 371-399 ms, drag p50 78-86 ms, render p50 ~251 ms, no outliers apart from drag max ~385 ms. Server 50x50 oha: 8802 x 200, 0 errors (64 aborted-at-deadline in flight). Sweeps ok (1000 x 10x10, 200 x 50x50).
 - Buildloop: `harness/buildloop/run.sh rust cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3` (11:55-12:01, rc=0). All cold/edit/no-op runs exit 0. hotreload/engine skipped (not a Flutter stack).
 - No harness fixes, no reruns. `git status --porcelain stacks` empty.
+
+## rust-flutter
+
+- start: Sat Oct 24 12:02 USMST 2026; end: Sat Oct 24 12:28 USMST 2026
+- Runtime: `harness/runtime/run.sh rust-flutter build meta loc cli desktop web server binsize --runs 3 --no-alt` (~12:03-12:10, rc=0, no reruns, no harness fixes). Note: the `build` section's cli/server times (0.6 s) were incremental no-op builds of already built targets; cold times are in the buildloop section.
+- Sanity: desktop drag p50 ~33 ms (p95 ~52), render p50 ~15.9 ms (vsync-like, not throttled), startup 961-1038 ms; 0 crashes in 3 runs x 4 modes (the intermittent access violation from AGENT_LOG did not occur). Web (default build only): tti 668-684 ms, drag p50 ~47 ms (max ~260 ms), render p50 ~71 ms, no outliers beyond that. Server 50x50 oha: 8952 x 200, 0 errors (64 aborted-at-deadline in flight), rps 300, 534 peak threads, peak RSS 1016 MB. Sweeps ok.
+- Buildloop: `harness/buildloop/run.sh rust-flutter cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3` (12:11-12:27). cold, edits ok (all exit 0, 0 failures); hotreload not-implemented (no hot_reload_probe); engine ok (3 reps).
+- `git status --porcelain stacks` listed app/lib/ui/frame_app.dart as M after the engine section (the edit script left it modified, empty-diff/eol noise per diff --stat); restored with `git checkout -- stacks/rust-flutter/app/lib/ui/frame_app.dart`; now empty.

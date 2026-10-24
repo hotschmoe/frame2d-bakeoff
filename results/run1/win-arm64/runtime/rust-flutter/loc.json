@@ -1,0 +1,478 @@
+{
+  "stack": "rust-flutter",
+  "tool": "scc scc version 4.1.0",
+  "metric": "code lines (not blank, not comment)",
+  "totals_code": {
+    "engine": 1370,
+    "ui": 1493,
+    "server": 284,
+    "glue": 922,
+    "tests": 261,
+    "other": 0,
+    "total_excluding_generated": 4330
+  },
+  "engine_of_which_cli": 192,
+  "buckets": {
+    "engine": {
+      "files": 10,
+      "code": 1178,
+      "comment": 74,
+      "blank": 132
+    },
+    "ui": {
+      "files": 8,
+      "code": 1493,
+      "comment": 48,
+      "blank": 156
+    },
+    "server": {
+      "files": 3,
+      "code": 284,
+      "comment": 9,
+      "blank": 46
+    },
+    "glue": {
+      "files": 14,
+      "code": 922,
+      "comment": 154,
+      "blank": 180
+    },
+    "tests": {
+      "files": 2,
+      "code": 261,
+      "comment": 7,
+      "blank": 27
+    },
+    "cli": {
+      "files": 2,
+      "code": 192,
+      "comment": 8,
+      "blank": 30
+    },
+    "generated": {
+      "files": 5,
+      "code": 1634,
+      "comment": 139,
+      "blank": 266
+    }
+  },
+  "generated_code_not_in_totals": 1634,
+  "loc_exclude_entries": [
+    "crates/bridge/src/frb_generated.rs",
+    "app/lib/generated",
+    "app/web/engine",
+    "Cargo.lock",
+    "app/pubspec.lock",
+    "app/windows/runner",
+    "app/windows/flutter",
+    "app/web/icons",
+    "app/web/favicon.png",
+    "app/web/manifest.json",
+    "app/analysis_options.yaml"
+  ],
+  "loc_exclude_dropped": {
+    "files": 14,
+    "code": 625,
+    "by_entry": {
+      "app/windows/flutter": 107,
+      "app/windows/runner": 518
+    }
+  },
+  "ignored": {
+    "hard_excluded_files": 0,
+    "data_or_doc_language_files": 10,
+    "languages": [
+      "Dockerfile",
+      "Document",
+      "JSON",
+      "License",
+      "Lockfile",
+      "Markdown",
+      "Plain Text",
+      "Properties",
+      "SVG",
+      "Systemd",
+      "TOML",
+      "YAML",
+      "gitignore"
+    ]
+  },
+  "by_language_code": {
+    "Rust": {
+      "code": 2136,
+      "files": 19
+    },
+    "Dart": {
+      "code": 1983,
+      "files": 17
+    },
+    "Shell": {
+      "code": 107,
+      "files": 1
+    },
+    "CMake": {
+      "code": 69,
+      "files": 1
+    },
+    "HTML": {
+      "code": 35,
+      "files": 1
+    }
+  },
+  "unbucketed_files": [],
+  "notes": "cli is part of engine in totals_code. tests bucket is path-based only; inline #[cfg(test)]/test blocks stay in their source bucket.",
+  "files": [
+    {
+      "path": "app/lib/state/app_state.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 235,
+      "comment": 18,
+      "blank": 42
+    },
+    {
+      "path": "app/lib/ui/canvas_view.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 103,
+      "comment": 2,
+      "blank": 15
+    },
+    {
+      "path": "app/lib/generated/api.dart",
+      "language": "Dart",
+      "bucket": "generated",
+      "code": 169,
+      "comment": 26,
+      "blank": 30
+    },
+    {
+      "path": "app/lib/ui/frame_app.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 329,
+      "comment": 1,
+      "blank": 27
+    },
+    {
+      "path": "app/lib/main.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 23,
+      "comment": 0,
+      "blank": 2
+    },
+    {
+      "path": "app/lib/ui/scene.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 424,
+      "comment": 17,
+      "blank": 31
+    },
+    {
+      "path": "app/lib/bench/bench.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 166,
+      "comment": 5,
+      "blank": 19
+    },
+    {
+      "path": "app/lib/bench/bench_platform_web.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 19,
+      "comment": 2,
+      "blank": 12
+    },
+    {
+      "path": "app/lib/ui/file_io.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 23,
+      "comment": 3,
+      "blank": 4
+    },
+    {
+      "path": "app/lib/bench/bench_platform_io.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 38,
+      "comment": 5,
+      "blank": 11
+    },
+    {
+      "path": "app/lib/ui/member_table.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 190,
+      "comment": 2,
+      "blank": 16
+    },
+    {
+      "path": "app/lib/engine/engine.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 104,
+      "comment": 20,
+      "blank": 25
+    },
+    {
+      "path": "app/lib/engine/engine_factory.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 4,
+      "comment": 1,
+      "blank": 0
+    },
+    {
+      "path": "app/lib/engine/engine_native.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 81,
+      "comment": 1,
+      "blank": 16
+    },
+    {
+      "path": "app/lib/generated/frb_generated.dart",
+      "language": "Dart",
+      "bucket": "generated",
+      "code": 585,
+      "comment": 52,
+      "blank": 81
+    },
+    {
+      "path": "app/lib/bench/bench_platform.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 2,
+      "comment": 1,
+      "blank": 0
+    },
+    {
+      "path": "app/lib/engine/engine_web.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 130,
+      "comment": 5,
+      "blank": 21
+    },
+    {
+      "path": "app/lib/generated/frb_generated.io.dart",
+      "language": "Dart",
+      "bucket": "generated",
+      "code": 116,
+      "comment": 6,
+      "blank": 51
+    },
+    {
+      "path": "app/test/app_test.dart",
+      "language": "Dart",
+      "bucket": "tests",
+      "code": 110,
+      "comment": 1,
+      "blank": 10
+    },
+    {
+      "path": "app/lib/engine/engine_stub.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 2,
+      "comment": 0,
+      "blank": 1
+    },
+    {
+      "path": "app/lib/generated/frb_generated.web.dart",
+      "language": "Dart",
+      "bucket": "generated",
+      "code": 115,
+      "comment": 6,
+      "blank": 52
+    },
+    {
+      "path": "crates/bridge/src/web.rs",
+      "language": "Rust",
+      "bucket": "glue",
+      "code": 91,
+      "comment": 2,
+      "blank": 15
+    },
+    {
+      "path": "crates/bridge/src/api.rs",
+      "language": "Rust",
+      "bucket": "glue",
+      "code": 235,
+      "comment": 30,
+      "blank": 29
+    },
+    {
+      "path": "crates/bridge/src/frb_generated.rs",
+      "language": "Rust",
+      "bucket": "generated",
+      "code": 649,
+      "comment": 49,
+      "blank": 52
+    },
+    {
+      "path": "crates/bridge/src/lib.rs",
+      "language": "Rust",
+      "bucket": "glue",
+      "code": 5,
+      "comment": 5,
+      "blank": 3
+    },
+    {
+      "path": "crates/engine/src/lib.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 14,
+      "comment": 1,
+      "blank": 2
+    },
+    {
+      "path": "crates/engine/src/analysis.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 413,
+      "comment": 20,
+      "blank": 37
+    },
+    {
+      "path": "crates/engine/src/clock.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 21,
+      "comment": 3,
+      "blank": 6
+    },
+    {
+      "path": "crates/engine/src/error.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 20,
+      "comment": 2,
+      "blank": 6
+    },
+    {
+      "path": "crates/engine/src/generate.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 56,
+      "comment": 1,
+      "blank": 6
+    },
+    {
+      "path": "crates/engine/src/model.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 111,
+      "comment": 4,
+      "blank": 14
+    },
+    {
+      "path": "crates/engine/src/rcm.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 112,
+      "comment": 12,
+      "blank": 11
+    },
+    {
+      "path": "crates/engine/src/output.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 105,
+      "comment": 2,
+      "blank": 17
+    },
+    {
+      "path": "crates/engine/src/skyline.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 107,
+      "comment": 13,
+      "blank": 12
+    },
+    {
+      "path": "crates/engine/src/topology.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 219,
+      "comment": 16,
+      "blank": 21
+    },
+    {
+      "path": "crates/server/src/main.rs",
+      "language": "Rust",
+      "bucket": "server",
+      "code": 134,
+      "comment": 4,
+      "blank": 24
+    },
+    {
+      "path": "crates/server/src/sweep.rs",
+      "language": "Rust",
+      "bucket": "server",
+      "code": 120,
+      "comment": 3,
+      "blank": 16
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "language": "Rust",
+      "bucket": "cli",
+      "code": 131,
+      "comment": 5,
+      "blank": 19
+    },
+    {
+      "path": "crates/cli/src/alloc.rs",
+      "language": "Rust",
+      "bucket": "cli",
+      "code": 61,
+      "comment": 3,
+      "blank": 11
+    },
+    {
+      "path": "crates/server/src/store.rs",
+      "language": "Rust",
+      "bucket": "server",
+      "code": 30,
+      "comment": 2,
+      "blank": 6
+    },
+    {
+      "path": "crates/engine/tests/engine.rs",
+      "language": "Rust",
+      "bucket": "tests",
+      "code": 151,
+      "comment": 6,
+      "blank": 17
+    },
+    {
+      "path": "app/windows/CMakeLists.txt",
+      "language": "CMake",
+      "bucket": "glue",
+      "code": 69,
+      "comment": 27,
+      "blank": 20
+    },
+    {
+      "path": "app/web/index.html",
+      "language": "HTML",
+      "bucket": "glue",
+      "code": 35,
+      "comment": 24,
+      "blank": 4
+    },
+    {
+      "path": "stack.sh",
+      "language": "Shell",
+      "bucket": "glue",
+      "code": 107,
+      "comment": 31,
+      "blank": 23
+    }
+  ]
+}

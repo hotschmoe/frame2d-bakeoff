@@ -1,0 +1,129 @@
+{
+ "stack": "zig-flutter",
+ "phase": "P1",
+ "build_check_commands": 11,
+ "n_failures": 7,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T05:59:29Z",
+   "minutes_since_phase_start": 6.6,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "exit code 2"
+   ],
+   "signature": "/usr/bin/bash: -c: line N: unexpected EOF while looking for matching `''",
+   "next_success": {
+    "ts": "2026-10-24T06:07:27Z",
+    "command": "cd $REPO/stacks/zig-flutter && cat >> src/bridge/exports.zig <<'PYEOF'\n<heredoc body, 23 lines elided>\ncd app && source ../../../harness/machine-env.sh && time dart run ffigen 2>&1 | tail -20",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 8.0
+   }
+  },
+  {
+   "id": "F2",
+   "ts": "2026-10-24T06:00:14Z",
+   "minutes_since_phase_start": 7.4,
+   "kinds": [
+    "test"
+   ],
+   "primary_kind": "test",
+   "reasons": [
+    "inferred: WSL bash stub (no distribution)"
+   ],
+   "signature": "Windows Subsystem for Linux has no installed distributions.",
+   "next_success": null
+  },
+  {
+   "id": "F3",
+   "ts": "2026-10-24T06:00:19Z",
+   "minutes_since_phase_start": 7.5,
+   "kinds": [
+    "test"
+   ],
+   "primary_kind": "test",
+   "reasons": [
+    "inferred: crash",
+    "inferred: compile error in test build"
+   ],
+   "signature": "FILE.zon:N:N: error: invalid fingerprint: NxbNdNaNcNeNfN; if this is a new or forked package, use th",
+   "next_success": null
+  },
+  {
+   "id": "F4",
+   "ts": "2026-10-24T06:01:37Z",
+   "minutes_since_phase_start": 8.8,
+   "kinds": [
+    "conformance"
+   ],
+   "primary_kind": "conformance",
+   "reasons": [
+    "inferred: python traceback",
+    "inferred: missing binary"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": {
+    "ts": "2026-10-24T06:01:52Z",
+    "command": "cd $REPO/stacks/zig-flutter && python - <<'PYEOF'\n<heredoc body, 10 lines elided>\ncd ../.. && python harness/conformance.py zig-flutter p1 --bin \"$(cygpath -m $PWD/stacks/zig-flutter/zig-out/bin/frame2d.exe)\" --no-golden 2>&1 | tail -30",
+    "kinds": [
+     "conformance"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  },
+  {
+   "id": "F5",
+   "ts": "2026-10-24T06:06:57Z",
+   "minutes_since_phase_start": 14.1,
+   "kinds": [
+    "run"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "Unhandled exception:",
+   "next_success": null
+  },
+  {
+   "id": "F6",
+   "ts": "2026-10-24T06:07:30Z",
+   "minutes_since_phase_start": 14.7,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "Unhandled exception:",
+   "next_success": null
+  },
+  {
+   "id": "F7",
+   "ts": "2026-10-24T06:07:55Z",
+   "minutes_since_phase_start": 15.1,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "exit code 1"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": {
+    "ts": "2026-10-24T06:08:02Z",
+    "command": "cd $REPO/stacks/zig-flutter/.tools && python -I -c \"\nimport zipfile,os\nz=zipfile.ZipFile('libclang-wheel/libclang-18.1.1-py2.py3-none-win_amd64.whl')\n ... lvm-path:\\n - '../.tools/libclang-x64'#\" ffigen.yaml && source ../../../harness/machine-env.sh && dart run ffigen --config ffigen.yaml 2>&1 | tail -20",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  }
+ ]
+}

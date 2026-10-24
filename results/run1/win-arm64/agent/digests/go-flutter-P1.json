@@ -1,0 +1,110 @@
+{
+ "stack": "go-flutter",
+ "phase": "P1",
+ "build_check_commands": 22,
+ "n_failures": 5,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T06:45:07Z",
+   "minutes_since_phase_start": 4.0,
+   "kinds": [
+    "build",
+    "conformance"
+   ],
+   "primary_kind": "conformance",
+   "reasons": [
+    "inferred: python traceback",
+    "inferred: missing binary"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": {
+    "ts": "2026-10-24T06:50:11Z",
+    "command": "time bash harness/server_conformance.sh go-flutter 2>&1 | tail -30",
+    "kinds": [
+     "conformance"
+    ],
+    "minutes_after_failure": 5.1
+   }
+  },
+  {
+   "id": "F2",
+   "ts": "2026-10-24T06:45:10Z",
+   "minutes_since_phase_start": 4.0,
+   "kinds": [
+    "conformance"
+   ],
+   "primary_kind": "conformance",
+   "reasons": [
+    "inferred: FAIL line",
+    "inferred: 17/22 passed"
+   ],
+   "signature": "FAIL FN",
+   "next_success": {
+    "ts": "2026-10-24T06:50:11Z",
+    "command": "time bash harness/server_conformance.sh go-flutter 2>&1 | tail -30",
+    "kinds": [
+     "conformance"
+    ],
+    "minutes_after_failure": 5.0
+   }
+  },
+  {
+   "id": "F3",
+   "ts": "2026-10-24T06:48:43Z",
+   "minutes_since_phase_start": 7.6,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: missing tool/file"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": {
+    "ts": "2026-10-24T06:48:59Z",
+    "command": "cd $REPO/stacks/go-flutter/.tools/libclang-x64 && W=$(cygpath -w /tmp/lc/libclang-18.1.1-py2.py3-none-win_amd64.whl) && python -c \"\nimport zipfile,sys ... l <<'EOF'\n<heredoc body, 3 lines elided>\nsource ../../../harness/machine-env.sh; dart run ffigen --config ffigen.yaml 2>&1 | tail -8; ls lib/generated",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  },
+  {
+   "id": "F4",
+   "ts": "2026-10-24T06:56:00Z",
+   "minutes_since_phase_start": 14.9,
+   "kinds": [
+    "run"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "panic: runtime error: C:/Program FILE:N: result of Go function t called from cgo is unpinned Go poin",
+   "next_success": null
+  },
+  {
+   "id": "F5",
+   "ts": "2026-10-24T07:20:10Z",
+   "minutes_since_phase_start": 39.0,
+   "kinds": [
+    "test"
+   ],
+   "primary_kind": "test",
+   "reasons": [
+    "inferred: --- FAIL",
+    "inferred: FAIL line"
+   ],
+   "signature": "--- FAIL: TestGenSolveAndMove (N.Ns)",
+   "next_success": {
+    "ts": "2026-10-24T07:20:27Z",
+    "command": "cd $REPO/stacks/go-flutter && sed -i 's/{9, 12, 3}/{9, 10, 3}/' bridge/session/session_test.go && cd ../.. && bash harness/measure.sh go-flutter test_all -- bash -c \"cd stacks/go-flutter && source stack.sh && test_all\" 2>&1 | tail -12",
+    "kinds": [
+     "test"
+    ],
+    "minutes_after_failure": 0.2
+   }
+  }
+ ]
+}

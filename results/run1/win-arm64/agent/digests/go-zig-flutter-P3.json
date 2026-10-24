@@ -1,0 +1,43 @@
+{
+ "stack": "go-zig-flutter",
+ "phase": "P3",
+ "build_check_commands": 10,
+ "n_failures": 2,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T08:28:23Z",
+   "minutes_since_phase_start": 9.0,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: file:line diagnostic"
+   ],
+   "signature": "FILE:N:N: error: binary operator '*' has whitespace on one side, but not the other",
+   "next_success": {
+    "ts": "2026-10-24T08:28:32Z",
+    "command": "cd $REPO/stacks/go-zig-flutter/zig; source ../../../harness/machine-env.sh; sed -i 's/= \\[_\\]?\\*session.Session{null} \\*\\* max_sessions;/= @splat(null ...  | head; zig build-lib src/lib.zig -OReleaseFast -static -target aarch64-windows-gnu --name frame2d -femit-bin=$TEMP/zout/libframe2d.a 2>&1 | head -60",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  },
+  {
+   "id": "F2",
+   "ts": "2026-10-24T15:33:11Z",
+   "minutes_since_phase_start": 433.8,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "exit code 1"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": null
+  }
+ ]
+}

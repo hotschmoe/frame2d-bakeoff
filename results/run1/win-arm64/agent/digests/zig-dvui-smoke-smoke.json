@@ -1,0 +1,101 @@
+{
+ "stack": "zig-dvui-smoke",
+ "phase": "smoke",
+ "build_check_commands": 7,
+ "n_failures": 4,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T05:55:18Z",
+   "minutes_since_phase_start": 2.3,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: zig build failed"
+   ],
+   "signature": "FILE.zon:N:N: error: invalid fingerprint: NxNdNcNaNeNbNfNaN; if this is a new or forked package, use",
+   "next_success": {
+    "ts": "2026-10-24T05:58:03Z",
+    "command": "cd \"$SCRATCH/dvui-smoke/app\"; sed -i 's/.color_text = .{ .r = 200, .g = 200, .b = 200, .a = 255 }/.color_text = .{ .color = .{ .r = 200, .g = 200, .b = 200, .a = 255 } }/' src/main.zig; zig build -Doptimize=safe 2>&1 | grep -v \"^failed command\" | cut -c1-400 | tail -30; ls -la zig-out/bin",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 2.0
+   }
+  },
+  {
+   "id": "F2",
+   "ts": "2026-10-24T05:56:06Z",
+   "minutes_since_phase_start": 3.1,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: file:line diagnostic",
+    "inferred: zig build failed"
+   ],
+   "signature": "FILE:N:N: error: no field named 'Debug' in enum 'lang.Optimize'",
+   "next_success": {
+    "ts": "2026-10-24T05:58:03Z",
+    "command": "cd \"$SCRATCH/dvui-smoke/app\"; sed -i 's/.color_text = .{ .r = 200, .g = 200, .b = 200, .a = 255 }/.color_text = .{ .color = .{ .r = 200, .g = 200, .b = 200, .a = 255 } }/' src/main.zig; zig build -Doptimize=safe 2>&1 | grep -v \"^failed command\" | cut -c1-400 | tail -30; ls -la zig-out/bin",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 1.7
+   }
+  },
+  {
+   "id": "F3",
+   "ts": "2026-10-24T05:56:27Z",
+   "minutes_since_phase_start": 3.5,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: file:line diagnostic",
+    "inferred: zig build failed"
+   ],
+   "signature": "   +- compile exe smoke safe native N errors",
+   "next_success": {
+    "ts": "2026-10-24T05:58:03Z",
+    "command": "cd \"$SCRATCH/dvui-smoke/app\"; sed -i 's/.color_text = .{ .r = 200, .g = 200, .b = 200, .a = 255 }/.color_text = .{ .color = .{ .r = 200, .g = 200, .b = 200, .a = 255 } }/' src/main.zig; zig build -Doptimize=safe 2>&1 | grep -v \"^failed command\" | cut -c1-400 | tail -30; ls -la zig-out/bin",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.5
+   }
+  },
+  {
+   "id": "F4",
+   "ts": "2026-10-24T05:57:35Z",
+   "minutes_since_phase_start": 4.6,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "exit code 2",
+    "inferred: error: line",
+    "inferred: file:line diagnostic",
+    "inferred: zig build failed",
+    "inferred: missing tool/file"
+   ],
+   "signature": "   +- compile exe smoke safe native N errors",
+   "next_success": {
+    "ts": "2026-10-24T05:58:03Z",
+    "command": "cd \"$SCRATCH/dvui-smoke/app\"; sed -i 's/.color_text = .{ .r = 200, .g = 200, .b = 200, .a = 255 }/.color_text = .{ .color = .{ .r = 200, .g = 200, .b = 200, .a = 255 } }/' src/main.zig; zig build -Doptimize=safe 2>&1 | grep -v \"^failed command\" | cut -c1-400 | tail -30; ls -la zig-out/bin",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.4
+   }
+  }
+ ]
+}

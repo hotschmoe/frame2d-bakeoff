@@ -1,0 +1,276 @@
+{
+ "stack": "rust-flutter",
+ "phase": "P1",
+ "build_check_commands": 63,
+ "n_failures": 15,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T06:30:06Z",
+   "minutes_since_phase_start": 6.9,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "exit code 2"
+   ],
+   "signature": "/usr/bin/bash: -c: line N: unexpected EOF while looking for matching `''",
+   "next_success": {
+    "ts": "2026-10-24T06:30:46Z",
+    "command": "cd $REPO/stacks/rust-flutter; source ../../harness/machine-env.sh; sed -i 's|members = .*|members = [\"crates/engine\", \"crates/cli\"]|' Cargo.toml; cat crates/engine/Cargo.toml; time cargo build -p frame2d-cli --release 2>&1 | tail -30",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.7
+   }
+  },
+  {
+   "id": "F2",
+   "ts": "2026-10-24T06:34:51Z",
+   "minutes_since_phase_start": 11.6,
+   "kinds": [
+    "check"
+   ],
+   "primary_kind": "check",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: build failed text"
+   ],
+   "signature": "wasmN-unknown-unknown",
+   "next_success": {
+    "ts": "2026-10-24T06:36:23Z",
+    "command": "cd $REPO/stacks/rust-flutter; source ../../harness/machine-env.sh; cargo check -p frame2d-bridge --target x86_64-pc-windows-msvc 2>&1 | tail -20; carg ... ridge --target wasm32-unknown-unknown 2>&1 | tail -20; cat app/lib/generated/frb_generated.dart | head -120; cat app/lib/generated/api.dart | head -60",
+    "kinds": [
+     "check"
+    ],
+    "minutes_after_failure": 1.4
+   }
+  },
+  {
+   "id": "F3",
+   "ts": "2026-10-24T06:35:00Z",
+   "minutes_since_phase_start": 11.8,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: Error: line"
+   ],
+   "signature": "Error: When compute_mod_from_rust_path(code_path=\"FILE\", base_dir=\"\\\\\\",
+   "next_success": {
+    "ts": "2026-10-24T06:44:09Z",
+    "command": "cd $REPO/stacks/rust-flutter/app/windows; python - <<'XEOF'\n<heredoc body, 14 lines elided>\ncd ../..; source ../../harness/machine-env.sh; cargo build -p frame2d-bridge --target x86_64-pc-windows-msvc 2>&1 | tail -5; ls target/x86_64-pc-windows-msvc/debug/*.dll",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 9.1
+   }
+  },
+  {
+   "id": "F4",
+   "ts": "2026-10-24T06:35:05Z",
+   "minutes_since_phase_start": 11.9,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: Error: line"
+   ],
+   "signature": "Error: When compute_mod_from_rust_path(code_path=\"FILE\", base_dir=\"",
+   "next_success": {
+    "ts": "2026-10-24T06:44:09Z",
+    "command": "cd $REPO/stacks/rust-flutter/app/windows; python - <<'XEOF'\n<heredoc body, 14 lines elided>\ncd ../..; source ../../harness/machine-env.sh; cargo build -p frame2d-bridge --target x86_64-pc-windows-msvc 2>&1 | tail -5; ls target/x86_64-pc-windows-msvc/debug/*.dll",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 9.1
+   }
+  },
+  {
+   "id": "F5",
+   "ts": "2026-10-24T06:35:10Z",
+   "minutes_since_phase_start": 11.9,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: Error: line"
+   ],
+   "signature": "Error: When compute_mod_from_rust_path(code_path=\"C:\\\\?FILE\", bas",
+   "next_success": {
+    "ts": "2026-10-24T06:44:09Z",
+    "command": "cd $REPO/stacks/rust-flutter/app/windows; python - <<'XEOF'\n<heredoc body, 14 lines elided>\ncd ../..; source ../../harness/machine-env.sh; cargo build -p frame2d-bridge --target x86_64-pc-windows-msvc 2>&1 | tail -5; ls target/x86_64-pc-windows-msvc/debug/*.dll",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 9.0
+   }
+  },
+  {
+   "id": "F6",
+   "ts": "2026-10-24T06:35:14Z",
+   "minutes_since_phase_start": 12.0,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: error: line"
+   ],
+   "signature": "error[EN]: file not found for module `frb_generated`",
+   "next_success": {
+    "ts": "2026-10-24T06:44:09Z",
+    "command": "cd $REPO/stacks/rust-flutter/app/windows; python - <<'XEOF'\n<heredoc body, 14 lines elided>\ncd ../..; source ../../harness/machine-env.sh; cargo build -p frame2d-bridge --target x86_64-pc-windows-msvc 2>&1 | tail -5; ls target/x86_64-pc-windows-msvc/debug/*.dll",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 8.1
+   }
+  },
+  {
+   "id": "F7",
+   "ts": "2026-10-24T06:41:33Z",
+   "minutes_since_phase_start": 18.3,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: file:line diagnostic"
+   ],
+   "signature": "FILE:N:    pub member_length: Vec<fN>,",
+   "next_success": {
+    "ts": "2026-10-24T06:44:09Z",
+    "command": "cd $REPO/stacks/rust-flutter/app/windows; python - <<'XEOF'\n<heredoc body, 14 lines elided>\ncd ../..; source ../../harness/machine-env.sh; cargo build -p frame2d-bridge --target x86_64-pc-windows-msvc 2>&1 | tail -5; ls target/x86_64-pc-windows-msvc/debug/*.dll",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 2.5
+   }
+  },
+  {
+   "id": "F8",
+   "ts": "2026-10-24T06:53:51Z",
+   "minutes_since_phase_start": 30.6,
+   "kinds": [
+    "run"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "/usr/bin/bash: line 1:   716 Segmentation fault         timeout 100 ./frame2d_app.exe --bench=drag -",
+   "next_success": null
+  },
+  {
+   "id": "F9",
+   "ts": "2026-10-24T06:53:58Z",
+   "minutes_since_phase_start": 30.7,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "\u2713 Built build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+   "next_success": null
+  },
+  {
+   "id": "F10",
+   "ts": "2026-10-24T06:54:37Z",
+   "minutes_since_phase_start": 31.4,
+   "kinds": [
+    "run"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "/usr/bin/bash: line 1:   768 Segmentation fault         timeout 8 ./frame2d_app.exe > /tmp/e.txt 2>&",
+   "next_success": null
+  },
+  {
+   "id": "F11",
+   "ts": "2026-10-24T06:54:49Z",
+   "minutes_since_phase_start": 31.6,
+   "kinds": [
+    "check",
+    "build"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "Analyzing app...",
+   "next_success": null
+  },
+  {
+   "id": "F12",
+   "ts": "2026-10-24T06:55:38Z",
+   "minutes_since_phase_start": 32.4,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "\u2713 Built build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+   "next_success": null
+  },
+  {
+   "id": "F13",
+   "ts": "2026-10-24T06:56:15Z",
+   "minutes_since_phase_start": 33.0,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "\u2713 Built build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+   "next_success": null
+  },
+  {
+   "id": "F14",
+   "ts": "2026-10-24T07:15:09Z",
+   "minutes_since_phase_start": 51.9,
+   "kinds": [
+    "run"
+   ],
+   "primary_kind": "run",
+   "reasons": [
+    "inferred: runtime crash marker in program output"
+   ],
+   "signature": "/usr/bin/bash: line 1:  1629 Segmentation fault         F2D_DISCARD=1 F2D_MESH=1 F2D_NO_MOMENT=1 tim",
+   "next_success": null
+  },
+  {
+   "id": "F15",
+   "ts": "2026-10-24T07:21:37Z",
+   "minutes_since_phase_start": 58.4,
+   "kinds": [
+    "test"
+   ],
+   "primary_kind": "test",
+   "reasons": [
+    "inferred: compile error in test build"
+   ],
+   "signature": "   --> FILE:N:N",
+   "next_success": {
+    "ts": "2026-10-24T07:21:51Z",
+    "command": "cd $REPO/stacks/rust-flutter; sed -i 's|^pub struct ModelView {|#[derive(Debug)]\\npub struct ModelView {|; s|^pub struct SolveView {|#[derive(Debug)]\\npub struct SolveView {|' crates/bridge/src/api.rs; source ../../harness/machine-env.sh; cargo test -p frame2d-bridge 2>&1 | tail -12",
+    "kinds": [
+     "test"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  }
+ ]
+}

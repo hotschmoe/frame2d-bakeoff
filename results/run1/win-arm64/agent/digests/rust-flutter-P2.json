@@ -1,0 +1,30 @@
+{
+ "stack": "rust-flutter",
+ "phase": "P2",
+ "build_check_commands": 2,
+ "n_failures": 1,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T07:43:14Z",
+   "minutes_since_phase_start": 1.0,
+   "kinds": [
+    "check"
+   ],
+   "primary_kind": "check",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: build failed text"
+   ],
+   "signature": "error[EN]: missing field `springs` in initializer of `model::Model`",
+   "next_success": {
+    "ts": "2026-10-24T07:43:32Z",
+    "command": "cd $REPO; sed -i 's|^ members,$| members,\\n springs: vec![],|' stacks/rust-flutter/crates/engine/src/generate.rs\nexport RESULTS_DIR=results/adhoc\nbash harness/measure.sh rust-flutter p2-check -- bash -c 'cd stacks/rust-flutter && source stack.sh && build_check' 2>&1 | tail -30",
+    "kinds": [
+     "check"
+    ],
+    "minutes_after_failure": 0.3
+   }
+  }
+ ]
+}

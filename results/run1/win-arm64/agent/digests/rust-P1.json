@@ -1,0 +1,111 @@
+{
+ "stack": "rust",
+ "phase": "P1",
+ "build_check_commands": 6,
+ "n_failures": 5,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T05:57:44Z",
+   "minutes_since_phase_start": 4.7,
+   "kinds": [
+    "test"
+   ],
+   "primary_kind": "test",
+   "reasons": [
+    "inferred: compile error in test build"
+   ],
+   "signature": "error: expected identifier, found reserved keyword `gen`",
+   "next_success": {
+    "ts": "2026-10-24T05:57:56Z",
+    "command": "cd $REPO/stacks/rust && mv src/gen.rs src/generator.rs && sed -i 's/pub mod gen;/pub mod generator;/' src/lib.rs && sed -i 's/crate::gen::/crate::gene ... ine, gen};/use frame2d::{engine, generator as gen};/' src/bin/frame2d.rs && sed -i '/panic = \"abort\"/d' Cargo.toml && cargo test --lib 2>&1 | tail -30",
+    "kinds": [
+     "test"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  },
+  {
+   "id": "F2",
+   "ts": "2026-10-24T05:58:12Z",
+   "minutes_since_phase_start": 5.1,
+   "kinds": [
+    "build",
+    "conformance"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: WSL bash stub (no distribution)",
+    "inferred: '<function> failed' line"
+   ],
+   "signature": "build_cli_release failed:",
+   "next_success": {
+    "ts": "2026-10-24T05:58:24Z",
+    "command": "cygpath -w /usr/bin/bash; cd $REPO && export PATH=\"$(cygpath -u \"$(dirname \"$(cygpath -w /usr/bin/bash)\")\"):$PATH\"; RESULTS_DIR=$PWD/results/adhoc har ... e.sh rust cli-release -- bash -c \"cd stacks/rust && source stack.sh && build_cli_release\" 2>&1 | tail -5; tail -1 results/adhoc/rust/cli-release.jsonl",
+    "kinds": [
+     "build"
+    ],
+    "minutes_after_failure": 0.2
+   }
+  },
+  {
+   "id": "F3",
+   "ts": "2026-10-24T05:58:18Z",
+   "minutes_since_phase_start": 5.2,
+   "kinds": [
+    "conformance"
+   ],
+   "primary_kind": "conformance",
+   "reasons": [
+    "inferred: python traceback",
+    "inferred: missing binary"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": {
+    "ts": "2026-10-24T05:58:53Z",
+    "command": "pwd && python harness/conformance.py rust p1 --bin \"$(cygpath -m $PWD)/stacks/rust/target/release/frame2d.exe\" 2>&1 | tail -30",
+    "kinds": [
+     "conformance"
+    ],
+    "minutes_after_failure": 0.6
+   }
+  },
+  {
+   "id": "F4",
+   "ts": "2026-10-24T05:58:41Z",
+   "minutes_since_phase_start": 5.6,
+   "kinds": [
+    "build"
+   ],
+   "primary_kind": "build",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: build failed text"
+   ],
+   "signature": "error: expected identifier, found reserved keyword `gen`",
+   "next_success": null
+  },
+  {
+   "id": "F5",
+   "ts": "2026-10-24T05:58:45Z",
+   "minutes_since_phase_start": 5.7,
+   "kinds": [
+    "conformance"
+   ],
+   "primary_kind": "conformance",
+   "reasons": [
+    "inferred: python traceback",
+    "inferred: missing binary"
+   ],
+   "signature": "Traceback (most recent call last):",
+   "next_success": {
+    "ts": "2026-10-24T05:58:53Z",
+    "command": "pwd && python harness/conformance.py rust p1 --bin \"$(cygpath -m $PWD)/stacks/rust/target/release/frame2d.exe\" 2>&1 | tail -30",
+    "kinds": [
+     "conformance"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  }
+ ]
+}

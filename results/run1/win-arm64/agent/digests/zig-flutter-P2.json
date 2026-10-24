@@ -1,0 +1,31 @@
+{
+ "stack": "zig-flutter",
+ "phase": "P2",
+ "build_check_commands": 3,
+ "n_failures": 1,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T06:58:29Z",
+   "minutes_since_phase_start": 2.2,
+   "kinds": [
+    "check"
+   ],
+   "primary_kind": "check",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: file:line diagnostic",
+    "inferred: zig build failed"
+   ],
+   "signature": "+- compile exe frameNd debug native N errors",
+   "next_success": {
+    "ts": "2026-10-24T06:58:44Z",
+    "command": "cd $REPO; sed -i 's/(if (mem.rel \\& 2 != 0) 3.0 else 4.0)/(if (mem.rel \\& 2 != 0) @as(f64, 3) else 4)/; s/(if (mem.rel \\& 1 != 0) 3.0 else 4.0)/(if (m ...  bash harness/measure.sh zig-flutter p2-check -- bash -c 'source stacks/zig-flutter/stack.sh; build_check' 2>&1 | grep -v \"^failed command\" | head -40",
+    "kinds": [
+     "check"
+    ],
+    "minutes_after_failure": 0.2
+   }
+  }
+ ]
+}

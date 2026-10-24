@@ -1,6 +1,6 @@
 # Agent session transcripts (run1, win-arm64)
 
-Raw Claude Code subagent transcripts (JSONL), one per agent run, copied from the orchestrator session when each
+Raw Claude Code subagent transcripts (JSONL, xz-compressed: `xz -dk <file>.jsonl.xz`), one per agent run, copied from the orchestrator session when each
 run finished. Source for the SPEC 8.1 metrics (turns, tool calls, builds, failure taxonomy).
 `<name>.meta.json` is the agent's metadata. The user's email in injected context is redacted as `<user-email>`.
 

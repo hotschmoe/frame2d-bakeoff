@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frame2D</title>
+<style>html, body { margin: 0; height: 100%; overflow: hidden; background: #fafaf7; }</style>
+</head>
+<body>
+<script src="wasm_exec.js"></script>
+<script>
+  const go = new Go();
+  const load = WebAssembly.instantiateStreaming
+    ? WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
+    : Promise.reject();
+  load
+    .catch(() => fetch("main.wasm").then((r) => r.arrayBuffer()).then((b) => WebAssembly.instantiate(b, go.importObject)))
+    .then((r) => go.run(r.instance));
+</script>
+</body>
+</html>

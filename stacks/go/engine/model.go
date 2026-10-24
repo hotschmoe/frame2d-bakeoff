@@ -38,11 +38,26 @@ type Support struct {
 
 // Member is a prismatic beam-column from node I to node J.
 type Member struct {
-	ID       int    `json:"id"`
-	I        int    `json:"i"`
-	J        int    `json:"j"`
-	Material string `json:"material"`
-	Section  string `json:"section"`
+	ID       int      `json:"id"`
+	I        int      `json:"i"`
+	J        int      `json:"j"`
+	Material string   `json:"material"`
+	Section  string   `json:"section"`
+	Release  *Release `json:"release,omitempty"`
+}
+
+// Release lists released DOFs ("mz") at each member end (SPEC 4.7).
+type Release struct {
+	I []string `json:"i"`
+	J []string `json:"j"`
+}
+
+// Spring adds stiffness to the free DOFs of a node; nil means no spring on that DOF.
+type Spring struct {
+	Node int      `json:"node"`
+	KX   *float64 `json:"kx"`
+	KY   *float64 `json:"ky"`
+	KR   *float64 `json:"kr"`
 }
 
 // NodalLoad is a global-axes point load.
@@ -73,6 +88,7 @@ type Model struct {
 	Nodes     []Node     `json:"nodes"`
 	Supports  []Support  `json:"supports"`
 	Members   []Member   `json:"members"`
+	Springs   []Spring   `json:"springs,omitempty"`
 	LoadCases []LoadCase `json:"load_cases"`
 }
 
@@ -87,11 +103,12 @@ func ParseModel(data []byte) (*Model, error) {
 
 // Error codes (SPEC 4.6).
 const (
-	ErrInvalidRef  = "invalid_ref"
-	ErrZeroLength  = "zero_length"
-	ErrDuplicateID = "duplicate_id"
-	ErrUnstable    = "unstable"
-	ErrNoFreeDOFs  = "no_free_dofs"
+	ErrInvalidRef      = "invalid_ref"
+	ErrZeroLength      = "zero_length"
+	ErrDuplicateID     = "duplicate_id"
+	ErrUnstable        = "unstable"
+	ErrNoFreeDOFs      = "no_free_dofs"
+	ErrSupportConflict = "support_conflict"
 )
 
 // ModelError is a user-facing model problem; it marshals to {"error","detail"}.

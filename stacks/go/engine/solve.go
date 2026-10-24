@@ -29,7 +29,8 @@ type Solution struct {
 	MemI     []int32 // node index of each member's i end
 	MemJ     []int32
 	MemL     []float64
-	Supports []bool // 3 per node: restrained flags
+	Supports []bool    // 3 per node: restrained flags
+	Springs  []float64 // 3 per node: spring stiffness (0 = none)
 	Cases    []CaseSolution
 	Warnings []Warning
 	Stats    Stats
@@ -39,6 +40,8 @@ type memberGeom struct {
 	i, j    int32
 	L, c, s float64
 	EA, EI  float64
+	relI    bool // mz released at end i
+	relJ    bool // mz released at end j
 }
 
 // solver holds the numbered DOFs and the skyline matrix.
@@ -84,9 +87,21 @@ func Analyze(m *Model, opt Options) (*Solution, error) {
 
 	t0 := time.Now()
 	sv := &solver{dof: dof, nfree: nfree, h: h}
-	sv.allocate()
-	for k := range geom {
-		sv.addMember(&geom[k])
+	sv.assemble(sol, geom)
+	if auto := sv.zeroRotations(sol); len(auto) > 0 { // SPEC 4.7 auto-restraint
+		restr := append([]bool(nil), sol.Supports...)
+		for _, n := range auto {
+			restr[3*n+2] = true
+			sol.Warnings = append(sol.Warnings, Warning{Warning: "auto_restrained", Node: sol.Nodes[n].ID, DOF: "rz"})
+		}
+		dof, nfree = numberDOFs(order, restr)
+		if nfree == 0 {
+			return nil, modelErr(ErrNoFreeDOFs, "every DOF is restrained")
+		}
+		h, _ = heights(dof, nfree, geom)
+		sol.Stats.FreeDOFs = nfree
+		sv = &solver{dof: dof, nfree: nfree, h: h}
+		sv.assemble(sol, geom)
 	}
 	cases := selectCases(m.LoadCases, opt.OnlyCase)
 	rhs := make([][]float64, len(cases))
@@ -116,6 +131,38 @@ func Analyze(m *Model, opt Options) (*Solution, error) {
 	sol.Stats.FactorMS = ms(t2.Sub(t1))
 	sol.Stats.SolveMS = ms(t3.Sub(t2))
 	return sol, nil
+}
+
+// assemble allocates the skyline and adds member and spring stiffness.
+func (s *solver) assemble(sol *Solution, geom []memberGeom) {
+	s.allocate()
+	for k := range geom {
+		s.addMember(&geom[k])
+	}
+	for n := range sol.Nodes {
+		for d := 0; d < 3; d++ {
+			if f := s.dof[3*n+d]; f >= 0 {
+				s.data[s.ptr[f]+int(s.h[f])] += sol.Springs[3*n+d]
+			}
+		}
+	}
+}
+
+// zeroRotations lists nodes (by index) whose free rz has no stiffness (SPEC 4.7).
+func (s *solver) zeroRotations(sol *Solution) []int {
+	maxDiag := 0.0
+	for j := 0; j < s.nfree; j++ {
+		if d := s.data[s.ptr[j]+int(s.h[j])]; d > maxDiag {
+			maxDiag = d
+		}
+	}
+	var out []int
+	for n := range sol.Nodes {
+		if f := s.dof[3*n+2]; f >= 0 && s.data[s.ptr[f]+int(s.h[f])] <= pivotTol*maxDiag {
+			out = append(out, n)
+		}
+	}
+	return out
 }
 
 func ms(d time.Duration) float64 { return float64(d.Nanoseconds()) / 1e6 }
@@ -173,6 +220,22 @@ func prepare(m *Model) (*Solution, []memberGeom, error) {
 		sol.Supports[3*ix+1] = sol.Supports[3*ix+1] || s.UY
 		sol.Supports[3*ix+2] = sol.Supports[3*ix+2] || s.RZ
 	}
+	sol.Springs = make([]float64, 3*nn)
+	for _, sp := range m.Springs {
+		ix, ok := nodeIx[sp.Node]
+		if !ok {
+			return nil, nil, modelErr(ErrInvalidRef, "spring references missing node %d", sp.Node)
+		}
+		for d, kv := range [3]*float64{sp.KX, sp.KY, sp.KR} {
+			if kv == nil {
+				continue
+			}
+			if sol.Supports[3*int(ix)+d] {
+				return nil, nil, modelErr(ErrSupportConflict, "node %d dof %d is both restrained and sprung", sp.Node, d)
+			}
+			sol.Springs[3*int(ix)+d] += *kv
+		}
+	}
 	memIDs := make(map[int]bool, len(sol.Members))
 	geom := make([]memberGeom, len(sol.Members))
 	sol.MemI = make([]int32, len(geom))
@@ -191,6 +254,9 @@ func prepare(m *Model) (*Solution, []memberGeom, error) {
 			return nil, nil, modelErr(ErrInvalidRef, "member %d references a missing material or section", mem.ID)
 		}
 		geom[k] = memberGeom{i: i, j: j, EA: mat.E * sec.A, EI: mat.E * sec.I}
+		if r := mem.Release; r != nil {
+			geom[k].relI, geom[k].relJ = hasMZ(r.I), hasMZ(r.J)
+		}
 		sol.MemI[k], sol.MemJ[k] = i, j
 	}
 	for _, lc := range m.LoadCases {
@@ -217,6 +283,43 @@ func prepare(m *Model) (*Solution, []memberGeom, error) {
 		sol.MemL[k] = g.L
 	}
 	return sol, geom, nil
+}
+
+func hasMZ(l []string) bool {
+	for _, d := range l {
+		if d == "mz" {
+			return true
+		}
+	}
+	return false
+}
+
+// condense statically eliminates the released rotations from k and f (SPEC 4.7). Eliminated rows and
+// columns of k and entries of f become zero.
+func condense(g *memberGeom, k *[6][6]float64, f *[6]float64) {
+	for _, r := range [2]int{2, 5} {
+		if (r == 2 && !g.relI) || (r == 5 && !g.relJ) {
+			continue
+		}
+		p := k[r][r]
+		fr := f[r]
+		for a := 0; a < 6; a++ {
+			if a == r {
+				continue
+			}
+			ka := k[a][r] / p
+			for b := 0; b < 6; b++ {
+				if b != r {
+					k[a][b] -= ka * k[r][b]
+				}
+			}
+			f[a] -= ka * fr
+		}
+		for a := 0; a < 6; a++ {
+			k[a][r], k[r][a] = 0, 0
+		}
+		f[r] = 0
+	}
 }
 
 // numberDOFs assigns free-DOF indices walking nodes in the given order (SPEC 4.3).
@@ -309,8 +412,18 @@ func rotation(g *memberGeom) [6][6]float64 {
 	return t
 }
 
+// memberK is the local stiffness with end releases condensed out.
+func memberK(g *memberGeom) [6][6]float64 {
+	k := localK(g)
+	if g.relI || g.relJ {
+		var f [6]float64
+		condense(g, &k, &f)
+	}
+	return k
+}
+
 func globalK(g *memberGeom) [6][6]float64 {
-	k, t := localK(g), rotation(g)
+	k, t := memberK(g), rotation(g)
 	var kt, out [6][6]float64
 	for a := 0; a < 6; a++ { // kt = k * t
 		for b := 0; b < 6; b++ {
@@ -424,6 +537,16 @@ func fixedEndLocal(w, L float64) [6]float64 {
 	return [6]float64{0, -w * L / 2, -w * L * L / 12, 0, -w * L / 2, w * L * L / 12}
 }
 
+// memberFixedEnd is the local fixed-end force vector, condensed for end releases.
+func memberFixedEnd(g *memberGeom, w float64) [6]float64 {
+	f := fixedEndLocal(w, g.L)
+	if g.relI || g.relJ {
+		k := localK(g)
+		condense(g, &k, &f)
+	}
+	return f
+}
+
 // buildLoads assembles the free-DOF load vector of a case and returns the per-member UDL values.
 func buildLoads(lc LoadCase, s *solver, geom []memberGeom, nodeIx map[int]int32, memIx map[int]int) (rhs, w []float64) {
 	rhs = make([]float64, s.nfree)
@@ -444,7 +567,7 @@ func buildLoads(lc LoadCase, s *solver, geom []memberGeom, nodeIx map[int]int32,
 			continue
 		}
 		g := &geom[k]
-		f := fixedEndLocal(w[k], g.L)
+		f := memberFixedEnd(g, w[k])
 		// equivalent nodal load = -T^T f
 		for a := 0; a < 6; a += 3 {
 			n := g.i
@@ -476,7 +599,7 @@ func postProcess(lc LoadCase, sol *Solution, s *solver, geom []memberGeom, x, w 
 	sum := make([]float64, 3*nn) // member end forces in global axes summed per node DOF
 	for k := range geom {
 		g := &geom[k]
-		kl, t := localK(g), rotation(g)
+		kl, t := memberK(g), rotation(g)
 		var ug, ul [6]float64
 		copy(ug[:3], cs.Disp[3*g.i:3*g.i+3])
 		copy(ug[3:], cs.Disp[3*g.j:3*g.j+3])
@@ -485,7 +608,7 @@ func postProcess(lc LoadCase, sol *Solution, s *solver, geom []memberGeom, x, w 
 				ul[a] += t[a][b] * ug[b]
 			}
 		}
-		ff := fixedEndLocal(w[k], g.L)
+		ff := memberFixedEnd(g, w[k])
 		ef := cs.EndForces[6*k : 6*k+6]
 		for a := 0; a < 6; a++ {
 			v := ff[a]

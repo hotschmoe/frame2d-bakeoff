@@ -1,0 +1,1 @@
+{"wall_s": 2.403122399991844, "cpu_s": 1.96875, "parallelism": 0.8192466600979966, "mem_peak_mb": 186.63671875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 6, "exit_code": 0, "method": "psutil", "stack": "go", "label": "p2-conf"}

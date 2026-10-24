@@ -44,3 +44,14 @@ None cost more than ~10 minutes. Small notes:
   startup first frame 214 ms, boundary noop 1.6 ns / echo 34 us.
 - Web benches (emulated x64 Chromium, software WebGL, indicative only): drag p50 260 ms (solve p50 78 ms), render p50 486 ms,
   startup 1.4 s, ready 1.1 s. Web payload `main.wasm` is ~12.4 MB unstripped-of-runtime (Go runtime + Gio + Go Regular font).
+
+# AGENT_LOG: go, phase P2
+
+Started: Sat Oct 24 01:01:03 2026 (local `date`)
+
+- Change (all in `engine/`): `Spring`/`Release` types and `support_conflict` in model.go; in solve.go springs are added to the
+  assembled diagonal, `condense()` does sequential static condensation of mz releases (stiffness and fixed-end forces, used by
+  assembly, loads and post-processing), and `zeroRotations` detects rz diagonals <= 1e-12 x max diagonal, then the model is
+  renumbered/reassembled with those rz restrained and `auto_restrained` warnings emitted. profile_before/after stay computed
+  from the original supports (matches ref.py); free_dofs is the final count.
+- No problems over ~10 minutes. conformance p2 7/7, p1 run after (see below). No UI changes.

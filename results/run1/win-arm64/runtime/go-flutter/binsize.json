@@ -1,0 +1,217 @@
+{
+  "stack": "go-flutter",
+  "flags": {
+    "cli": "go build -trimpath -ldflags '-s -w' ./cmd/frame2d (CGO_ENABLED=0)",
+    "server": "go build -trimpath -ldflags '-s -w' ./cmd/server (CGO_ENABLED=0)",
+    "desktop": "go build -buildmode=c-shared -trimpath -ldflags '-s -w' ./bridge/native (GOARCH=amd64 CC='zig cc -target x86_64-windows-gnu' on windows) + flutter build <os> --release",
+    "web": "GOOS=js GOARCH=wasm go build -trimpath -ldflags '-s -w' ./bridge/wasm; flutter build web --release --wasm (default) | (F2D_WEB_MODE=default: dart2js)"
+  },
+  "stripped": {
+    "cli": true,
+    "server": true,
+    "desktop": true,
+    "web": true
+  },
+  "release_profile": null,
+  "unit": "bytes",
+  "cli": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d.exe",
+    "bytes": 2731008
+  },
+  "server": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d-server.exe",
+    "bytes": 15554560
+  },
+  "desktop": {
+    "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+    "exe_bytes": 90624,
+    "bundle_dir": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-flutter\\app\\build\\windows\\x64\\runner\\Release",
+    "bundle_bytes": 30900732,
+    "engine_lib": [
+      {
+        "name": "frame2d_engine.dll",
+        "bytes": 3074560
+      }
+    ],
+    "engine_lib_bytes": 3074560,
+    "largest_bundle_files": [
+      {
+        "path": "flutter_windows.dll",
+        "bytes": 21289472
+      },
+      {
+        "path": "data/app.so",
+        "bytes": 5440392
+      },
+      {
+        "path": "frame2d_engine.dll",
+        "bytes": 3074560
+      },
+      {
+        "path": "data/icudtl.dat",
+        "bytes": 864880
+      },
+      {
+        "path": "data/flutter_assets/NOTICES.Z",
+        "bytes": 99723
+      },
+      {
+        "path": "frame2d_app.exe",
+        "bytes": 90624
+      }
+    ]
+  },
+  "web": {
+    "label": "default",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-flutter\\webdist\\default",
+    "files": 43,
+    "total_br_bytes": 12212614,
+    "total_raw_bytes": 48600037,
+    "engine_wasm": [
+      {
+        "path": "engine.wasm",
+        "raw": 4646484,
+        "br": 943077
+      }
+    ],
+    "engine_wasm_br_bytes": 943077,
+    "engine_wasm_raw_bytes": 4646484,
+    "engine_note": null,
+    "flutter_app_code": [
+      {
+        "path": "main.dart.js",
+        "raw": 2531434,
+        "br": 578255
+      },
+      {
+        "path": "main.dart.mjs",
+        "raw": 31155,
+        "br": 6425
+      },
+      {
+        "path": "main.dart.wasm",
+        "raw": 2106210,
+        "br": 608618
+      }
+    ],
+    "largest_by_br": [
+      {
+        "path": "canvaskit/canvaskit.wasm",
+        "raw": 7284602,
+        "br": 2257085
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.wasm",
+        "raw": 5216217,
+        "br": 1858459
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.wasm",
+        "raw": 5428806,
+        "br": 1540246
+      },
+      {
+        "path": "canvaskit/skwasm.wasm",
+        "raw": 3593715,
+        "br": 1209789
+      },
+      {
+        "path": "canvaskit/wimp.wasm",
+        "raw": 3581677,
+        "br": 1132927
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.wasm",
+        "raw": 3729129,
+        "br": 1055638
+      },
+      {
+        "path": "engine.wasm",
+        "raw": 4646484,
+        "br": 943077
+      },
+      {
+        "path": "main.dart.wasm",
+        "raw": 2106210,
+        "br": 608618
+      }
+    ],
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "note": "total = every file in the static dir (what a deploy ships), including files a given load never fetches"
+  },
+  "web_alt": {
+    "label": "dart2js",
+    "what": "build_web_release defaults to --wasm in this stack; the dart2js build is the extra",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-flutter\\webdist\\alt-dart2js",
+    "files": 41,
+    "total_br_bytes": 11597626,
+    "total_raw_bytes": 46462720,
+    "engine_wasm": [
+      {
+        "path": "engine.wasm",
+        "raw": 4646484,
+        "br": 943077
+      }
+    ],
+    "engine_wasm_br_bytes": 943077,
+    "engine_wasm_raw_bytes": 4646484,
+    "engine_note": null,
+    "flutter_app_code": [
+      {
+        "path": "main.dart.js",
+        "raw": 2531434,
+        "br": 578255
+      }
+    ],
+    "largest_by_br": [
+      {
+        "path": "canvaskit/canvaskit.wasm",
+        "raw": 7284602,
+        "br": 2257085
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.wasm",
+        "raw": 5216217,
+        "br": 1858459
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.wasm",
+        "raw": 5428806,
+        "br": 1540246
+      },
+      {
+        "path": "canvaskit/skwasm.wasm",
+        "raw": 3593715,
+        "br": 1209789
+      },
+      {
+        "path": "canvaskit/wimp.wasm",
+        "raw": 3581677,
+        "br": 1132927
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.wasm",
+        "raw": 3729129,
+        "br": 1055638
+      },
+      {
+        "path": "engine.wasm",
+        "raw": 4646484,
+        "br": 943077
+      },
+      {
+        "path": "main.dart.js",
+        "raw": 2531434,
+        "br": 578255
+      }
+    ],
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "note": "total = every file in the static dir (what a deploy ships), including files a given load never fetches"
+  }
+}

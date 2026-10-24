@@ -42,3 +42,10 @@
 - Buildloop: `harness/buildloop/run.sh go cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3` (12:58-13:02, rc=0, 0 failures). hotreload/engine skipped (not a Flutter stack).
 - Anomaly + rerun: first cold-server run took 35.3 s (cpu 27.7 s, parallelism 0.78; other run 7.6 s) - external stall. Reran only that target: `harness/buildloop/run.sh go cold --cold-targets "server" --cold-runs 2` -> 7.4 s, 8.8 s. Original attempt kept in `results/run1/win-arm64/_logs/go-cold-server-attempt1.jsonl`. Other cold targets (2 runs each) have some spread (cli 3.4/7.9, desktop 5.4/10.9, dev 15.9/17.0, web 5.5/5.2) - first-run slowness, kept.
 - `git status --porcelain stacks` empty.
+
+## go-flutter
+
+- start: Sat Oct 24 13:03 USMST 2026; end: Sat Oct 24 13:34 USMST 2026
+- Runtime: `harness/runtime/run.sh go-flutter build meta loc cli desktop web server binsize --runs 3 --no-alt` (13:04-13:17, all sections rc=0, no reruns, no harness fixes). Note: the build section still ran go-flutter's alternate (dart2js) web build, but only the default (wasm) build was benchmarked. Sanity: desktop drag p50 46 ms, render p50 16 ms, startup 975 ms (vsync-like, not throttled; Impeller OpenGLES). Web: tti 1.93 s, drag p50 124 ms (solve in wasm ~113 ms), render p50 17 ms, 0 page errors/timeouts. Server 50x50 oha: 4595 x 200, 0 errors (64 aborted-at-deadline in flight), 155 rps, peak RSS 2.8 GB. Sweeps ok (1000 x 10x10, 200 x 50x50).
+- Buildloop: `harness/buildloop/run.sh go-flutter cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3` (13:17-13:33, rc=0, 0 failures in any target). Cold runs are tight (no outliers). hotreload ran (probe defined): rep 0 took 1.40 s, reps 1-2 0.83/0.80 s. engine ok (3 reps).
+- No harness fixes, no reruns. `git status --porcelain stacks` empty.

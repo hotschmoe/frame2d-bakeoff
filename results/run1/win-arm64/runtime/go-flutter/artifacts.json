@@ -1,0 +1,19 @@
+{
+  "stack": "go-flutter",
+  "cli": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d.exe",
+  "server": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d-server.exe",
+  "desktop_exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+  "desktop_bundle_dir": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-flutter\\app\\build\\windows\\x64\\runner\\Release",
+  "web": {
+    "label": "default",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/web",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-flutter\\webdist\\default",
+    "what": "build_web_release (stack default)"
+  },
+  "web_alt": {
+    "label": "dart2js",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/web",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-flutter\\webdist\\alt-dart2js",
+    "what": "build_web_release defaults to --wasm in this stack; the dart2js build is the extra"
+  }
+}

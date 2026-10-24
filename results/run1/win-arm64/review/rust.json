@@ -1,0 +1,32 @@
+{
+  "stack": "rust",
+  "scores": {"structure": 4, "naming": 4, "errors": 4, "boundary": 4, "tests": 2, "change_resilience": 3},
+  "justifications": {
+    "structure": "Clean lib/bin split: model.rs (types+ModelError), engine.rs (no UI/IO deps), generator.rs, alloc_count.rs, feature-gated app/ (scene/canvas/table/io/bench), thin bins frame2d.rs and frame2d-server.rs; engine.rs is a single 815-line file mixing validation, RCM, skyline, element math and post-processing.",
+    "naming": "Section banners and doc comments in engine.rs (prepare, rcm, bfs_levels, number_dofs, column_tops, Skyline::factor, condense, solve_case) track SPEC sections and make the solver followable; short names (e, c, s, ea, ei, sx/sy/mag) and the dense Skyline::factor index arithmetic need some effort.",
+    "errors": "ModelError{error,detail} with codes raised in engine::prepare/solve_filtered maps to CLI exit 2 (Failure::Model in frame2d.rs), HTTP 422 (ApiError::Model in frame2d-server.rs) and UI red status (Frame2dApp::run_solve, Io::parse); weaknesses: malformed JSON is 400/exit 1 rather than a model error, an unknown 'only' case silently yields empty results, unsupported release reports invalid_ref.",
+    "boundary": "No FFI; the only unsafe is the GlobalAlloc impl in alloc_count.rs (sound delegation to System, relaxed atomics) and one small commented Win32 K32GetProcessMemoryInfo call in app/bench.rs; server threading is explicit (spawn_blocking, thread::scope with atomic work counter, per-slot Mutex, Arc<Mutex<Connection>>); wasm glue is minimal and single-threaded with Rc<RefCell> inbox in app/io.rs.",
+    "tests": "Only 5 unit tests, all in engine.rs (cantilever, fixed-fixed UDL, no-supports unstable, invalid_ref, gen 10x10 profile/equilibrium); no tests for RCM on disconnected graphs, zero_length, duplicate_id, no_free_dofs, springs, releases/auto-restraint, server handlers, sweep, CLI or generator.",
+    "change_resilience": "A new load type touches model.rs, engine.rs (CaseData, prepare, solve_case load vector, fixed_end/end forces, equilibrium sums) and generator/UI if it should be creatable or drawn; the engine part is concentrated in one file but solve_case hard-codes UDL in three separate places (load vector, end-force fixed_end, equilibrium resultant) and per-member sums are not abstracted behind a load trait."
+  },
+  "load_type_touch_points": [
+    "src/model.rs:LoadCase (new Vec field + load struct, serde)",
+    "src/engine.rs:CaseData (per-case summed load storage)",
+    "src/engine.rs:prepare (ref validation and accumulation of the new load)",
+    "src/engine.rs:fixed_end (equivalent end forces, with condense for releases)",
+    "src/engine.rs:solve_case (equivalent load vector assembly)",
+    "src/engine.rs:solve_case (member end forces/stations: V(x), M(x) terms for the new load)",
+    "src/engine.rs:solve_case (equilibrium resultant sums sx/sy/mag)",
+    "src/generator.rs:generate (only if generator should emit it)",
+    "src/app/canvas.rs:draw_scene (only if loads are to be drawn; currently loads are not drawn)",
+    "stacks/rust/tests or engine.rs tests (new test)"
+  ],
+  "generated_excluded": ["target/ (cargo build output, including target/debug/build/**/bindgen.rs)", "Cargo.lock (lockfile)", "frame2d.db (runtime sqlite artifact)"],
+  "notable": [
+    "Strength: engine.rs is dependency-free of UI/IO, with clear SPEC-aligned sections (RCM with George-Liu, skyline LDL^T with 4-way unrolled dot, static condensation for releases) and the BENCH-EDIT:leaf tolerance marker present.",
+    "Strength: ModelError carries SPEC codes end to end; ApiError enum cleanly maps to 422/400/404/500 and CPU work runs via spawn_blocking; sweep uses scoped threads with an atomic index counter.",
+    "Risk: test coverage is thin (5 tests in one file); spring/release/auto-restrain, zero_length, duplicate_id, no_free_dofs, RCM components and all server/CLI paths are untested in-repo.",
+    "Risk: solve_filtered with an unknown 'only' case returns Ok with no cases, and malformed model JSON yields HTTP 400 / CLI exit 1 rather than the 422 / exit 2 model-error path; server uses several unwrap()/expect() on mutex locks, db open and run_sweep slots.",
+    "Risk: UDL handling is duplicated across three places in solve_case plus fixed_end, so new load types need coordinated edits; the drag path re-runs full prepare/RCM/assembly on the UI thread each frame (allowed, but no caching of ordering)."
+  ]
+}

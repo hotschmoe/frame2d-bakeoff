@@ -1,0 +1,36 @@
+# zig-flutter review
+
+| item | score | justification |
+|---|---|---|
+| structure | 4 | Clean split: src/engine (model, model_json, rcm, solver, sweep, results_json) is I/O-free; bridge/exports.zig, cli/main.zig and server/main.zig are thin shells; Dart hides ffi vs js_interop behind FrameEngine with conditional imports; AppState holds no maths. |
+| naming | 4 | solver.zig reads top-down (Plan/buildPlan/Geom/assemble/factor/solveCase/postProcess) with SPEC references and unit comments, rcm.zig is clear; but postProcess is a long function mixing end forces, reactions and equilibrium, buildPlan has duplicated DOF-numbering loops, and the profile_before/auto-restrain special case is subtle. |
+| errors | 3 | Diag/ErrCode carry model errors to CLI exit 2 (cli modelError), HTTP 422 (server modelErrorReply) and Dart strings via f2d_error_*; weaknesses: CLI usage/arg errors return 1 silently, server non-model failures collapse to a generic 500, the 160-byte Diag detail truncates silently, sweep thread OOM flag is set without sync, and the UI shows the raw 'code: detail' string. |
+| boundary | 3 | Single module (exports.zig) with a documented validity contract and 3-code status; zero-copy views are re-read after each solve; but global mutable session/diag/scratch with no locking or thread note, accessors do session.? (trap or UB in ReleaseSmall if called with no model), f2d_set_node_xy does no bounds check, adopt() leaks earlier allocations on OOM, f2d_load_json trusts ptr/len, and f2d_echo falls back to returning an unrelated buffer on OOM. |
+| tests | 2 | Only 4 Zig tests in engine/tests.zig (cantilever F01, unstable, gen 10x10 profile/DOF golden, JSON round trip) and 2 trivial Dart view-transform tests; nothing for rcm, releases/springs/auto-restrain (P2), validation error codes, sweep, server routes or the bridge; the rest relies on the harness. |
+| change_resilience | 3 | A new load type touches model, parser, writer, solver RHS, equilibrium and fixed-end handling in 4 Zig files (about 7 functions) with no Dart/bridge change unless it should be drawn, but equilibrium and member station logic are hard-wired to UDL (CaseResult.w, station()) so it is not just additive. |
+
+## Load type touch points
+- src/engine/model.zig:LoadCase (new slice type, NodalLoad/UdlLoad siblings)
+- src/engine/model_json.zig:RawCase/Raw* structs
+- src/engine/model_json.zig:build (resolve refs, invalid_ref checks)
+- src/engine/model_json.zig:writeModel (round trip)
+- src/engine/solver.zig:Solver.solveCase (RHS / fixed-end forces)
+- src/engine/solver.zig:Geom.fixedEnd (equivalent end forces)
+- src/engine/solver.zig:postProcess (member end forces, station w, equilibrium resultants)
+- src/engine/solver.zig:station + results_json.writeResults (diagram formulas assume uniform w)
+- src/engine/solver.zig:CaseResult (per-member load storage)
+
+## Generated/excluded
+- app/lib/generated/frame2d_bindings.dart (ffigen output)
+- app/web/frame2d_engine.wasm (build output)
+- app/windows, app/web/icons, favicon, manifest, index.html (flutter create boilerplate)
+- app/.idea, app/.metadata, pubspec.lock, .flutter-plugins-dependencies
+- frame2d.db (runtime artifact)
+- zig-pkg and .tools (listed in LOC_EXCLUDE, not present/read)
+
+## Notable
+- Strength: solver keeps a reusable Plan (RCM+skyline layout) separate from numeric factorization, so node drags re-solve without renumbering; factor once, solve all cases.
+- Strength: sweep.zig is a clean atomic work-queue over per-thread Solvers with duplicated section arrays and first-error capture; model is shared read-only.
+- Risk: exports.zig global state is not thread-safe and exported getters unwrap session.? with no null guard; set_node_xy is unchecked; adopt() leaks on partial OOM.
+- Risk: server spawns an unbounded detached thread per connection and maps all non-model failures to a generic 500; sweep bad requests return 400 not 422.
+- Gap: tests are thin (4 Zig tests); P2 features (springs, releases, auto-restraint) and every error code except unstable have no unit tests; Dart UI for springs/releases not extended per the log.

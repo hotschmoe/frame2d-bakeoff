@@ -1,0 +1,46 @@
+{
+ "stack": "go-zig-flutter",
+ "scores": {
+  "structure": 4,
+  "naming": 4,
+  "errors": 4,
+  "boundary": 3,
+  "tests": 3,
+  "change_resilience": 3
+ },
+ "justifications": {
+  "structure": "Clean split: zig/src engine.zig (solver) / model.zig (types+JSON) / results.zig / session.zig (flat-buffer marshal) / lib.zig (only C ABI); Go bridge/zig is the sole cgo user, cmd/* thin; Dart engine/ interface hides ffi vs wasm; AppState does no analysis.",
+  "naming": "engine.zig is readable with SPEC refs and doc comments (prepare, rcmOrder, condense, factor, solveInPlace), but solve() is one ~150-line function mixing assembly, load vectors and reaction/residual post-processing, and the numberDofs/skylineTop Impl-wrapper pairs and 6x6 index arithmetic are terse.",
+  "errors": "Single Diag + error.Model + Code.abi() flows through lib.zig errOut -> rc 1/2 -> Go ModelError/BadRequestError -> CLI exit 2/1 (cmd/frame2d fail) and HTTP 422/400 (server replyErr) and UI banner via f2d_last_error; gaps: f2d_gen/f2d_load_json OOM paths return -1 without setting last_error, caseIds silently returns [] when >4096 bytes, session solve clamps bad case index to 0.",
+  "boundary": "Ownership is mostly explicit (arena per session, f2d_buf_free + take() copy in zig.go, forked SweepWorker per goroutine, scratch/slice copies in f2d_loader.js), but the session table `sessions`/`last_error`/`echo_buf` in lib.zig are unsynchronized globals, Dart/JS views into session memory are valid only until next solve/free (documented only in comments), raw unsafe.Slice in EchoView, no null checks on f2d_alloc in the JS loader, and the hand-written header is duplicated in app/ffigen.",
+  "tests": "zig tests.zig has 6 real tests (closed-form cantilever, 10x10 profile counts, all error codes, sweep, session move node, JSON round trip), Go has 4 bridge tests, Dart has 2 FakeEngine state tests; but no unit tests for releases/springs/auto-restraint, no HTTP handler tests (422/400/404 mapping), no FFI/wasm loader tests.",
+  "change_resilience": "A new load type touches model.zig (struct, fromJson, writeModel), engine.zig (Case, prepare, solve load vector + residual), results.zig (stations/sweepRun), session.zig (station call), plus gen; Go, header and Dart need no change unless the canvas draws it, but UDL is hard-wired through w[] arrays and station() rather than a load abstraction."
+ },
+ "load_type_touch_points": [
+  "zig/src/model.zig:LoadCase/NodalLoad/MemberUdl (types)",
+  "zig/src/model.zig:fromJson (parse)",
+  "zig/src/model.zig:writeModel (serialize)",
+  "zig/src/model.zig:gen (generator, if used)",
+  "zig/src/engine.zig:Case + prepare (per-case load arrays, ref validation)",
+  "zig/src/engine.zig:solve (load vector assembly, fixed-end forces, equilibrium residual)",
+  "zig/src/engine.zig:station/maxAbsM (diagram stations)",
+  "zig/src/results.zig:writeResults (station output)",
+  "zig/src/results.zig:sweepRun (max |M|)",
+  "zig/src/session.zig:Session.solve (station moments for UI)",
+  "zig/src/tests.zig (new tests)"
+ ],
+ "generated_excluded": [
+  "app/lib/generated/engine_bindings.dart (ffigen output)",
+  "app/pubspec.lock",
+  "app/windows|android|ios|macos|linux|web icons/manifest (flutter create boilerplate; not present or not read)",
+  "build/ .dart_tool/ zig-pkg/ .zig-cache/ zig-out/ vendor/ .tools/ (not read)",
+  "go.sum"
+ ],
+ "notable": [
+  "Strength: single error path (Diag -> abi code -> rc -> typed Go errors -> exit 2/422/UI banner) is consistent across all three consumers.",
+  "Strength: sweep uses Prepared.fork so each goroutine owns its own stiffness/workspace while sharing immutable topology; clean concurrent design.",
+  "Risk: lib.zig session table, last_error and echo_buf are unsynchronized process globals (fine for single-threaded Dart/WASM, unsafe if the shared lib is ever called from multiple threads; Go Echo/EchoView share the same buffer).",
+  "Risk: f2d_gen and f2d_load_json OOM/null-data paths return -1 without updating last_error, so UI may show a stale or empty message; f2d_load_json also leaks its arena on those early returns.",
+  "Gap: POST /models only parses (Check) so models with invalid refs are stored and fail later at solve; app/ffigen/frame2d_engine.h duplicates zig/include header and Go codeName() duplicates Code.abi() (drift risk)."
+ ]
+}

@@ -1,0 +1,20 @@
+{"stack":"zig",
+"scores":{"structure":4,"naming":3,"errors":4,"boundary":4,"tests":2,"change_resilience":3},
+"justifications":{
+"structure":"engine.zig/solver.zig/model.zig/report.zig are OS-free and shared by cli.zig, server.zig, state.zig/ui.zig/canvas.zig; store.zig and platform.zig isolate SQLite and web/native glue.",
+"naming":"Helpers are well named (rcmOrder, columnHeights, condense, memberLocal) with doc comments, but solver.zig:solve() is a ~230-line function mixing assembly, load cases, reactions and residuals, and Geometry uses terse fields (mi, mj, ea, ei, c, s).",
+"errors":"solver.ErrorInfo with a Code enum flows via error.ModelError to cli.cmdSolve (exit 2 + JSON), server.respondModelError (422) and state.zig setError (UI text); minor gaps: CLI bad JSON/gen args exit 1 silently, and a few unchecked .? lookups in solve() depend on earlier validation.",
+"boundary":"Unsafe surface is small and contained: store.zig hand-written SQLite externs with SQLITE_TRANSIENT, serialized mode, and finalize via defer; server threads share only App (gpa + serialized store) and the per-request arena; ui.zig wasm exports (echoExport static buffer) are simple, but externs are unwrapped @intCast and sweep/solve use globals (clock_ns, g_io).",
+"tests":"Only three Zig tests (engine.zig cantilever F01 and unstable beam, model.zig generator sizes); no tests for RCM, skyline factor, condensation, springs, releases, store or JSON round trip; correctness rests on the harness fixtures.",
+"change_resilience":"A new load type touches model, validation, solver rhs assembly, reactions/residual, canvas drawing, report/model writers and UI; about 7 places, with the nodal/UDL handling repeated three times in solve() rather than behind one load-vector function."},
+"load_type_touch_points":[
+"stacks/zig/src/model.zig:LoadCase (struct)","stacks/zig/src/model.zig:write (JSON writer)","stacks/zig/src/model.zig:generate",
+"stacks/zig/src/solver.zig:buildGeometry (reference validation, ~line 264)","stacks/zig/src/solver.zig:solve (rhs assembly ~855)","stacks/zig/src/solver.zig:solve (reactions and equilibrium residual ~914-934)","stacks/zig/src/solver.zig:station/maxAbsM (member diagram if member-based)",
+"stacks/zig/src/report.zig:writeResults (if output changes)","stacks/zig/src/canvas.zig:draw (load glyphs ~282)","stacks/zig/src/sweep.zig:run (if loads are scaled)"],
+"generated_excluded":["stacks/zig/zig-pkg/","stacks/zig/.zig-cache/","stacks/zig/.zig-global/","stacks/zig/zig-out/","SQLite amalgamation (fetched dependency, not in source tree reviewed)"],
+"notable":[
+"Strength: solver is pure Zig with no OS deps and an injectable clock hook (solver.clock_ns), so the same engine serves CLI, server and wasm.",
+"Strength: single ErrorInfo/Code type maps cleanly to exit code 2, HTTP 422 and UI text; allocation counting wrapper (counting.zig) for stats.",
+"Risk: solve() in solver.zig is one ~230-line function; nodal/UDL loop logic is duplicated for rhs, reactions and residual.",
+"Risk: only three unit tests; solver internals (RCM, skyline LDL, condense) are untested beyond end-to-end harness fixtures.",
+"Minor: server.respondError interpolates detail into JSON unescaped (currently only static strings); /solve returns 400 for malformed JSON while model errors return 422."]}

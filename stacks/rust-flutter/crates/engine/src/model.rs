@@ -45,6 +45,43 @@ pub struct Member {
     pub j: i64,
     pub material: String,
     pub section: String,
+    #[serde(default)]
+    pub release: Option<Release>,
+}
+
+/// End releases (SPEC 4.7): lists of released components per end; only `mz` is supported.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct Release {
+    #[serde(default)]
+    pub i: Vec<String>,
+    #[serde(default)]
+    pub j: Vec<String>,
+}
+
+impl Member {
+    /// `[i end, j end]` rotational release flags.
+    pub fn mz_released(&self) -> [bool; 2] {
+        let has = |v: &Vec<String>| v.iter().any(|s| s == "mz");
+        self.release.as_ref().map_or([false; 2], |r| [has(&r.i), has(&r.j)])
+    }
+}
+
+/// Spring support (SPEC 4.7): stiffness added to the free DOF's diagonal.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct Spring {
+    pub node: i64,
+    #[serde(default)]
+    pub kx: Option<f64>,
+    #[serde(default)]
+    pub ky: Option<f64>,
+    #[serde(default)]
+    pub kr: Option<f64>,
+}
+
+impl Spring {
+    pub fn stiffness(&self) -> [Option<f64>; 3] {
+        [self.kx, self.ky, self.kr]
+    }
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -85,6 +122,8 @@ pub struct Model {
     pub supports: Vec<Support>,
     #[serde(default)]
     pub members: Vec<Member>,
+    #[serde(default)]
+    pub springs: Vec<Spring>,
     #[serde(default)]
     pub load_cases: Vec<LoadCase>,
 }

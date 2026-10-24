@@ -21,6 +21,7 @@ fn beam(n: usize, len: f64, supports: &[(i64, bool, bool, bool)]) -> Model {
             j: k as i64 + 2,
             material: "steel".into(),
             section: "BM".into(),
+            release: None,
         });
     }
     for &(node, ux, uy, rz) in supports {

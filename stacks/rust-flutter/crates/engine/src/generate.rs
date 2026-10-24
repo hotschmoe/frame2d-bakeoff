@@ -18,6 +18,7 @@ pub fn generate(bays: usize, stories: usize) -> Model {
         j,
         material: "steel".into(),
         section: section.into(),
+        release: None,
     };
     let mut members = Vec::with_capacity(bays * stories + (bays + 1) * stories);
     let mut next_id = 1i64;
@@ -52,6 +53,7 @@ pub fn generate(bays: usize, stories: usize) -> Model {
             .map(|b| Support { node: node_id(b, 0), ux: true, uy: true, rz: true })
             .collect(),
         members,
+        springs: vec![],
         load_cases: vec![
             LoadCase { id: "D".into(), nodal: vec![], member_udl: udl(-20000.0) },
             LoadCase { id: "L".into(), nodal: vec![], member_udl: udl(-10000.0) },

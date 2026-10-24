@@ -23,6 +23,10 @@ pub struct Topology {
     pub member_material: Vec<usize>,
     pub member_section: Vec<usize>,
     pub free_dofs: usize,
+    /// Per node: its rotation was restrained automatically because releases left it with no stiffness.
+    pub auto_rz: Vec<bool>,
+    /// Rotational release flags `[i, j]` per model member.
+    pub member_release: Vec<[bool; 2]>,
     /// Column heights (diagonal excluded) and start offsets into skyline storage (diagonal included).
     pub height: Vec<usize>,
     pub col_start: Vec<usize>,
@@ -95,7 +99,44 @@ impl Topology {
             }
         }
 
+        for sp in &model.springs {
+            let Some(&k) = node_index.get(&sp.node) else {
+                return Err(ModelError::new("invalid_ref", format!("spring at missing node {}", sp.node)));
+            };
+            for (c, name) in ["kx", "ky", "kr"].iter().enumerate() {
+                if sp.stiffness()[c].is_some() && restrained[k][c] {
+                    return Err(ModelError::new(
+                        "support_conflict",
+                        format!("node {} {} is both restrained and sprung", sp.node, name),
+                    ));
+                }
+            }
+        }
+
         check_lengths(model, &member_nodes)?;
+
+        // Auto-restraint (SPEC 4.7): a free rotation that only released member ends touch has no stiffness.
+        let member_release: Vec<[bool; 2]> = model.members.iter().map(|m| m.mz_released()).collect();
+        let mut stiff_rz = vec![false; model.nodes.len()];
+        let mut touched = vec![false; model.nodes.len()];
+        for (m, &(i, j)) in member_nodes.iter().enumerate() {
+            for (node, rel) in [(i, member_release[m][0]), (j, member_release[m][1])] {
+                touched[node] = true;
+                stiff_rz[node] |= !rel;
+            }
+        }
+        for sp in &model.springs {
+            if sp.kr.is_some_and(|k| k > 0.0) {
+                stiff_rz[node_index[&sp.node]] = true;
+            }
+        }
+        let mut auto_rz = vec![false; model.nodes.len()];
+        for k in 0..model.nodes.len() {
+            if !restrained[k][2] && touched[k] && !stiff_rz[k] {
+                restrained[k][2] = true;
+                auto_rz[k] = true;
+            }
+        }
 
         if restrained.iter().all(|r| r.iter().all(|&b| b)) {
             return Err(ModelError::new("no_free_dofs", "every DOF is restrained"));
@@ -139,6 +180,8 @@ impl Topology {
             member_material,
             member_section,
             free_dofs,
+            auto_rz,
+            member_release,
             height,
             col_start,
             profile_before,

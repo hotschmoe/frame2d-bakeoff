@@ -108,6 +108,8 @@ struct Element {
     length: f64,
     c: f64,
     s: f64,
+    /// Local DOFs condensed out (mz releases at the i and j ends).
+    released: [bool; 6],
 }
 
 type Mat6 = [[f64; 6]; 6];
@@ -125,6 +127,42 @@ fn local_stiffness(el: &Element) -> Mat6 {
         [0.0, -b12, -b6l, 0.0, b12, -b6l],
         [0.0, b6l, b2l2, 0.0, -b6l, b4l2],
     ]
+}
+
+/// Static condensation of the released local DOFs out of `k` and `f` (SPEC 4.7): released rows and columns
+/// become zero, so the released end moment is exactly zero.
+fn condense(k: &mut Mat6, f: &mut [f64; 6], released: &[bool; 6]) {
+    for r in 0..6 {
+        if !released[r] {
+            continue;
+        }
+        let piv = k[r][r];
+        for a in 0..6 {
+            if a == r || released[a] && a < r {
+                continue;
+            }
+            let fac = k[a][r] / piv;
+            for b in 0..6 {
+                k[a][b] -= fac * k[r][b];
+            }
+            f[a] -= fac * f[r];
+        }
+        for a in 0..6 {
+            k[a][r] = 0.0;
+            k[r][a] = 0.0;
+        }
+        f[r] = 0.0;
+    }
+}
+
+/// Local stiffness and fixed-end forces for UDL `w`, with releases condensed.
+fn element_local(el: &Element, w: f64) -> (Mat6, [f64; 6]) {
+    let mut k = local_stiffness(el);
+    let mut f = fixed_end_forces(w, el.length);
+    if el.released.iter().any(|&r| r) {
+        condense(&mut k, &mut f, &el.released);
+    }
+    (k, f)
 }
 
 /// Global-to-local rotation of the six member DOFs.
@@ -205,6 +243,10 @@ pub fn analyze(model: &Model, topo: &Topology, select: Option<&[usize]>) -> Resu
                 length,
                 c: dx / length,
                 s: dy / length,
+                released: {
+                    let r = topo.member_release[k];
+                    [false, false, r[0], false, false, r[1]]
+                },
             }
         })
         .collect();
@@ -213,7 +255,7 @@ pub fn analyze(model: &Model, topo: &Topology, select: Option<&[usize]>) -> Resu
     for (k, el) in elements.iter().enumerate() {
         let dofs = topo.member_dofs(k);
         let t = rotation(el.c, el.s);
-        let kg = mat_mul(&transpose(&t), &mat_mul(&local_stiffness(el), &t));
+        let kg = mat_mul(&transpose(&t), &mat_mul(&element_local(el, 0.0).0, &t));
         for a in 0..6 {
             if dofs[a] < 0 {
                 continue;
@@ -224,6 +266,15 @@ pub fn analyze(model: &Model, topo: &Topology, select: Option<&[usize]>) -> Resu
                 }
                 let (da, db) = (dofs[a] as usize, dofs[b] as usize);
                 sky.add(da.min(db), da.max(db), kg[a][b]);
+            }
+        }
+    }
+    for sp in &model.springs {
+        let n = topo.node_index[&sp.node];
+        for (c, k) in sp.stiffness().iter().enumerate() {
+            let d = topo.dof[n * 3 + c];
+            if let (Some(k), true) = (k, d >= 0) {
+                sky.add(d as usize, d as usize, *k);
             }
         }
     }
@@ -251,7 +302,12 @@ pub fn analyze(model: &Model, topo: &Topology, select: Option<&[usize]>) -> Resu
         member_ids: topo.member_sorted.iter().map(|&k| model.members[k].id).collect(),
         member_length: topo.member_sorted.iter().map(|&k| elements[k].length).collect(),
         cases,
-        warnings: Vec::new(),
+        warnings: topo
+            .node_sorted
+            .iter()
+            .filter(|&&k| topo.auto_rz[k])
+            .map(|&k| Warning { warning: "auto_restrained".into(), node: model.nodes[k].id, dof: "rz".into() })
+            .collect(),
         stats: Stats {
             nodes: model.nodes.len(),
             members: model.members.len(),
@@ -297,7 +353,7 @@ fn solve_case(model: &Model, topo: &Topology, elements: &[Element], sky: &Skylin
         if w == 0.0 {
             continue;
         }
-        let f = fixed_end_forces(w, el.length);
+        let f = element_local(el, w).1;
         let global = [
             el.c * f[0] - el.s * f[1],
             el.s * f[0] + el.c * f[1],
@@ -340,8 +396,8 @@ fn solve_case(model: &Model, topo: &Topology, elements: &[Element], sky: &Skylin
         let ug = [node_u(ni, 0), node_u(ni, 1), node_u(ni, 2), node_u(nj, 0), node_u(nj, 1), node_u(nj, 2)];
         let t = rotation(el.c, el.s);
         let ul = mat_vec(&t, &ug);
-        let mut ef = mat_vec(&local_stiffness(el), &ul);
-        let f = fixed_end_forces(w_of[k], el.length);
+        let (kl, f) = element_local(el, w_of[k]);
+        let mut ef = mat_vec(&kl, &ul);
         for (e, fx) in ef.iter_mut().zip(f.iter()) {
             *e += fx;
         }
@@ -360,7 +416,7 @@ fn solve_case(model: &Model, topo: &Topology, elements: &[Element], sky: &Skylin
     let mut reactions = Vec::new();
     let (mut sx, mut sy, mut mag) = (0.0f64, 0.0f64, 1.0f64);
     for &n in &topo.node_sorted {
-        if (0..3).any(|c| topo.dof[n * 3 + c] < 0) {
+        if (0..3).any(|c| topo.dof[n * 3 + c] < 0 && !(c == 2 && topo.auto_rz[n])) {
             let comp = |c: usize| {
                 let slot = n * 3 + c;
                 if topo.dof[slot] < 0 {
@@ -374,6 +430,17 @@ fn solve_case(model: &Model, topo: &Topology, elements: &[Element], sky: &Skylin
             sy += r.fy;
             mag += r.fx.abs() + r.fy.abs();
             reactions.push(r);
+        }
+    }
+    for sp in &model.springs {
+        // The spring pulls back on the structure with -k u.
+        let n = topo.node_index[&sp.node];
+        for (c, k) in sp.stiffness().iter().enumerate().take(2) {
+            if let Some(k) = k {
+                let f = -k * node_u(n, c);
+                if c == 0 { sx += f } else { sy += f }
+                mag += f.abs();
+            }
         }
     }
     for n in 0..model.nodes.len() {

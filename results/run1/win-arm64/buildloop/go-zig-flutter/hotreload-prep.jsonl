@@ -1,0 +1,1 @@
+{"wall_s": 30.880415299994638, "cpu_s": 18.578125, "parallelism": 0.6016151278899162, "mem_peak_mb": 448.45703125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 7, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "hotreload-prep"}

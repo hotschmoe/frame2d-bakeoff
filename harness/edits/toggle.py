@@ -17,7 +17,7 @@ else:
 marker = f"BENCH-EDIT:{name}"
 hits = []
 for p in root.rglob("*"):
-    if p.is_file() and not (set(p.relative_to(root).parts) & SKIP):
+    if p.is_file() and p.suffix != ".md" and not (set(p.relative_to(root).parts) & SKIP):  # docs (AGENT_LOG.md) may mention the marker
         try:
             text = p.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):

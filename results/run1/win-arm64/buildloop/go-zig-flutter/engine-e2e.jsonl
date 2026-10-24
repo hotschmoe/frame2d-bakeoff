@@ -1,0 +1,3 @@
+{"rep": 0, "ok": true, "build_wall_s": 28.798893099999987, "build_cpu_s": 18.484375, "launch_to_first_frame_s": 2.6888969000137877, "first_frame_ms_reported": 2677.1759, "edit_to_first_frame_s": 31.487790000013774}
+{"rep": 1, "ok": true, "build_wall_s": 28.87584279998555, "build_cpu_s": 18.3125, "launch_to_first_frame_s": 2.718587299983483, "first_frame_ms_reported": 2706.6484, "edit_to_first_frame_s": 31.59443009996903}
+{"rep": 2, "ok": true, "build_wall_s": 28.790032999997493, "build_cpu_s": 18.4375, "launch_to_first_frame_s": 2.7408696000056807, "first_frame_ms_reported": 2727.984, "edit_to_first_frame_s": 31.530902600003174}

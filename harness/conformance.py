@@ -47,6 +47,9 @@ def native_path(p):
 
 
 G_REL, G_ABS = 1e-8, 1e-10
+# Golden abs floor also scales with the largest |value| of the same field in the golden file (G_SCALE x max),
+# so roundoff-zero entries (e.g. ~1e-10 N.m moments in a model whose moments reach ~1e5) do not fail on noise.
+G_SCALE = 1e-12
 GOLDEN = ["gen_10_10", "gen_50_50"]
 VOLATILE_STATS = {"assemble_ms", "factor_ms", "solve_ms", "alloc_count", "alloc_bytes", "peak_heap_bytes"}
 
@@ -129,8 +132,24 @@ def check_fixture(binary, path):
     return problems
 
 
-def diff_golden(got, want, path=""):
+def field_scales(x, key=None, out=None):
+    """Max |value| per leaf field name (the nearest dict key: ux, M, end_forces, ...) over a golden file."""
+    out = {} if out is None else out
+    if isinstance(x, dict):
+        for k, v in x.items():
+            field_scales(v, k, out)
+    elif isinstance(x, list):
+        for v in x:
+            field_scales(v, key, out)
+    elif isinstance(x, (int, float)) and not isinstance(x, bool):
+        out[key] = max(out.get(key, 0.0), abs(x))
+    return out
+
+
+def diff_golden(got, want, path="", key=None, scales=None):
     """Recursive compare at golden tolerance; profile_* must match exactly, timing/alloc stats are ignored."""
+    if scales is None:
+        scales = field_scales(want)
     if isinstance(want, dict):
         for k, v in want.items():
             if k in VOLATILE_STATS:
@@ -138,16 +157,17 @@ def diff_golden(got, want, path=""):
             if k not in got:
                 yield f"{path}/{k}: missing"
             else:
-                yield from diff_golden(got[k], v, f"{path}/{k}")
+                yield from diff_golden(got[k], v, f"{path}/{k}", k, scales)
     elif isinstance(want, list):
         if len(got) != len(want):
             yield f"{path}: len {len(got)} != {len(want)}"
         else:
             for i, (g, w) in enumerate(zip(got, want)):
-                yield from diff_golden(g, w, f"{path}/{i}")
+                yield from diff_golden(g, w, f"{path}/{i}", key, scales)
     elif isinstance(want, (int, float)) and not isinstance(want, bool):
         exact = path.rsplit("/", 1)[-1].startswith("profile_")
-        if (got != want) if exact else not close(got, want, G_REL, G_ABS):
+        floor = max(G_ABS, G_SCALE * scales.get(key, 0.0))
+        if (got != want) if exact else not close(got, want, G_REL, floor):
             yield f"{path}: got {got!r}, want {want!r}"
     elif got != want:
         yield f"{path}: {got!r} != {want!r}"

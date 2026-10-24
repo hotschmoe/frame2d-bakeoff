@@ -1,0 +1,2 @@
+{"wall_s": 21.63464600002044, "cpu_s": 16.484375, "parallelism": 0.761943366209201, "mem_peak_mb": 701.45703125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 15, "exit_code": 0, "method": "psutil", "stack": "rust-flutter", "label": "build_dev"}
+{"wall_s": 41.94458519999171, "cpu_s": 44.09375, "parallelism": 1.0512381941497593, "mem_peak_mb": 1254.57421875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 23, "exit_code": 0, "method": "psutil", "stack": "rust-flutter", "label": "build_dev"}

@@ -1,0 +1,7 @@
+target/
+*.db
+*.db-shm
+*.db-wal
+app/web/engine/
+app/.dart_tool/
+app/build/

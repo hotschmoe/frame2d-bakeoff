@@ -1,0 +1,1 @@
+{"wall_s": 42.00475439999718, "cpu_s": 20.078125, "parallelism": 0.47799648603590805, "mem_peak_mb": 1570.34375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 25, "exit_code": 0, "method": "psutil", "stack": "rust-flutter", "label": "build_desktop_release"}

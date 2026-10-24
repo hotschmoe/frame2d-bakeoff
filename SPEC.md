@@ -204,7 +204,7 @@ The three allocation fields are required in the **CLI binary** only (`frame2d so
 
 Other front ends may report them as `null`.
 
-- Arrays are sorted by node or member id.
+- Arrays are sorted by node or member id. `displacements` lists every node; `reactions` lists one entry per node with at least one restrained DOF.
 - Numbers are printed with round-trip precision (shortest representation that round-trips an f64).
 - `profile_before` and `profile_after` are the skyline profile (sum of column heights) under original id order and under RCM order. Both must match the golden files exactly.
 
@@ -817,3 +817,38 @@ Write these down before running, then check them against the results. Starting h
 | `zig-flutter` | cleanest FFI, tiny engine library | Zig server; WASM interop glue on web |
 | `go-flutter` | ops simplicity | Go → WASM from Flutter web (size and interop); c-shared on desktop |
 | `go-zig-flutter` | best ops + hot-path speed; `zig cc` cross-compile | cgo call overhead on chatty paths; three toolchains |
+
+---
+
+## 15. Machines, runs and tooling decisions
+
+### 15.1 Run identity
+
+Every result set is tagged with a **run id** and a **machine id**, and lives under `results/<run-id>/<machine-id>/`. A run id is the toolchain generation, e.g. `run1`. The exact versions of each toolchain for a run are frozen in `results/<run-id>/versions.md` before P1 starts (§2.2), and each machine records its own `results/<run-id>/<machine-id>/env.md` (§12 template, plus the fields below). Numbers from different machines are never mixed in one comparison table; cross-machine tables compare each stack's ratio to a baseline stack on the same machine.
+
+### 15.2 Machine matrix
+
+| Machine id | OS / arch | Role | Notes |
+|------------|-----------|------|-------|
+| `win-arm64` | Windows 11, ARM64 (Snapdragon laptop) | **run 1 dev + test machine** | No cgroups/PSI/systemd: §9.4–9.7 are Linux-only (see 15.4) |
+| `linux-aarch64` | Linux, aarch64 | planned | Full §9 accounting; also the §8.7 cross-compile target |
+| `win-x64` | Windows 11, x86_64 | planned | |
+| `linux-x64` | Linux, x86_64 | planned | Full §9 accounting |
+
+Each `env.md` records: CPU model, physical cores / logical threads, RAM, **GPU model and driver version**, disk model and type, OS build (and kernel, on Linux), and power mode (plugged in, performance profile; laptops throttle).
+
+### 15.3 GPU and browser
+
+The GPU matters: egui (wgpu), Gio (GPU rendering), dvui (backend dependent), Flutter (Impeller/Skia) and the browser canvas all draw on it, so `drag`/`render` frame times depend on it. Record the GPU and driver per machine, and state in each desktop result which renderer was active (hardware or software).
+
+Web measurements use **Chromium via Playwright** on every machine, so the browser build is identical wherever Playwright publishes one. Record: Playwright version, Chromium build number (`browser.version()`), launch flags, and the GPU/WebGL/WebGPU status from `chrome://gpu` (headless Chromium can silently fall back to software rendering). Use the same flags on every machine. Only if a Playwright Chromium isn't published for a platform, use the system Chrome and record its build number.
+
+### 15.4 Windows and the Linux-only sections
+
+§9.4 (per-build cgroups), §9.6 (contention, PSI) and §9.7 (whole-run accounting) need cgroup v2, systemd and `/proc/pressure`. On Windows machines these are skipped, except that `measure.sh` may report `wall_s` and peak working set via a Job Object where practical. The Windows results cover build wall times, runtime, binary size and code size; the machine-cost category is scored on Linux machines only.
+
+### 15.5 Browser tooling for agents
+
+- **Benchmarks and conformance in the browser:** Playwright + Chromium (pinned, headless). It's cross-platform, reads `console.log` `BENCH` lines, and pins the browser build.
+- **Interactive diagnostics while building:** any browser tool the agent has (a built-in browser pane or Claude in Chrome) is fine for looking at the UI, but its numbers never go in results.
+- **Not used:** Lightpanda and other non-rendering headless browsers. There's no canvas, WebGL or real frame pacing, so `drag`/`render` can't be measured.

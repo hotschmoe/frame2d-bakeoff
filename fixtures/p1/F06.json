@@ -1,0 +1,90 @@
+{
+ "materials": [
+  {
+   "id": "steel",
+   "E": 200000000000.0
+  }
+ ],
+ "sections": [
+  {
+   "id": "BM",
+   "A": 0.01,
+   "I": 8e-05
+  }
+ ],
+ "nodes": [
+  {
+   "id": 1,
+   "x": 0,
+   "y": 0
+  },
+  {
+   "id": 2,
+   "x": 2.5,
+   "y": 0
+  },
+  {
+   "id": 3,
+   "x": 5.0,
+   "y": 0
+  }
+ ],
+ "supports": [
+  {
+   "node": 1,
+   "ux": true,
+   "uy": true,
+   "rz": true
+  },
+  {
+   "node": 3,
+   "ux": true,
+   "uy": true,
+   "rz": true
+  }
+ ],
+ "members": [
+  {
+   "id": 1,
+   "i": 1,
+   "j": 2,
+   "material": "steel",
+   "section": "BM"
+  },
+  {
+   "id": 2,
+   "i": 2,
+   "j": 3,
+   "material": "steel",
+   "section": "BM"
+  }
+ ],
+ "load_cases": [
+  {
+   "id": "D",
+   "nodal": [
+    {
+     "node": 2,
+     "fx": 0,
+     "fy": -10000.0,
+     "mz": 0
+    }
+   ],
+   "member_udl": []
+  }
+ ],
+ "expect": [
+  {
+   "path": "/load_cases/0/displacements/1/uy",
+   "value": -0.00040690104166666663
+  },
+  {
+   "path": "/load_cases/0/reactions/0/mz",
+   "value": 6250.0
+  },
+  {
+   "path": "/load_cases/0/members/0/stations/10/M",
+   "value": 6250.0
+  }
+ ]
+}

@@ -1,0 +1,80 @@
+{
+ "materials": [
+  {
+   "id": "steel",
+   "E": 200000000000.0
+  }
+ ],
+ "sections": [
+  {
+   "id": "BM",
+   "A": 0.01,
+   "I": 8e-05
+  }
+ ],
+ "nodes": [
+  {
+   "id": 1,
+   "x": 0,
+   "y": 0
+  },
+  {
+   "id": 2,
+   "x": 4,
+   "y": 3
+  }
+ ],
+ "supports": [
+  {
+   "node": 1,
+   "ux": true,
+   "uy": true,
+   "rz": true
+  }
+ ],
+ "members": [
+  {
+   "id": 1,
+   "i": 1,
+   "j": 2,
+   "material": "steel",
+   "section": "BM"
+  }
+ ],
+ "load_cases": [
+  {
+   "id": "D",
+   "nodal": [
+    {
+     "node": 2,
+     "fx": 0,
+     "fy": -10000.0,
+     "mz": 0
+    }
+   ],
+   "member_udl": []
+  }
+ ],
+ "expect": [
+  {
+   "path": "/load_cases/0/displacements/1/ux",
+   "value": 0.012487999999999997
+  },
+  {
+   "path": "/load_cases/0/displacements/1/uy",
+   "value": -0.01667566666666666
+  },
+  {
+   "path": "/load_cases/0/displacements/1/rz",
+   "value": -0.0062499999999999995
+  },
+  {
+   "path": "/load_cases/0/reactions/0/fy",
+   "value": 10000.0
+  },
+  {
+   "path": "/load_cases/0/reactions/0/mz",
+   "value": 40000.0
+  }
+ ]
+}

@@ -1,0 +1,189 @@
+{
+ "materials": [
+  {
+   "id": "steel",
+   "E": 200000000000.0
+  }
+ ],
+ "sections": [
+  {
+   "id": "BM",
+   "A": 0.01,
+   "I": 8e-05
+  }
+ ],
+ "nodes": [
+  {
+   "id": 1,
+   "x": 0,
+   "y": 0
+  },
+  {
+   "id": 2,
+   "x": 2.5,
+   "y": 0
+  },
+  {
+   "id": 3,
+   "x": 5.0,
+   "y": 0
+  }
+ ],
+ "supports": [
+  {
+   "node": 1,
+   "ux": true,
+   "uy": true,
+   "rz": true
+  },
+  {
+   "node": 3,
+   "ux": true,
+   "uy": true,
+   "rz": true
+  }
+ ],
+ "members": [
+  {
+   "id": 1,
+   "i": 1,
+   "j": 2,
+   "material": "steel",
+   "section": "BM"
+  },
+  {
+   "id": 2,
+   "i": 2,
+   "j": 3,
+   "material": "steel",
+   "section": "BM"
+  }
+ ],
+ "load_cases": [
+  {
+   "id": "D",
+   "nodal": [],
+   "member_udl": [
+    {
+     "member": 1,
+     "w": -5000.0
+    },
+    {
+     "member": 2,
+     "w": -5000.0
+    }
+   ]
+  },
+  {
+   "id": "P",
+   "nodal": [
+    {
+     "node": 2,
+     "fx": 0,
+     "fy": -10000.0,
+     "mz": 0
+    }
+   ],
+   "member_udl": []
+  },
+  {
+   "id": "Z",
+   "nodal": [],
+   "member_udl": []
+  }
+ ],
+ "expect": [
+  {
+   "path": "/load_cases/0/displacements/1/uy",
+   "value": -0.0005086263020833333
+  },
+  {
+   "path": "/load_cases/0/reactions/0/mz",
+   "value": 10416.666666666666
+  },
+  {
+   "path": "/load_cases/0/reactions/1/mz",
+   "value": -10416.666666666666
+  },
+  {
+   "path": "/load_cases/0/members/0/stations/0/M",
+   "value": -10416.666666666666
+  },
+  {
+   "path": "/load_cases/0/members/0/stations/10/M",
+   "value": 5208.333333333333
+  },
+  {
+   "path": "/load_cases/1/displacements/1/uy",
+   "value": -0.00040690104166666663
+  },
+  {
+   "path": "/load_cases/1/reactions/0/mz",
+   "value": 6250.0
+  },
+  {
+   "path": "/load_cases/1/members/0/stations/10/M",
+   "value": 6250.0
+  },
+  {
+   "path": "/load_cases/2/displacements/0/ux",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/0/uy",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/0/rz",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/1/ux",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/1/uy",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/1/rz",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/2/ux",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/2/uy",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/displacements/2/rz",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/reactions/0/fx",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/reactions/0/fy",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/reactions/0/mz",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/reactions/1/fx",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/reactions/1/fy",
+   "value": 0.0
+  },
+  {
+   "path": "/load_cases/2/reactions/1/mz",
+   "value": 0.0
+  }
+ ]
+}

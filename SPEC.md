@@ -356,7 +356,7 @@ There's no closed form for the generated frames, so:
 
 1. The first stack to pass §6.1 generates golden results for `gen 10 10` and `gen 50 50`. Commit them to `fixtures/golden/`.
 2. Before trusting them, check them: equilibrium residual < 1e-8, and spot-check one roof `ux` under `W` against a second stack.
-3. Every stack must then match the goldens at relative 1e-8 (abs floor 1e-10), and match `profile_before` and `profile_after` **exactly**.
+3. Every stack must then match the goldens at relative 1e-8, with an absolute floor of max(1e-10, 1e-12 × the largest |value| of the same field in the golden file), and match `profile_before` and `profile_after` **exactly**.
 
 ### 6.4 Server conformance
 

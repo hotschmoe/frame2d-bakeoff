@@ -1,0 +1,843 @@
+{
+  "stack": "rust",
+  "label": "default",
+  "root": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\rust\\webdist\\default",
+  "runs": 3,
+  "modes": [
+    "ready",
+    "startup",
+    "drag",
+    "render",
+    "boundary"
+  ],
+  "date": "2026-10-24T18:42:33.522Z",
+  "server": {
+    "kind": "node static_server (harness/runtime/web_common.mjs)",
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "headers": {
+      "Content-Encoding": "br (precompressed)",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp"
+    },
+    "cache": "Cache-Control: no-store + CDP Network.setCacheDisabled + fresh browser per run + service workers blocked"
+  },
+  "manifest": {
+    "total_raw": 4360553,
+    "total_br": 1220877,
+    "files": [
+      {
+        "path": "frame2d.js",
+        "raw": 87063,
+        "br": 10606,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "frame2d_bg.wasm",
+        "raw": 4272215,
+        "br": 1209733,
+        "type": "application/wasm"
+      },
+      {
+        "path": "index.html",
+        "raw": 1275,
+        "br": 538,
+        "type": "text/html; charset=utf-8"
+      }
+    ]
+  },
+  "env": {
+    "browser_version": "156.0.8078.4",
+    "playwright_version": "1.64.1",
+    "launch_args": [
+      "--ignore-gpu-blocklist",
+      "--enable-unsafe-swiftshader",
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows"
+    ],
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "node": "v24.22.1",
+    "platform": "win32/arm64",
+    "gl": {
+      "webgl2": true,
+      "webgl2_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl2_vendor": "Google Inc. (Google)",
+      "webgl": true,
+      "webgl_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl_vendor": "Google Inc. (Google)",
+      "webgpu": false,
+      "crossOriginIsolated": true,
+      "hardwareConcurrency": 18,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+    },
+    "software_rendering_suspected": true,
+    "chrome_gpu_error": "Error: page.goto: net::ERR_FAILED at chrome://gpu"
+  },
+  "modes_out": {
+    "ready": {
+      "ok_runs": 3,
+      "median": {
+        "tti_ms": 374.575
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 1220877,
+      "uncompressed_bytes_median": 4360553,
+      "wire_bytes_cdp_median": 1221967,
+      "nav_to_bench_wall_ms_median": 377,
+      "runs": [
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 398.815
+          },
+          "nav_to_bench_wall_ms": 403,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x2f9400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x2f9400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x2f9400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 370.685
+          },
+          "nav_to_bench_wall_ms": 374,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x440c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x440c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x440c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 374.575
+          },
+          "nav_to_bench_wall_ms": 377,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x734400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x734400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x734400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 604.365
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 1220877,
+      "uncompressed_bytes_median": 4360553,
+      "wire_bytes_cdp_median": 1221967,
+      "nav_to_bench_wall_ms_median": 608,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 607.985
+          },
+          "nav_to_bench_wall_ms": 611,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x7dac00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x7dac00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x7dac00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 603.325
+          },
+          "nav_to_bench_wall_ms": 606,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x4c400434200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4c400434200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4c400434200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 604.365
+          },
+          "nav_to_bench_wall_ms": 608,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x3a6400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x3a6400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x3a6400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 84.25,
+        "p95": 92.835,
+        "p99": 97.76,
+        "max": 384.02,
+        "solve_p50": 28.065,
+        "lag_max": 0,
+        "rss_mb": 22.8
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 1220877,
+      "uncompressed_bytes_median": 4360553,
+      "wire_bytes_cdp_median": 1221967,
+      "nav_to_bench_wall_ms_median": 51063,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 84.25,
+            "p95": 89.835,
+            "p99": 95.56,
+            "max": 384.02,
+            "solve_p50": 28.5,
+            "lag_max": 0,
+            "rss_mb": 22.8
+          },
+          "nav_to_bench_wall_ms": 51071,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x34d400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x34d400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x34d400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x34d400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 78.03,
+            "p95": 101.82,
+            "p99": 120.83,
+            "max": 393.555,
+            "solve_p50": 20.825,
+            "lag_max": 0,
+            "rss_mb": 22.8
+          },
+          "nav_to_bench_wall_ms": 50314,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0xb400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0xb400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0xb400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0xb400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 86.16,
+            "p95": 92.835,
+            "p99": 97.76,
+            "max": 381.78,
+            "solve_p50": 28.065,
+            "lag_max": 0,
+            "rss_mb": 22.8
+          },
+          "nav_to_bench_wall_ms": 51063,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x89c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x89c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x89c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x89c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 251.675,
+        "p95": 600.335,
+        "p99": 641.76,
+        "max": 737.87,
+        "solve_p50": 11156.875,
+        "lag_max": 0,
+        "rss_mb": 506.9
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 1220877,
+      "uncompressed_bytes_median": 4360553,
+      "wire_bytes_cdp_median": 1221967,
+      "nav_to_bench_wall_ms_median": 182312,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 253.445,
+            "p95": 607.755,
+            "p99": 667.83,
+            "max": 752.78,
+            "solve_p50": 10812.685,
+            "lag_max": 0,
+            "rss_mb": 506.9
+          },
+          "nav_to_bench_wall_ms": 184510,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x7b3c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x7b3c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x7b3c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x7b3c00430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 251.675,
+            "p95": 600.335,
+            "p99": 641.76,
+            "max": 710.735,
+            "solve_p50": 11156.875,
+            "lag_max": 0,
+            "rss_mb": 506.9
+          },
+          "nav_to_bench_wall_ms": 182312,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x575400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x575400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x575400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x575400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 249.07,
+            "p95": 593.205,
+            "p99": 640.725,
+            "max": 737.87,
+            "solve_p50": 11254.58,
+            "lag_max": 0,
+            "rss_mb": 506.9
+          },
+          "nav_to_bench_wall_ms": 181708,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "[.WebGL-0x11400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x11400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x11400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x11400430200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 12.375,
+        "transfer_us": 53.99000000953674
+      },
+      "mechanism": "wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)",
+      "transferred_body_bytes_median": 1220877,
+      "uncompressed_bytes_median": 4360553,
+      "wire_bytes_cdp_median": 1221967,
+      "nav_to_bench_wall_ms_median": 164,
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.58500000834465,
+            "transfer_us": 53.99000000953674,
+            "mechanism": "wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"
+          },
+          "nav_to_bench_wall_ms": 170,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.305000007152557,
+            "transfer_us": 51.76500001549721,
+            "mechanism": "wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"
+          },
+          "nav_to_bench_wall_ms": 163,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.375,
+            "transfer_us": 54.53999999165535,
+            "mechanism": "wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"
+          },
+          "nav_to_bench_wall_ms": 164,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [],
+          "transfer": {
+            "transferred_body_bytes": 1220877,
+            "uncompressed_bytes": 4360553,
+            "wire_bytes_cdp": 1221967,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 538,
+                "raw": 1275,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d.js",
+                "sent": 10606,
+                "raw": 87063,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_bg.wasm",
+                "sent": 1209733,
+                "raw": 4272215,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "transferred_br_bytes": 1220877,
+    "uncompressed_bytes": 4360553,
+    "tti_ms": 374.575,
+    "startup_first_frame_ms": 604.365,
+    "drag": {
+      "p50": 84.25,
+      "p95": 92.835,
+      "p99": 97.76,
+      "max": 384.02,
+      "lag_max": 0
+    },
+    "render": {
+      "p50": 251.675,
+      "p95": 600.335,
+      "p99": 641.76,
+      "max": 737.87
+    },
+    "solve_p50_ms": 28.065,
+    "boundary": {
+      "noop_ns": 12.375,
+      "transfer_us": 53.99000000953674,
+      "mechanism": "wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"
+    },
+    "directory_total_br_bytes": 1220877,
+    "directory_total_raw_bytes": 4360553
+  },
+  "what": "build_web_release (stack default)",
+  "is_alternate_extra": false
+}

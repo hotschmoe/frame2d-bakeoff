@@ -1,0 +1,1 @@
+{"wall_s": 0.7884052000008523, "cpu_s": 0.578125, "parallelism": 0.7332841031481971, "mem_peak_mb": 325.17578125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 11, "exit_code": 0, "method": "psutil", "stack": "rust", "label": "edit-server-check"}

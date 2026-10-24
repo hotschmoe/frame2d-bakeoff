@@ -19,3 +19,10 @@
 - Sanity: desktop drag p50 8.7 ms, render p50 1.4 ms, startup 64 ms (no throttling). Web: tti 175-205 ms, drag p50 ~39 ms, render p50 ~19 ms, no outliers. Server 50x50 oha: 7501 x 200, 0 errors (64 "aborted due to deadline" are in-flight at the end of the 30 s run). Sweeps ok (1000 x 10x10, 200 x 50x50).
 - Buildloop: `harness/buildloop/run.sh zig cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3`. cold ok (2 runs x cli/server/desktop/web/dev, all exit 0), edits ok (all exit 0). hotreload/engine: skipped (not a Flutter stack). No reruns needed.
 - `git status --porcelain stacks` lists model.zig/solver.zig/ui.zig as M after the edits section although `git diff` (worktree and HEAD) is empty: content is identical to HEAD, only eol/stat noise (autocrlf) from the edit scripts' rewrites; not resolved by `git update-index --refresh`.
+
+## rust
+
+- start: Sat Oct 24 11:39 USMST 2026; end: Sat Oct 24 12:02 USMST 2026
+- Runtime: `harness/runtime/run.sh rust build meta loc cli desktop web server binsize --runs 3 --no-alt` (11:39-11:55, rc=0, no reruns). Sanity: desktop drag p50 13.9 ms (matches AGENT_LOG ~14 ms; no throttling), render p50 8.4 ms, startup 149-254 ms (first run 254 ms cold). Web: tti 371-399 ms, drag p50 78-86 ms, render p50 ~251 ms, no outliers apart from drag max ~385 ms. Server 50x50 oha: 8802 x 200, 0 errors (64 aborted-at-deadline in flight). Sweeps ok (1000 x 10x10, 200 x 50x50).
+- Buildloop: `harness/buildloop/run.sh rust cold edits hotreload engine --cold-runs 2 --runs 3 --warmup 1 --engine-runs 3 --hot-reps 3` (11:55-12:01, rc=0). All cold/edit/no-op runs exit 0. hotreload/engine skipped (not a Flutter stack).
+- No harness fixes, no reruns. `git status --porcelain stacks` empty.

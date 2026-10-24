@@ -1,0 +1,231 @@
+{
+  "stack": "rust",
+  "tool": "scc scc version 4.1.0",
+  "metric": "code lines (not blank, not comment)",
+  "totals_code": {
+    "engine": 1075,
+    "ui": 985,
+    "server": 199,
+    "glue": 85,
+    "tests": 0,
+    "other": 0,
+    "total_excluding_generated": 2344
+  },
+  "engine_of_which_cli": 135,
+  "buckets": {
+    "engine": {
+      "files": 4,
+      "code": 940,
+      "comment": 50,
+      "blank": 95
+    },
+    "ui": {
+      "files": 7,
+      "code": 985,
+      "comment": 51,
+      "blank": 95
+    },
+    "server": {
+      "files": 1,
+      "code": 199,
+      "comment": 4,
+      "blank": 25
+    },
+    "glue": {
+      "files": 2,
+      "code": 85,
+      "comment": 11,
+      "blank": 15
+    },
+    "cli": {
+      "files": 2,
+      "code": 135,
+      "comment": 4,
+      "blank": 19
+    },
+    "tests": {
+      "files": 0,
+      "code": 0,
+      "comment": 0,
+      "blank": 0
+    },
+    "generated": {
+      "files": 0,
+      "code": 0,
+      "comment": 0,
+      "blank": 0
+    }
+  },
+  "generated_code_not_in_totals": 0,
+  "loc_exclude_entries": [],
+  "loc_exclude_dropped": {
+    "files": 0,
+    "code": 0,
+    "by_entry": {}
+  },
+  "ignored": {
+    "hard_excluded_files": 0,
+    "data_or_doc_language_files": 2,
+    "languages": [
+      "Dockerfile",
+      "Document",
+      "JSON",
+      "License",
+      "Lockfile",
+      "Markdown",
+      "Plain Text",
+      "Properties",
+      "SVG",
+      "Systemd",
+      "TOML",
+      "YAML",
+      "gitignore"
+    ]
+  },
+  "by_language_code": {
+    "Rust": {
+      "code": 2259,
+      "files": 14
+    },
+    "Shell": {
+      "code": 50,
+      "files": 1
+    },
+    "HTML": {
+      "code": 35,
+      "files": 1
+    }
+  },
+  "unbucketed_files": [],
+  "notes": "cli is part of engine in totals_code. tests bucket is path-based only; inline #[cfg(test)]/test blocks stay in their source bucket.",
+  "files": [
+    {
+      "path": "src/model.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 174,
+      "comment": 4,
+      "blank": 23
+    },
+    {
+      "path": "src/alloc_count.rs",
+      "language": "Rust",
+      "bucket": "cli",
+      "code": 46,
+      "comment": 3,
+      "blank": 8
+    },
+    {
+      "path": "src/generator.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 55,
+      "comment": 2,
+      "blank": 3
+    },
+    {
+      "path": "src/lib.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 6,
+      "comment": 1,
+      "blank": 2
+    },
+    {
+      "path": "src/app/table.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 106,
+      "comment": 2,
+      "blank": 8
+    },
+    {
+      "path": "src/engine.rs",
+      "language": "Rust",
+      "bucket": "engine",
+      "code": 705,
+      "comment": 43,
+      "blank": 67
+    },
+    {
+      "path": "src/app/bench.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 225,
+      "comment": 19,
+      "blank": 24
+    },
+    {
+      "path": "src/app/mod.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 220,
+      "comment": 7,
+      "blank": 19
+    },
+    {
+      "path": "src/app/io.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 51,
+      "comment": 3,
+      "blank": 9
+    },
+    {
+      "path": "src/app/scene.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 91,
+      "comment": 4,
+      "blank": 11
+    },
+    {
+      "path": "src/bin/frame2d-app.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 41,
+      "comment": 3,
+      "blank": 3
+    },
+    {
+      "path": "src/bin/frame2d.rs",
+      "language": "Rust",
+      "bucket": "cli",
+      "code": 89,
+      "comment": 1,
+      "blank": 11
+    },
+    {
+      "path": "src/bin/frame2d-server.rs",
+      "language": "Rust",
+      "bucket": "server",
+      "code": 199,
+      "comment": 4,
+      "blank": 25
+    },
+    {
+      "path": "src/app/canvas.rs",
+      "language": "Rust",
+      "bucket": "ui",
+      "code": 251,
+      "comment": 13,
+      "blank": 21
+    },
+    {
+      "path": "web/index.html",
+      "language": "HTML",
+      "bucket": "glue",
+      "code": 35,
+      "comment": 0,
+      "blank": 2
+    },
+    {
+      "path": "stack.sh",
+      "language": "Shell",
+      "bucket": "glue",
+      "code": 50,
+      "comment": 11,
+      "blank": 13
+    }
+  ]
+}

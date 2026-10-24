@@ -1,0 +1,1 @@
+{"wall_s": 2.5498129000188783, "cpu_s": 7.21875, "parallelism": 2.831090077215687, "mem_peak_mb": 2877.28125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 11, "exit_code": 0, "method": "psutil", "stack": "rust", "label": "edit-struct-dev"}

@@ -44,6 +44,7 @@ Optional:
 9. **Human interventions.** Any human message other than the kickoff prompt and bare "continue" counts as an intervention and is logged.
 10. **One agent at a time.** Agent runs happen on an otherwise idle machine, so agent wall time and build-wait time aren't distorted by other agents' builds. Multi-agent load is measured separately and deliberately (§9.6). If you run agents in parallel anyway to save time, record which stacks overlapped and treat §8.1 timings as indicative only.
 11. **Every agent run gets its own cgroup** (§9.7), so whole-phase CPU, memory and I/O totals can be attributed to a stack.
+12. **No Emscripten unless absolutely needed.** WASM builds use each language's native toolchain (Rust `wasm32-unknown-unknown` + wasm-bindgen, Go `js/wasm`, Zig `wasm32-freestanding`/`wasm32-wasi` targets, Flutter's own web compiler). Emscripten is a last resort: an agent may use it only when no native route works, must say why in `AGENT_LOG.md`, and the stack's report flags it as a deviation, with the Emscripten build time, tool count and output size shown separately (§9.5 `tools`, §8.6).
 
 ---
 
@@ -860,3 +861,5 @@ Before the `zig` P1 run, a time-boxed smoke test (about 2 hours, throwaway code,
 If it fails, record why in `results/<run-id>/versions.md` and fall back in this order: **Teak** (pure Zig, labeled `zig-teak`), then **Dear ImGui via cimgui** (labeled `zig-imgui`, not pure Zig). The fallback run is reported as a deviation from §1 and is never silently merged with a dvui result. Where dvui works, `zig-teak` may still run as the optional extra stack.
 
 **Teak as the baseline (dogfooding).** If Teak is used, it may be fixed and extended along the way and new Teak releases cut, but it is not the point of the bake-off. Rules: pin the run to a Teak release tag (or commit) recorded in `versions.md`; Teak changes stay minimal and only unblock Frame2D; time spent on Teak work (not on Frame2D) is logged separately in `AGENT_LOG.md` and excluded from the stack's agent-handling and build-loop numbers, but the extra lines of Teak code are reported, not hidden.
+
+If the `zig-imgui` fallback needs Emscripten for its web build, that counts as the §2.12 deviation and is one more reason to prefer Teak.

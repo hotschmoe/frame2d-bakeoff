@@ -5,6 +5,7 @@
 
 STACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$STACK_DIR" || return 1
+source "$STACK_DIR/../../harness/machine-env.sh"   # pinned PATH per machine (SPEC 15)
 
 # clean_all: remove build outputs and compiled deps; KEEP downloaded sources (SPEC 9.1).
 #   Document here what is kept, e.g. cargo registry, go module cache, ~/.cache/zig/p, pub cache.

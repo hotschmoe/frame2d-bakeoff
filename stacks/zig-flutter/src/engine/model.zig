@@ -9,6 +9,7 @@ pub const ErrCode = enum {
     duplicate_id,
     unstable,
     no_free_dofs,
+    support_conflict,
 };
 
 /// A model-level error with a human readable detail, reported as {"error": code, "detail": ...}.
@@ -46,6 +47,8 @@ pub const Member = struct {
     j: u32,
     mat: u32,
     sec: u32,
+    /// End releases (SPEC 4.7): bit 0 = mz released at i, bit 1 = mz released at j.
+    rel: u8 = 0,
 };
 
 /// Restraint bits for `Model.restraint`.
@@ -72,6 +75,8 @@ pub const Model = struct {
     /// One bitmask per node (UX|UY|RZ), indexed like `nodes`.
     restraint: []u8,
     load_cases: []LoadCase,
+    /// Spring stiffness per DOF (nodes*3: kx, ky, kr), or empty when the model has no springs.
+    springs: []f64 = &.{},
 
     pub fn deinit(m: *Model) void {
         m.arena.deinit();

@@ -85,7 +85,12 @@ pub fn writeResults(
         try w.writeByte('}');
     }
     const st = s.stats;
-    try w.print("],\"warnings\":[],\"stats\":{{\"nodes\":{d},\"members\":{d},\"free_dofs\":{d},\"profile_before\":{d},\"profile_after\":{d},\"assemble_ms\":", .{
+    try w.writeAll("],\"warnings\":[");
+    if (s.plan) |p| for (p.auto, 0..) |nd, q| {
+        if (q > 0) try w.writeByte(',');
+        try w.print("{{\"warning\":\"auto_restrained\",\"node\":{d},\"dof\":\"rz\"}}", .{m.nodes[nd].id});
+    };
+    try w.print("],\"stats\":{{\"nodes\":{d},\"members\":{d},\"free_dofs\":{d},\"profile_before\":{d},\"profile_after\":{d},\"assemble_ms\":", .{
         st.nodes, st.members, st.free_dofs, st.profile_before, st.profile_after,
     });
     try writeNum(w, st.assemble_ms);

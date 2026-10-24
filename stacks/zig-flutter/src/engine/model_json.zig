@@ -8,7 +8,9 @@ const RawMaterial = struct { id: []const u8, E: f64 };
 const RawSection = struct { id: []const u8, A: f64, I: f64 };
 const RawNode = struct { id: i32, x: f64, y: f64 };
 const RawSupport = struct { node: i32, ux: bool = false, uy: bool = false, rz: bool = false };
-const RawMember = struct { id: i32, i: i32, j: i32, material: []const u8, section: []const u8 };
+const RawRelease = struct { i: []const []const u8 = &.{}, j: []const []const u8 = &.{} };
+const RawMember = struct { id: i32, i: i32, j: i32, material: []const u8, section: []const u8, release: RawRelease = .{} };
+const RawSpring = struct { node: i32, kx: ?f64 = null, ky: ?f64 = null, kr: ?f64 = null };
 const RawNodal = struct { node: i32, fx: f64 = 0, fy: f64 = 0, mz: f64 = 0 };
 const RawUdl = struct { member: i32, w: f64 = 0 };
 const RawCase = struct { id: []const u8, nodal: []RawNodal = &.{}, member_udl: []RawUdl = &.{} };
@@ -18,6 +20,7 @@ const RawModel = struct {
     nodes: []RawNode = &.{},
     supports: []RawSupport = &.{},
     members: []RawMember = &.{},
+    springs: []RawSpring = &.{},
     load_cases: []RawCase = &.{},
 };
 
@@ -25,7 +28,7 @@ fn lessNode(_: void, a: model.Node, b: model.Node) bool {
     return a.id < b.id;
 }
 
-const RawMemberIdx = struct { id: i32, i: u32, j: u32, mat: u32, sec: u32 };
+const RawMemberIdx = struct { id: i32, i: u32, j: u32, mat: u32, sec: u32, rel: u8 };
 fn lessMember(_: void, a: RawMemberIdx, b: RawMemberIdx) bool {
     return a.id < b.id;
 }
@@ -82,13 +85,22 @@ fn build(gpa: std.mem.Allocator, raw: RawModel, diag: *Diag) error{ Model, OutOf
             return diag.set(.invalid_ref, "member {d} references missing material {s}", .{ m.id, m.material });
         const sec = findId(model.Section, sections, m.section) orelse
             return diag.set(.invalid_ref, "member {d} references missing section {s}", .{ m.id, m.section });
-        tmp[k] = .{ .id = m.id, .i = ni, .j = nj, .mat = mat, .sec = sec };
+        var rel: u8 = 0;
+        for (m.release.i) |d| {
+            if (!std.mem.eql(u8, d, "mz")) return diag.set(.invalid_ref, "member {d}: unsupported release {s}", .{ m.id, d });
+            rel |= 1;
+        }
+        for (m.release.j) |d| {
+            if (!std.mem.eql(u8, d, "mz")) return diag.set(.invalid_ref, "member {d}: unsupported release {s}", .{ m.id, d });
+            rel |= 2;
+        }
+        tmp[k] = .{ .id = m.id, .i = ni, .j = nj, .mat = mat, .sec = sec, .rel = rel };
     }
     std.mem.sort(RawMemberIdx, tmp, {}, lessMember);
     const members = try a.alloc(model.Member, tmp.len);
     for (tmp, 0..) |m, k| {
         if (k > 0 and m.id == tmp[k - 1].id) return diag.set(.duplicate_id, "duplicate member id {d}", .{m.id});
-        members[k] = .{ .id = m.id, .i = m.i, .j = m.j, .mat = m.mat, .sec = m.sec };
+        members[k] = .{ .id = m.id, .i = m.i, .j = m.j, .mat = m.mat, .sec = m.sec, .rel = m.rel };
     }
 
     const restraint = try a.alloc(u8, nodes.len);
@@ -99,6 +111,24 @@ fn build(gpa: std.mem.Allocator, raw: RawModel, diag: *Diag) error{ Model, OutOf
         if (s.ux) restraint[ni] |= model.UX;
         if (s.uy) restraint[ni] |= model.UY;
         if (s.rz) restraint[ni] |= model.RZ;
+    }
+
+    var springs: []f64 = &.{};
+    if (raw.springs.len > 0) {
+        springs = try a.alloc(f64, nodes.len * 3);
+        @memset(springs, 0);
+        for (raw.springs) |sp| {
+            const ni = indexOf(model.Node, nodes, sp.node) orelse
+                return diag.set(.invalid_ref, "spring references missing node {d}", .{sp.node});
+            const ks = [3]?f64{ sp.kx, sp.ky, sp.kr };
+            const names = [3][]const u8{ "ux", "uy", "rz" };
+            for (ks, 0..) |kv, d| {
+                const v = kv orelse continue;
+                if (restraint[ni] & (@as(u8, 1) << @intCast(d)) != 0)
+                    return diag.set(.support_conflict, "node {d} {s} is both restrained and sprung", .{ sp.node, names[d] });
+                springs[ni * 3 + d] += v;
+            }
+        }
     }
 
     const cases = try a.alloc(model.LoadCase, raw.load_cases.len);
@@ -126,6 +156,7 @@ fn build(gpa: std.mem.Allocator, raw: RawModel, diag: *Diag) error{ Model, OutOf
         .members = members,
         .restraint = restraint,
         .load_cases = cases,
+        .springs = springs,
     };
 }
 
@@ -193,10 +224,34 @@ pub fn writeModel(w: *std.Io.Writer, m: *const Model) std.Io.Writer.Error!void {
     try w.writeAll("],\"members\":[");
     for (m.members, 0..) |x, k| {
         if (k > 0) try w.writeByte(',');
-        try w.print("{{\"id\":{d},\"i\":{d},\"j\":{d},\"material\":\"{s}\",\"section\":\"{s}\"}}", .{
+        try w.print("{{\"id\":{d},\"i\":{d},\"j\":{d},\"material\":\"{s}\",\"section\":\"{s}\"", .{
             x.id, m.nodes[x.i].id, m.nodes[x.j].id, m.materials[x.mat].id, m.sections[x.sec].id,
         });
+        if (x.rel != 0) {
+            try w.writeAll(",\"release\":{\"i\":");
+            try w.writeAll(if (x.rel & 1 != 0) "[\"mz\"]" else "[]");
+            try w.writeAll(",\"j\":");
+            try w.writeAll(if (x.rel & 2 != 0) "[\"mz\"]" else "[]");
+            try w.writeByte('}');
+        }
+        try w.writeByte('}');
     }
+    try w.writeAll("],\"springs\":[");
+    first = true;
+    if (m.springs.len > 0) for (m.nodes, 0..) |n, k| {
+        const sp = m.springs[k * 3 ..][0..3];
+        if (sp[0] == 0 and sp[1] == 0 and sp[2] == 0) continue;
+        if (!first) try w.writeByte(',');
+        first = false;
+        try w.print("{{\"node\":{d}", .{n.id});
+        const keys = [3][]const u8{ "kx", "ky", "kr" };
+        for (sp, keys) |v, key| {
+            if (v == 0) continue;
+            try w.print(",\"{s}\":", .{key});
+            try writeNum(w, v);
+        }
+        try w.writeByte('}');
+    };
     try w.writeAll("],\"load_cases\":[");
     for (m.load_cases, 0..) |c, k| {
         if (k > 0) try w.writeByte(',');

@@ -64,8 +64,11 @@ pub const Plan = struct {
     col_ptr: []usize,
     profile_before: u64,
     profile_after: u64,
+    /// Nodes whose rz was restrained automatically because releases left it with no stiffness (SPEC 4.7).
+    auto: []u32,
 
     fn deinit(p: *Plan, gpa: std.mem.Allocator) void {
+        gpa.free(p.auto);
         gpa.free(p.dof_of);
         gpa.free(p.dof_node);
         gpa.free(p.dof_comp);
@@ -103,15 +106,75 @@ fn heightsFor(gpa: std.mem.Allocator, m: *const Model, dof_of: []const i32, n_fr
     return total;
 }
 
+/// Skyline profile for the numbering that follows `ord` (or id order when null) under `restraint`.
+fn profileOf(gpa: std.mem.Allocator, m: *const Model, restraint: []const u8, ord: ?[]const u32) !u64 {
+    const nn = m.nodes.len;
+    const dof_of = try gpa.alloc(i32, nn * 3);
+    defer gpa.free(dof_of);
+    var count: u32 = 0;
+    for (0..nn) |q| {
+        const nd = if (ord) |o| o[q] else q;
+        for (0..3) |d| {
+            if (restraint[nd] & (@as(u8, 1) << @intCast(d)) != 0) {
+                dof_of[nd * 3 + d] = -1;
+            } else {
+                dof_of[nd * 3 + d] = @intCast(count);
+                count += 1;
+            }
+        }
+    }
+    const heights = try gpa.alloc(u32, count);
+    defer gpa.free(heights);
+    return heightsFor(gpa, m, dof_of, count, heights);
+}
+
+/// Effective restraints: the model's supports plus every free rz that no member (after releases) or spring
+/// stiffens. Returns the auto-restrained node indices; `eff` is filled in either way.
+fn autoRestrain(gpa: std.mem.Allocator, m: *const Model, eff: []u8) ![]u32 {
+    const nn = m.nodes.len;
+    @memcpy(eff, m.restraint);
+    var any_release = false;
+    for (m.members) |mem| {
+        if (mem.rel != 0) any_release = true;
+    }
+    if (!any_release) return gpa.alloc(u32, 0);
+    const rz = try gpa.alloc(f64, nn);
+    defer gpa.free(rz);
+    @memset(rz, 0);
+    if (m.springs.len > 0) {
+        for (0..nn) |k| rz[k] = m.springs[k * 3 + 2];
+    }
+    for (m.members, 0..) |mem, k| {
+        const L = m.memberLength(k);
+        const ei = m.materials[mem.mat].E * m.sections[mem.sec].I;
+        // Rotational stiffness at an unreleased end: 4EI/L, or 3EI/L when the far end is released.
+        if (mem.rel & 1 == 0) rz[mem.i] += (if (mem.rel & 2 != 0) @as(f64, 3) else 4) * ei / L;
+        if (mem.rel & 2 == 0) rz[mem.j] += (if (mem.rel & 1 != 0) @as(f64, 3) else 4) * ei / L;
+    }
+    var list: std.ArrayList(u32) = .empty;
+    errdefer list.deinit(gpa);
+    for (0..nn) |k| {
+        if (eff[k] & model.RZ == 0 and rz[k] <= 0) {
+            eff[k] |= model.RZ;
+            try list.append(gpa, @intCast(k));
+        }
+    }
+    return list.toOwnedSlice(gpa);
+}
+
 fn buildPlan(gpa: std.mem.Allocator, m: *const Model, diag: *Diag) error{ Model, OutOfMemory }!Plan {
     const nn = m.nodes.len;
+    const eff = try gpa.alloc(u8, nn);
+    defer gpa.free(eff);
+    const auto = try autoRestrain(gpa, m, eff);
+    errdefer gpa.free(auto);
     // Original (id order) numbering for profile_before.
     const dof_of = try gpa.alloc(i32, nn * 3);
     errdefer gpa.free(dof_of);
     var count: u32 = 0;
     for (0..nn) |k| {
         for (0..3) |d| {
-            if (m.restraint[k] & (@as(u8, 1) << @intCast(d)) != 0) {
+            if (eff[k] & (@as(u8, 1) << @intCast(d)) != 0) {
                 dof_of[k * 3 + d] = -1;
             } else {
                 dof_of[k * 3 + d] = @intCast(count);
@@ -135,7 +198,7 @@ fn buildPlan(gpa: std.mem.Allocator, m: *const Model, diag: *Diag) error{ Model,
     count = 0;
     for (ord) |nd| {
         for (0..3) |d| {
-            if (m.restraint[nd] & (@as(u8, 1) << @intCast(d)) != 0) {
+            if (eff[nd] & (@as(u8, 1) << @intCast(d)) != 0) {
                 dof_of[nd * 3 + d] = -1;
             } else {
                 dof_of[nd * 3 + d] = @intCast(count);
@@ -146,6 +209,12 @@ fn buildPlan(gpa: std.mem.Allocator, m: *const Model, diag: *Diag) error{ Model,
         }
     }
     const after = try heightsFor(gpa, m, dof_of, n_free, heights);
+    var before_stat = before;
+    var after_stat = after;
+    if (auto.len > 0) {
+        before_stat = try profileOf(gpa, m, m.restraint, null);
+        after_stat = try profileOf(gpa, m, m.restraint, ord);
+    }
     const col_ptr = try gpa.alloc(usize, n_free + 1);
     errdefer gpa.free(col_ptr);
     var off: usize = 0;
@@ -161,8 +230,9 @@ fn buildPlan(gpa: std.mem.Allocator, m: *const Model, diag: *Diag) error{ Model,
         .dof_comp = dof_comp,
         .height = heights,
         .col_ptr = col_ptr,
-        .profile_before = before,
-        .profile_after = after,
+        .profile_before = before_stat,
+        .profile_after = after_stat,
+        .auto = auto,
     };
 }
 
@@ -194,6 +264,7 @@ const Geom = struct {
     b2: f64, // 6EI/L^2
     b3: f64, // 4EI/L
     b4: f64, // 2EI/L
+    rel: u8, // end releases (SPEC 4.7)
 
     fn of(m: *const Model, sections: []const model.Section, k: usize) Geom {
         const mem = m.members[k];
@@ -214,10 +285,37 @@ const Geom = struct {
             .b2 = 6 * EI / (L * L),
             .b3 = 4 * EI / L,
             .b4 = 2 * EI / L,
+            .rel = mem.rel,
         };
     }
 
+    /// Static condensation of the released rotational DOFs (local index 2 = mz at i, 5 = mz at j) out of
+    /// the stiffness `k` and the fixed-end vector `f`. Released rows and columns end up zero.
+    fn condense(g: Geom, k: *[6][6]f64, f: *[6]f64) void {
+        const dofs = [2]usize{ 2, 5 };
+        for (dofs, 0..) |r, bit| {
+            if (g.rel & (@as(u8, 1) << @intCast(bit)) == 0) continue;
+            const piv = k[r][r];
+            const col = [6]f64{ k[0][r], k[1][r], k[2][r], k[3][r], k[4][r], k[5][r] };
+            const row = k[r];
+            const fr = f[r];
+            for (0..6) |i| {
+                for (0..6) |j| k[i][j] -= col[i] * row[j] / piv;
+                f[i] -= col[i] * fr / piv;
+            }
+        }
+    }
+
     fn localK(g: Geom) [6][6]f64 {
+        var k = g.rawK();
+        if (g.rel != 0) {
+            var f = [6]f64{ 0, 0, 0, 0, 0, 0 };
+            g.condense(&k, &f);
+        }
+        return k;
+    }
+
+    fn rawK(g: Geom) [6][6]f64 {
         return .{
             .{ g.a, 0, 0, -g.a, 0, 0 },
             .{ 0, g.b1, g.b2, 0, -g.b1, g.b2 },
@@ -245,7 +343,12 @@ const Geom = struct {
 
     fn fixedEnd(g: Geom, w: f64) [6]f64 {
         const wl = w * g.L;
-        return .{ 0, -wl / 2, -wl * g.L / 12, 0, -wl / 2, wl * g.L / 12 };
+        var f = [6]f64{ 0, -wl / 2, -wl * g.L / 12, 0, -wl / 2, wl * g.L / 12 };
+        if (g.rel != 0) {
+            var k = g.rawK();
+            g.condense(&k, &f);
+        }
+        return f;
     }
 };
 
@@ -419,6 +522,14 @@ pub const Solver = struct {
                     if (row < 0 or row > col) continue;
                     s.k[top - @as(usize, @intCast(col - row))] += kg[rr][cc];
                 }
+            }
+        }
+        if (m.springs.len > 0) {
+            for (0..m.nodes.len * 3) |q| {
+                const dof = plan.dof_of[q];
+                if (dof < 0 or m.springs[q] == 0) continue;
+                const cj: usize = @intCast(dof);
+                s.k[plan.col_ptr[cj] + plan.height[cj]] += m.springs[q];
             }
         }
     }
@@ -604,9 +715,14 @@ fn postProcess(m: *const Model, sections: []const model.Section, c: *CaseResult,
                 c.reactions[nd * 3 + d] = 0;
             }
         }
-        const rx = c.reactions[nd * 3];
-        const ry = c.reactions[nd * 3 + 1];
-        const rm = c.reactions[nd * 3 + 2];
+        var rx = c.reactions[nd * 3];
+        var ry = c.reactions[nd * 3 + 1];
+        var rm = c.reactions[nd * 3 + 2];
+        if (m.springs.len > 0) { // spring forces are reactions too
+            rx -= m.springs[nd * 3] * c.disp[nd * 3];
+            ry -= m.springs[nd * 3 + 1] * c.disp[nd * 3 + 1];
+            rm -= m.springs[nd * 3 + 2] * c.disp[nd * 3 + 2];
+        }
         sum_x += rx;
         sum_y += ry;
         sum_m += rm + x * ry - y * rx;

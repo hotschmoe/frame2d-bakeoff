@@ -31,3 +31,12 @@ Run id: run1   Machine: win-arm64   Agent model: claude-sonnet-5-5   Started: Fr
 - `bash` on PATH is the WSL stub on this machine; I invoked Git bash explicitly before the orchestrator fix.
 - Extra stack.sh function: build_web_wasm_release (output app/build/web_wasm). hot_reload_probe not implemented. ffigen output is committed; regenerate with `dart run ffigen --config ffigen.yaml` in app/ (needs .tools/libclang-x64).
 - Extra bench parameters for diagnosis: --size=N, --defl=0, --moment=0, --color=0 (desktop) or ?size=N etc. (web).
+
+# Phase P2 (spring supports, end releases, auto-restraint)
+
+Started: Fri Oct 23 23:56:21 USMST 2026
+
+- Done in one pass, no problems over 10 minutes. conformance p2 7/7 and p1 17/17.
+- Touched src/engine only: model.zig (support_conflict, Member.rel, Model.springs), model_json.zig (springs, release, writeModel round trip), solver.zig (Geom.condense for static condensation of K and fixed-end forces, spring diagonal in assemble, auto-restrain in buildPlan, spring forces in equilibrium sum), results_json.zig (auto_restrained warnings).
+- Profile stats are computed with the original supports (as ref.py does); free_dofs and factorization use the auto-restrained numbering. Reactions are listed only for nodes with user supports.
+- UI (Flutter) not extended for springs/releases; the bridge compiles unchanged.

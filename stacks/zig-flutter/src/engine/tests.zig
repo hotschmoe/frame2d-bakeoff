@@ -67,3 +67,70 @@ test "model JSON round trip" {
     try std.testing.expectEqual(m.members.len, m2.members.len);
     try std.testing.expectEqual(m.nodes[5].x, m2.nodes[5].x);
 }
+
+fn solveText(gpa: std.mem.Allocator, text: []const u8, diag: *e.Diag) !struct { m: e.Model, s: e.Solver } {
+    var m = try e.model_json.parse(gpa, text, diag);
+    errdefer m.deinit();
+    var s = e.Solver.init(gpa);
+    errdefer s.deinit();
+    try s.solve(&m, m.sections, 1, diag);
+    return .{ .m = m, .s = s };
+}
+
+test "F21 tip spring halves the cantilever deflection" {
+    const gpa = std.testing.allocator;
+    var diag: e.Diag = .{};
+    const text = try std.mem.replaceOwned(u8, gpa, cantilever, "\"supports\":", "\"springs\":[{\"node\":2,\"ky\":384000}],\"supports\":");
+    defer gpa.free(text);
+    var r = try solveText(gpa, text, &diag);
+    defer r.m.deinit();
+    defer r.s.deinit();
+    try std.testing.expectApproxEqRel(-0.01302083333, r.s.cases[0].disp[4], 1e-8);
+    try std.testing.expect(r.s.cases[0].residual < 1e-9);
+}
+
+test "end moment release at the free tip auto-restrains its rotation and keeps the deflection" {
+    const gpa = std.testing.allocator;
+    var diag: e.Diag = .{};
+    const text = try std.mem.replaceOwned(u8, gpa, cantilever, "\"section\":\"BM\"", "\"section\":\"BM\",\"release\":{\"i\":[],\"j\":[\"mz\"]}");
+    defer gpa.free(text);
+    var r = try solveText(gpa, text, &diag);
+    defer r.m.deinit();
+    defer r.s.deinit();
+    try std.testing.expectEqual(@as(usize, 1), r.s.plan.?.auto.len);
+    try std.testing.expectApproxEqRel(-0.02604166667, r.s.cases[0].disp[4], 1e-9);
+    try std.testing.expectEqual(@as(f64, 0), r.s.cases[0].disp[5]);
+}
+
+fn parseCode(text: []const u8) !e.model.ErrCode {
+    var diag: e.Diag = .{};
+    if (e.model_json.parse(std.testing.allocator, text, &diag)) |m| {
+        var mm = m;
+        mm.deinit();
+        return error.TestExpectedError;
+    } else |err| {
+        try std.testing.expectEqual(error.Model, err);
+        return diag.code;
+    }
+}
+
+test "validation error codes" {
+    const gpa = std.testing.allocator;
+    try std.testing.expectEqual(e.model.ErrCode.invalid_json, try parseCode("{not json"));
+    const bad_ref = try std.mem.replaceOwned(u8, gpa, cantilever, "\"i\":1,\"j\":2", "\"i\":1,\"j\":9");
+    defer gpa.free(bad_ref);
+    try std.testing.expectEqual(e.model.ErrCode.invalid_ref, try parseCode(bad_ref));
+    const dup = try std.mem.replaceOwned(u8, gpa, cantilever, "{\"id\":2,\"x\":5", "{\"id\":1,\"x\":5");
+    defer gpa.free(dup);
+    try std.testing.expectEqual(e.model.ErrCode.duplicate_id, try parseCode(dup));
+    // Zero-length members are reported when the member geometry is built (the solve), not by the parser.
+    const zero = try std.mem.replaceOwned(u8, gpa, cantilever, "\"x\":5", "\"x\":0");
+    defer gpa.free(zero);
+    var diag: e.Diag = .{};
+    var m = try e.model_json.parse(gpa, zero, &diag);
+    defer m.deinit();
+    var s = e.Solver.init(gpa);
+    defer s.deinit();
+    try std.testing.expectError(error.Model, s.solve(&m, m.sections, 1, &diag));
+    try std.testing.expectEqual(e.model.ErrCode.zero_length, diag.code);
+}

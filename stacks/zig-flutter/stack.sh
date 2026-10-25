@@ -36,14 +36,56 @@ _zig_build() { # _zig_build <optimize> <step-or-args...>
   zig build -Doptimize="$opt" ${ZIG_J:+-j"$ZIG_J"} "${DESKTOP_ZIG_ARGS[@]}" "$@"
 }
 
+# Copy src to dst only when the content differs, so an unchanged engine never bumps an mtime that the
+# Flutter/CMake build would then treat as a changed input.
+_sync() { cmp -s "$1" "$2" 2>/dev/null || { mkdir -p "$(dirname "$2")" && cp "$1" "$2"; }; }
+
 # Copy the freshly built engine library and WASM module to where the Flutter build picks them up.
 _stage_engine() {
-  mkdir -p "$APP_DIR/web"
-  cp "$STACK_DIR/zig-out/web/frame2d_engine.wasm" "$APP_DIR/web/frame2d_engine.wasm" || return 1
+  _sync "$STACK_DIR/zig-out/web/frame2d_engine.wasm" "$APP_DIR/web/frame2d_engine.wasm" || return 1
   case "$HOST_OS" in
-    windows) cp "$STACK_DIR/zig-out/bin/$ENGINE_LIB" "$APP_DIR/windows/$ENGINE_LIB" ;;
+    windows) _sync "$STACK_DIR/zig-out/bin/$ENGINE_LIB" "$APP_DIR/windows/$ENGINE_LIB" ;;
     *) ;;  # linux/macos runners are not wired up on this machine
   esac
+}
+
+# Release web builds: shrink the staged WASM with binaryen when it is installed (about 7% smaller).
+_wasm_opt_release() {
+  command -v wasm-opt >/dev/null 2>&1 || return 0
+  local w="$APP_DIR/web/frame2d_engine.wasm"
+  wasm-opt -O3 -all "$w" -o "$w.opt" && mv -f "$w.opt" "$w"
+}
+
+# _stale <stamp> <find-args...>: succeeds when the stamp is missing or any listed input is newer than it.
+# Incremental skip for the slow Flutter steps: a no-op rebuild does no work, and an edit that only touches
+# the Zig engine just refreshes the engine binaries inside the existing build output (see _dev_flutter).
+_stale() {
+  local stamp="$1"; shift
+  [ -f "$stamp" ] || return 0
+  [ -n "$(find "$@" -type f -newer "$stamp" -print -quit 2>/dev/null)" ]
+}
+
+# Inputs of the Flutter build that are NOT the engine binaries (Dart sources, pubspec, platform runner).
+_dart_inputs_stale() { # _dart_inputs_stale <stamp> <platform dir>
+  _stale "$1" "$APP_DIR/lib" "$APP_DIR/pubspec.yaml" "$APP_DIR/pubspec.lock" "$APP_DIR/$2" \
+      ! -name 'frame2d_engine.*' ! -path '*/ephemeral/*'
+}
+
+# _dev_flutter <name> <platform dir> <engine-file-pairs...> -- <flutter build args...>
+#   Runs the Flutter build only when a non-engine input changed; otherwise refreshes the engine binaries in
+#   the existing output (identical to what CMake install / the web asset copy would do).
+_dev_flutter() {
+  local name="$1" pdir="$2"; shift 2
+  local stamp="$APP_DIR/build/.dev-$name.stamp" pairs=()
+  while [ "$1" != "--" ]; do pairs+=("$1"); shift; done; shift
+  if _dart_inputs_stale "$stamp" "$pdir"; then
+    mkdir -p "$APP_DIR/build"; : > "$stamp.new"
+    (cd "$APP_DIR" && flutter build "$@") || { rm -f "$stamp.new"; return 1; }
+    mv -f "$stamp.new" "$stamp"
+  else
+    local i
+    for ((i = 0; i < ${#pairs[@]}; i += 2)); do _sync "${pairs[i]}" "${pairs[i+1]}" || return 1; done
+  fi
 }
 
 # clean_all: remove build outputs and compiled deps; KEEP downloaded sources (SPEC 9.1).
@@ -73,7 +115,7 @@ build_desktop_release() {
   _stage_engine >&2 || return 1
   case "$HOST_OS" in
     windows)
-      (cd "$APP_DIR" && flutter build windows --release >&2) || return 1
+      (cd "$APP_DIR" && flutter build windows --release --split-debug-info="$APP_DIR/build/symbols" >&2) || return 1
       _nativepath "$APP_DIR/build/windows/x64/runner/Release/frame2d_app.exe" ;;
     linux)
       (cd "$APP_DIR" && flutter build linux --release >&2) || return 1
@@ -88,6 +130,8 @@ build_desktop_release() {
 build_web_release() {
   _zig_build ReleaseFast install >&2 || return 1
   _stage_engine >&2 || return 1
+  _wasm_opt_release >&2 || return 1
+  rm -f "$APP_DIR/build/.dev-web.stamp"   # build/web is shared with the dev web build
   (cd "$APP_DIR" && flutter build web --release --no-web-resources-cdn --pwa-strategy=none >&2) || return 1
   _nativepath "$APP_DIR/build/web"
 }
@@ -96,6 +140,8 @@ build_web_release() {
 build_web_wasm_release() {
   _zig_build ReleaseFast install >&2 || return 1
   _stage_engine >&2 || return 1
+  _wasm_opt_release >&2 || return 1
+  rm -f "$APP_DIR/build/.dev-web.stamp"
   (cd "$APP_DIR" && flutter build web --release --wasm --no-web-resources-cdn --pwa-strategy=none \
       --output="$(_nativepath "$APP_DIR/build/web_wasm")" >&2) || return 1
   _nativepath "$APP_DIR/build/web_wasm"
@@ -105,19 +151,35 @@ build_web_wasm_release() {
 # dart analyze type-checks the Flutter code (including the web-only and ffi-only files).
 build_check() {
   _zig_build Debug check || return 1
-  (cd "$APP_DIR" && dart analyze)
+  local stamp="$APP_DIR/build/.check.stamp"
+  if _stale "$stamp" "$APP_DIR/lib" "$APP_DIR/test" "$APP_DIR/pubspec.yaml" "$APP_DIR/pubspec.lock" "$APP_DIR/analysis_options.yaml"; then
+    mkdir -p "$APP_DIR/build"; : > "$stamp.new"
+    (cd "$APP_DIR" && dart analyze) || { rm -f "$stamp.new"; return 1; }
+    mv -f "$stamp.new" "$stamp"
+  fi
 }
 
 # build_dev: what the agent rebuilds while working: every Zig target (CLI, server, engine library, WASM) in
-# Debug, plus the debug Flutter desktop app and the (profile-less) debug web build.
+# Debug, plus the debug Flutter desktop app and the (profile-less) debug web build. Each Flutter build is
+# skipped when only the Zig engine changed (the new engine binary is copied into the existing output).
 build_dev() {
   _zig_build Debug install || return 1
   _stage_engine || return 1
+  # The desktop and web Flutter builds are independent (separate output trees), so they run side by side;
+  # on a Dart edit the 10 s desktop build then hides behind the 30 s web compile.
+  local desk_log; desk_log="$(mktemp)"
+  local desk_pid=""
   case "$HOST_OS" in
-    windows) (cd "$APP_DIR" && flutter build windows --debug) || return 1 ;;
-    linux) (cd "$APP_DIR" && flutter build linux --debug) || return 1 ;;
+    windows) _dev_flutter win windows         "$APP_DIR/windows/$ENGINE_LIB" "$APP_DIR/build/windows/x64/runner/Debug/$ENGINE_LIB" -- windows --debug >"$desk_log" 2>&1 &
+      desk_pid=$! ;;
+    linux) _dev_flutter linux linux         "$STACK_DIR/zig-out/lib/$ENGINE_LIB" "$APP_DIR/build/linux/x64/debug/bundle/lib/$ENGINE_LIB" -- linux --debug >"$desk_log" 2>&1 &
+      desk_pid=$! ;;
   esac
-  (cd "$APP_DIR" && flutter build web --debug --no-web-resources-cdn --pwa-strategy=none)
+  local rc=0
+  _dev_flutter web web       "$APP_DIR/web/frame2d_engine.wasm" "$APP_DIR/build/web/frame2d_engine.wasm" --       web --debug --no-web-resources-cdn --pwa-strategy=none --no-wasm-dry-run || rc=$?
+  if [ -n "$desk_pid" ]; then wait "$desk_pid" || rc=$?; fi
+  cat "$desk_log"; rm -f "$desk_log"
+  return $rc
 }
 
 run_server() {

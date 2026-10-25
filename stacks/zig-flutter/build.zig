@@ -3,11 +3,14 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
+    // Release artifacts carry no debug info (smaller binaries; the dev loop keeps full Debug info).
+    const strip = optimize != .debug;
 
     const engine = b.addModule("engine", .{
         .root_source_file = b.path("src/engine/engine.zig"),
         .target = target,
         .optimize = optimize,
+            .strip = strip,
     });
 
     const cli = b.addExecutable(.{
@@ -16,6 +19,7 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("src/cli/main.zig"),
             .target = target,
             .optimize = optimize,
+            .strip = strip,
             .imports = &.{.{ .name = "engine", .module = engine }},
         }),
     });
@@ -28,13 +32,14 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("src/server/main.zig"),
             .target = target,
             .optimize = optimize,
+            .strip = strip,
             .link_libc = true,
             .imports = &.{.{ .name = "engine", .module = engine }},
         }),
     });
     server.root_module.addCSourceFile(.{
         .file = sqlite.path("sqlite3.c"),
-        .flags = &.{ "-DSQLITE_THREADSAFE=1", "-DSQLITE_OMIT_LOAD_EXTENSION", "-DSQLITE_DQS=0", "-fno-sanitize=undefined" },
+        .flags = &.{ "-DSQLITE_THREADSAFE=1", "-DSQLITE_OMIT_LOAD_EXTENSION", "-DSQLITE_DQS=0", "-DSQLITE_DEFAULT_MEMSTATUS=0", "-DSQLITE_OMIT_DEPRECATED", "-DSQLITE_OMIT_SHARED_CACHE", "-DSQLITE_OMIT_PROGRESS_CALLBACK", "-DSQLITE_OMIT_DECLTYPE", "-fno-sanitize=undefined" },
     });
     b.installArtifact(server);
 
@@ -50,10 +55,12 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("src/bridge/exports.zig"),
             .target = lib_target,
             .optimize = optimize,
+            .strip = strip,
             .imports = &.{.{ .name = "engine", .module = b.createModule(.{
                 .root_source_file = b.path("src/engine/engine.zig"),
                 .target = lib_target,
                 .optimize = optimize,
+            .strip = strip,
             }) }},
         }),
     });
@@ -71,10 +78,12 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("src/bridge/exports.zig"),
             .target = wasm_target,
             .optimize = optimize,
+            .strip = strip,
             .imports = &.{.{ .name = "engine", .module = b.createModule(.{
                 .root_source_file = b.path("src/engine/engine.zig"),
                 .target = wasm_target,
                 .optimize = optimize,
+            .strip = strip,
             }) }},
         }),
     });
@@ -86,6 +95,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/engine/engine.zig"),
         .target = target,
         .optimize = optimize,
+            .strip = strip,
     }) });
     const test_step = b.step("test", "Run engine unit tests");
     test_step.dependOn(&b.addRunArtifact(tests).step);

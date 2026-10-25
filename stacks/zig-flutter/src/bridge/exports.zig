@@ -49,40 +49,48 @@ fn dropSession() void {
 
 fn adopt(m: engine.Model) i32 {
     dropSession();
-    var s: Session = .{
-        .model = m,
-        .solver = engine.Solver.init(gpa),
-        .node_ids = undefined,
-        .node_xy = undefined,
-        .member_ids = undefined,
-        .member_ends = undefined,
-        .member_len = undefined,
+    return adoptInner(m) catch |e| switch (e) {
+        error.OutOfMemory => err_oom,
     };
-    const nn = m.nodes.len;
-    const nm = m.members.len;
-    s.node_ids = gpa.alloc(i32, nn) catch return oom(&s.model);
-    s.node_xy = gpa.alloc(f64, nn * 2) catch return oom(&s.model);
-    s.member_ids = gpa.alloc(i32, nm) catch return oom(&s.model);
-    s.member_ends = gpa.alloc(u32, nm * 2) catch return oom(&s.model);
-    s.member_len = gpa.alloc(f64, nm) catch return oom(&s.model);
-    for (m.nodes, 0..) |n, k| {
-        s.node_ids[k] = n.id;
-        s.node_xy[k * 2] = n.x;
-        s.node_xy[k * 2 + 1] = n.y;
-    }
-    for (m.members, 0..) |mem, k| {
-        s.member_ids[k] = mem.id;
-        s.member_ends[k * 2] = mem.i;
-        s.member_ends[k * 2 + 1] = mem.j;
-        s.member_len[k] = s.model.memberLength(k);
-    }
-    session = s;
-    return ok;
 }
 
-fn oom(m: *engine.Model) i32 {
-    m.deinit();
-    return err_oom;
+/// Builds the session; on failure everything allocated so far, including `m`, is released.
+fn adoptInner(m: engine.Model) error{OutOfMemory}!i32 {
+    var model = m;
+    errdefer model.deinit();
+    const nn = model.nodes.len;
+    const nm = model.members.len;
+    const node_ids = try gpa.alloc(i32, nn);
+    errdefer gpa.free(node_ids);
+    const node_xy = try gpa.alloc(f64, nn * 2);
+    errdefer gpa.free(node_xy);
+    const member_ids = try gpa.alloc(i32, nm);
+    errdefer gpa.free(member_ids);
+    const member_ends = try gpa.alloc(u32, nm * 2);
+    errdefer gpa.free(member_ends);
+    const member_len = try gpa.alloc(f64, nm);
+    errdefer gpa.free(member_len);
+    for (model.nodes, 0..) |n, k| {
+        node_ids[k] = n.id;
+        node_xy[k * 2] = n.x;
+        node_xy[k * 2 + 1] = n.y;
+    }
+    for (model.members, 0..) |mem, k| {
+        member_ids[k] = mem.id;
+        member_ends[k * 2] = mem.i;
+        member_ends[k * 2 + 1] = mem.j;
+        member_len[k] = model.memberLength(k);
+    }
+    session = .{
+        .model = model,
+        .solver = engine.Solver.init(gpa),
+        .node_ids = node_ids,
+        .node_xy = node_xy,
+        .member_ids = member_ids,
+        .member_ends = member_ends,
+        .member_len = member_len,
+    };
+    return ok;
 }
 
 fn fail(e: error{ Model, OutOfMemory }) i32 {
@@ -155,44 +163,49 @@ export fn f2d_case_count() u32 {
     return if (session) |s| @intCast(s.model.load_cases.len) else 0;
 }
 
-export fn f2d_node_ids() [*]const i32 {
-    return session.?.node_ids.ptr;
+export fn f2d_node_ids() ?[*]const i32 {
+    return (session orelse return null).node_ids.ptr;
 }
 
 /// x0, y0, x1, y1, ...
-export fn f2d_node_xy() [*]const f64 {
-    return session.?.node_xy.ptr;
+export fn f2d_node_xy() ?[*]const f64 {
+    return (session orelse return null).node_xy.ptr;
 }
 
 /// One bit mask per node: 1 = ux, 2 = uy, 4 = rz restrained.
-export fn f2d_node_restraint() [*]const u8 {
-    return session.?.model.restraint.ptr;
+export fn f2d_node_restraint() ?[*]const u8 {
+    return (session orelse return null).model.restraint.ptr;
 }
 
-export fn f2d_member_ids() [*]const i32 {
-    return session.?.member_ids.ptr;
+export fn f2d_member_ids() ?[*]const i32 {
+    return (session orelse return null).member_ids.ptr;
 }
 
 /// i0, j0, i1, j1, ... as node indices.
-export fn f2d_member_ends() [*]const u32 {
-    return session.?.member_ends.ptr;
+export fn f2d_member_ends() ?[*]const u32 {
+    return (session orelse return null).member_ends.ptr;
 }
 
-export fn f2d_member_len() [*]const f64 {
-    return session.?.member_len.ptr;
+export fn f2d_member_len() ?[*]const f64 {
+    return (session orelse return null).member_len.ptr;
 }
 
-export fn f2d_case_name_ptr(k: u32) [*]const u8 {
-    return session.?.model.load_cases[k].id.ptr;
+export fn f2d_case_name_ptr(k: u32) ?[*]const u8 {
+    const s = &(session orelse return null);
+    if (k >= s.model.load_cases.len) return null;
+    return s.model.load_cases[k].id.ptr;
 }
 
 export fn f2d_case_name_len(k: u32) usize {
-    return session.?.model.load_cases[k].id.len;
+    const s = &(session orelse return 0);
+    if (k >= s.model.load_cases.len) return 0;
+    return s.model.load_cases[k].id.len;
 }
 
 /// Move one node (index, not id). Topology is unchanged, so the factor plan is reused by the next solve.
 export fn f2d_set_node_xy(idx: u32, x: f64, y: f64) void {
     const s = &(session orelse return);
+    if (idx >= s.model.nodes.len) return;
     s.model.nodes[idx].x = x;
     s.model.nodes[idx].y = y;
     s.node_xy[idx * 2] = x;
@@ -263,6 +276,9 @@ export fn f2d_residual(k: u32) f64 {
 
 // ---- JSON out (save model / export results) ----
 
+/// Not thread-safe: the session, diagnostics and scratch buffer are process-global, so a host must call
+/// the whole f2d_* surface from one thread (the Flutter UI isolate / the JS main thread do).
+///
 /// Serialize into the scratch buffer; returns its length (0 on failure). Read it with f2d_out_ptr.
 export fn f2d_export_model() usize {
     const s = &(session orelse return 0);
@@ -288,7 +304,7 @@ export fn f2d_export_results() usize {
     return scratch.items.len;
 }
 
-export fn f2d_out_ptr() [*]const u8 {
+export fn f2d_out_ptr() [*]const u8 { // valid for the length returned by f2d_export_*; never null (empty slice ptr)
     return scratch.items.ptr;
 }
 

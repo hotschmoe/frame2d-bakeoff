@@ -41,7 +41,14 @@ pub fn main(init: std.process.Init) !void {
             std.debug.print("accept failed: {t}\n", .{e});
             continue;
         };
+        // Bound the thread count: past the cap a new connection is refused instead of exhausting the process.
+        if (live_connections.fetchAdd(1, .monotonic) >= max_connections) {
+            _ = live_connections.fetchSub(1, .monotonic);
+            stream.close(io);
+            continue;
+        }
         const t = std.Thread.spawn(.{}, connection, .{ &ctx, stream }) catch {
+            _ = live_connections.fetchSub(1, .monotonic);
             stream.close(io);
             continue;
         };
@@ -49,7 +56,11 @@ pub fn main(init: std.process.Init) !void {
     }
 }
 
+const max_connections = 1024;
+var live_connections: std.atomic.Value(u32) = .init(0);
+
 fn connection(ctx: *Ctx, stream: std.Io.net.Stream) void {
+    defer _ = live_connections.fetchSub(1, .monotonic);
     defer stream.close(ctx.io);
     var rbuf: [16 * 1024]u8 = undefined;
     var wbuf: [16 * 1024]u8 = undefined;
@@ -66,6 +77,8 @@ fn connection(ctx: *Ctx, stream: std.Io.net.Stream) void {
 const Reply = struct {
     status: http.Status = .ok,
     body: []const u8,
+    /// The response was already streamed to the client; `handle` must not respond again.
+    sent: bool = false,
 };
 
 fn handle(ctx: *Ctx, req: *http.Server.Request) !void {
@@ -92,27 +105,40 @@ fn handle(ctx: *Ctx, req: *http.Server.Request) !void {
 
     var out: std.Io.Writer.Allocating = .init(gpa);
     defer out.deinit();
-    const reply = route(ctx, method, path, body, &out) catch |e| switch (e) {
+    const reply = route(ctx, req, method, path, body, &out) catch |e| switch (e) {
         error.OutOfMemory => Reply{ .status = .internal_server_error, .body = "{\"error\":\"oom\",\"detail\":\"out of memory\"}" },
         else => Reply{ .status = .internal_server_error, .body = "{\"error\":\"internal\",\"detail\":\"internal error\"}" },
     };
+    if (reply.sent) return;
     try respondText(req, reply.status, reply.body);
 }
 
+const tag_sep = std.mem.indexOf(u8, server_tag, ": ").?;
+const json_headers = [_]http.Header{
+    .{ .name = "content-type", .value = "application/json" },
+    .{ .name = server_tag[0..tag_sep], .value = server_tag[tag_sep + 2 ..] },
+};
+
 fn respondText(req: *http.Server.Request, status: http.Status, body: []const u8) !void {
-    const sep = std.mem.indexOf(u8, server_tag, ": ").?;
-    const headers = [_]http.Header{
-        .{ .name = "content-type", .value = "application/json" },
-        .{ .name = server_tag[0..sep], .value = server_tag[sep + 2 ..] },
-    };
-    try req.respond(body, .{ .status = status, .extra_headers = &headers });
+    try req.respond(body, .{ .status = status, .extra_headers = &json_headers });
+}
+
+/// Write the results JSON straight to the socket (chunked). A 50x50 result is ~16 MB: buffering it per
+/// request cost memory (64 connections = 1 GB) and a realloc-copy chain; streaming needs a 64 KB buffer.
+fn streamResults(ctx: *Ctx, req: *http.Server.Request, m: *const engine.Model, s: *const engine.Solver) !Reply {
+    const buf = try ctx.gpa.alloc(u8, 64 * 1024);
+    defer ctx.gpa.free(buf);
+    var bw = try req.respondStreaming(buf, .{ .respond_options = .{ .extra_headers = &json_headers } });
+    try engine.results_json.writeResults(&bw.writer, m, s, null);
+    try bw.end();
+    return .{ .body = "", .sent = true };
 }
 
 const not_found: Reply = .{ .status = .not_found, .body = "{\"error\":\"not_found\",\"detail\":\"no such route\"}" };
 
-fn route(ctx: *Ctx, method: http.Method, path: []const u8, body: []const u8, out: *std.Io.Writer.Allocating) !Reply {
+fn route(ctx: *Ctx, req: *http.Server.Request, method: http.Method, path: []const u8, body: []const u8, out: *std.Io.Writer.Allocating) !Reply {
     if (method == .GET and std.mem.eql(u8, path, "/health")) return .{ .body = "{\"ok\":true}" };
-    if (method == .POST and std.mem.eql(u8, path, "/solve")) return solveText(ctx, body, out);
+    if (method == .POST and std.mem.eql(u8, path, "/solve")) return solveText(ctx, req, body, out);
     if (method == .POST and std.mem.eql(u8, path, "/sweep")) return sweepRequest(ctx, body, out);
     if (method == .POST and std.mem.eql(u8, path, "/models")) return storeModel(ctx, body, out);
     const prefix = "/models/";
@@ -130,7 +156,7 @@ fn route(ctx: *Ctx, method: http.Method, path: []const u8, body: []const u8, out
             const id = std.fmt.parseInt(i64, rest[0 .. rest.len - solve_suffix.len], 10) catch return not_found;
             const text = (try ctx.store.get(ctx.gpa, id)) orelse return not_found;
             defer ctx.gpa.free(text);
-            return solveText(ctx, text, out);
+            return solveText(ctx, req, text, out);
         }
     }
     return not_found;
@@ -142,17 +168,17 @@ fn modelErrorReply(diag: *const engine.Diag, out: *std.Io.Writer.Allocating) !Re
     return .{ .status = .unprocessable_entity, .body = out.written() };
 }
 
-fn solveText(ctx: *Ctx, text: []const u8, out: *std.Io.Writer.Allocating) !Reply {
+fn solveText(ctx: *Ctx, req: *http.Server.Request, text: []const u8, out: *std.Io.Writer.Allocating) !Reply {
     var diag: engine.Diag = .{};
     var m = engine.model_json.parse(ctx.gpa, text, &diag) catch |e| switch (e) {
         error.Model => return modelErrorReply(&diag, out),
         error.OutOfMemory => return error.OutOfMemory,
     };
     defer m.deinit();
-    return solveModel(ctx, &m, out);
+    return solveModel(ctx, req, &m, out);
 }
 
-fn solveModel(ctx: *Ctx, m: *const engine.Model, out: *std.Io.Writer.Allocating) !Reply {
+fn solveModel(ctx: *Ctx, req: *http.Server.Request, m: *const engine.Model, out: *std.Io.Writer.Allocating) !Reply {
     var diag: engine.Diag = .{};
     var s = engine.Solver.init(ctx.gpa);
     defer s.deinit();
@@ -160,8 +186,7 @@ fn solveModel(ctx: *Ctx, m: *const engine.Model, out: *std.Io.Writer.Allocating)
         error.Model => return modelErrorReply(&diag, out),
         error.OutOfMemory => return error.OutOfMemory,
     };
-    try engine.results_json.writeResults(&out.writer, m, &s, null);
-    return .{ .body = out.written() };
+    return streamResults(ctx, req, m, &s);
 }
 
 fn storeModel(ctx: *Ctx, text: []const u8, out: *std.Io.Writer.Allocating) !Reply {

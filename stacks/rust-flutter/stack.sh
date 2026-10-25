@@ -60,9 +60,49 @@ _bridge_wasm() {
     wasm-opt -O3 --enable-simd --enable-bulk-memory --enable-nontrapping-float-to-int --enable-sign-ext \
       --enable-mutable-globals -o "$WEB_ENGINE_DIR/frame2d_engine_bg.wasm" "$WEB_ENGINE_DIR/frame2d_engine_bg.wasm" || return 1
   fi
+  rm -f "$STAMP_DIR"/wasm-*; _stamp "wasm-$profile"
 }
 
 _flutter() { (cd "$APP_DIR" && flutter "$@"); }
+
+# Stamp files (under target/, so `cargo clean` in clean_all also forgets them). A step guarded by a stamp is
+# skipped when none of its input files is newer than the stamp from its last successful run (make semantics).
+STAMP_DIR="$STACK_DIR/target/.stamps"
+_stale() {   # _stale <name> <path>...: true when the stamp is missing or any file under the paths is newer
+  local stamp="$STAMP_DIR/$1"; shift
+  [ -e "$stamp" ] || return 0
+  [ -n "$(find "$@" -type f -newer "$stamp" -print -quit 2>/dev/null)" ]
+}
+_stamp() { mkdir -p "$STAMP_DIR" && touch "$STAMP_DIR/$1"; }
+
+# Background jobs whose output is kept apart and replayed in order, so parallel steps do not interleave.
+_JOB_PIDS=(); _JOB_LOGS=()
+_bg() {   # _bg <name> <command...>
+  local log; log="$(mktemp)"
+  ( "${@:2}" ) >"$log" 2>&1 &
+  _JOB_PIDS+=($!); _JOB_LOGS+=("$log")
+}
+_join() {  # waits for every _bg job, replays its output on stderr, returns non-zero if any failed
+  local rc=0 i
+  for i in "${!_JOB_PIDS[@]}"; do
+    wait "${_JOB_PIDS[$i]}" || rc=1
+    cat "${_JOB_LOGS[$i]}" >&2; rm -f "${_JOB_LOGS[$i]}"
+  done
+  _JOB_PIDS=(); _JOB_LOGS=()
+  return $rc
+}
+
+# Dart inputs of the app (everything the analyzer and the desktop build read).
+_dart_inputs() { echo "$APP_DIR/lib" "$APP_DIR/test" "$APP_DIR/pubspec.yaml" "$APP_DIR/pubspec.lock" "$APP_DIR/analysis_options.yaml"; }
+
+# _dart_analyze: the Dart analyzer with the same strictness as `flutter analyze` (infos are fatal), without the
+# Flutter tool's start-up; skipped when no Dart input changed since the last clean run.
+_dart_analyze() {
+  _stale analyze $(_dart_inputs) || return 0
+  if [ "$APP_DIR/pubspec.yaml" -nt "$APP_DIR/.dart_tool/package_config.json" ]; then _flutter pub get >&2 || return 1; fi
+  (cd "$APP_DIR" && dart analyze --fatal-infos) || return 1
+  _stamp analyze
+}
 
 # --- SPEC 5.6 interface -----------------------------------------------------------------------------------
 
@@ -103,19 +143,37 @@ build_web_release() {
 
 # build_check: cargo check on every target the code is compiled for, plus the Dart analyzer.
 build_check() {
-  cargo check --workspace --exclude frame2d-bridge || return 1
-  cargo check -p frame2d-bridge --target "$DESKTOP_TARGET" || return 1
-  _cargo_wasm check -p frame2d-bridge --target "$WASM_TARGET" || return 1
-  _flutter analyze
+  # The three cargo checks (different target layouts, so they do not block each other) and the Dart analyzer
+  # run side by side.
+  _bg host cargo check --workspace --exclude frame2d-bridge
+  _bg desktop cargo check -p frame2d-bridge --target "$DESKTOP_TARGET"
+  _bg wasm _cargo_wasm check -p frame2d-bridge --target "$WASM_TARGET"
+  _bg dart _dart_analyze
+  _join
 }
 
 # build_dev: debug profile of everything the agent normally rebuilds: CLI, server, engine DLL for desktop,
 # engine WASM for web, and the Flutter desktop debug app.
 build_dev() {
-  cargo build -p frame2d-cli -p frame2d-server || return 1
+  # CLI + server and the web engine build while the desktop engine DLL and the Flutter app are made.
+  _bg cli-server cargo build -p frame2d-cli -p frame2d-server
+  _bg web _bridge_wasm debug
+  _build_desktop_debug || { _join; return 1; }
+  _join
+}
+
+# _build_desktop_debug: engine DLL, then the Flutter debug app. The Flutter build (about 10 s even when nothing
+# changed) only runs when a Dart/Windows input changed; after an engine-only edit the new DLL is just copied into
+# the existing bundle, which is all the Flutter build's install step would do with it.
+_build_desktop_debug() {
+  local bundle="$APP_DIR/$FLUTTER_BUNDLE_SUBDIR/Debug"
   _bridge_desktop debug || return 1
-  _bridge_wasm debug || return 1
-  _flutter build "$DESKTOP_DIR" --debug
+  if [ -e "$bundle/frame2d_app$EXE" ] && ! _stale flutter-debug $(_dart_inputs) "$APP_DIR/$DESKTOP_DIR"; then
+    cmp -s "$F2D_BRIDGE_DLL" "$bundle/$BRIDGE_LIB" || cp "$F2D_BRIDGE_DLL" "$bundle/$BRIDGE_LIB" || return 1
+  else
+    _flutter build "$DESKTOP_DIR" --debug || return 1
+    _stamp flutter-debug
+  fi
 }
 
 # run_server: foreground, honors FRAME2D_ADDR. Builds first, then execs the binary itself so that killing the

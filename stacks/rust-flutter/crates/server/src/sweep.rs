@@ -1,6 +1,6 @@
 //! Parametric sweep (SPEC 5.4): scale every `BM` section's I across N variants and solve them on all cores.
 
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Mutex;
 
 use frame2d_engine::{analyze, Model, ModelError, Topology};
@@ -65,6 +65,7 @@ pub fn run(model: &Model, count: usize, range: [f64; 2]) -> Result<SweepResult, 
     let next = AtomicUsize::new(0);
     let slots: Mutex<Vec<Option<Variant>>> = Mutex::new(vec![None; count]);
     let failure: Mutex<Option<ModelError>> = Mutex::new(None);
+    let failed = AtomicBool::new(false);
 
     std::thread::scope(|scope| {
         for _ in 0..threads {
@@ -73,7 +74,7 @@ pub fn run(model: &Model, count: usize, range: [f64; 2]) -> Result<SweepResult, 
                 let base: Vec<f64> = model.sections.iter().map(|s| s.i).collect();
                 loop {
                     let k = next.fetch_add(1, Ordering::Relaxed);
-                    if k >= count || failure.lock().unwrap().is_some() {
+                    if k >= count || failed.load(Ordering::Relaxed) {
                         break;
                     }
                     let scale = scale_of(k, count, range[0], range[1]);
@@ -88,6 +89,7 @@ pub fn run(model: &Model, count: usize, range: [f64; 2]) -> Result<SweepResult, 
                         }
                         Err(e) => {
                             *failure.lock().unwrap() = Some(e);
+                            failed.store(true, Ordering::Relaxed);
                             break;
                         }
                     }

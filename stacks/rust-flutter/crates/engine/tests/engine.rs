@@ -172,3 +172,31 @@ fn results_json_has_expected_shape() {
     assert!(v["stats"]["alloc_count"].is_null());
     assert_eq!(v["warnings"].as_array().unwrap().len(), 0);
 }
+
+#[test]
+fn released_end_turns_a_propped_cantilever_into_a_simply_supported_beam() {
+    // Node 1 is fully fixed but the member's i end is released; node 2 is a pin. Without the release the
+    // midspan moment would be 9wL^2/128 and the fixed end would carry 5/8 of the load.
+    let mut m = beam(1, 5.0, &[(1, true, true, true), (2, true, true, false)]);
+    m.members[0].release = Some(model::Release { i: vec!["mz".into()], j: vec![] });
+    m.load_cases.push(case("D", vec![], vec![model::UdlLoad { member: 1, w: -5000.0 }]));
+    let r = solve(&m).unwrap();
+    assert!(r.station(0, 0, 0).m.abs() < 1e-6, "released end moment {}", r.station(0, 0, 0).m);
+    assert!(close(r.station(0, 0, 5).m, 15625.0), "midspan {}", r.station(0, 0, 5).m);
+    assert!(close(r.cases[0].reactions[0].fy, 12500.0));
+}
+
+#[test]
+fn spring_support_shares_the_load_with_the_member() {
+    let k = 1e7;
+    let mut m = beam(1, 4.0, &[(1, true, true, true), (2, false, true, true)]);
+    m.springs.push(model::Spring { node: 2, kx: Some(k), ky: None, kr: None });
+    m.load_cases.push(case("P", vec![model::NodalLoad { node: 2, fx: 1e5, ..Default::default() }], vec![]));
+    let r = solve(&m).unwrap();
+    let ea_l = 200e9 * 0.01 / 4.0;
+    let u = 1e5 / (ea_l + k);
+    assert!(close(r.cases[0].disp[3], u), "ux {} vs {}", r.cases[0].disp[3], u);
+    // The fixed end takes only the member's share of the load; the spring takes k*u.
+    assert!(close(r.cases[0].reactions[0].fx.abs(), ea_l * u));
+    assert!(r.cases[0].equilibrium_residual < 1e-9);
+}

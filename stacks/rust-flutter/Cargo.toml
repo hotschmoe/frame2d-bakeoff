@@ -8,3 +8,10 @@ lto = true
 codegen-units = 1
 strip = true
 
+
+# Dev loop: keep line tables for panics but no debug info for dependencies (smaller objects, faster links).
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = false

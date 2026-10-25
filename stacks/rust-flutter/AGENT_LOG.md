@@ -91,3 +91,68 @@ Files touched (engine only): `model.rs` (Spring, Release), `topology.rs` (suppor
 `generate.rs` and `tests/engine.rs` (new struct fields). No problems over 10 minutes.
 Design notes: auto-restrained rotations are not listed as reactions unless the node also has an explicit support.
 The Flutter app and wire formats were not changed (no UI for springs/releases in P2).
+
+## P5 optimization pass
+
+Machine win-arm64, other agents building concurrently, so timings are indicative. Before = run1 code measured the same way
+(`harness/measure.sh`, label `p5-before-*`), after = `p5-after-*` in `results/adhoc/rust-flutter/`.
+
+### Changes
+- `stack.sh` build_check / build_dev: the Dart analyzer and the Flutter desktop build are the expensive steps (about 5 s and
+  10 s even when nothing changed), while the Rust steps take about 1 s each. Both are now skipped by a make-style stamp
+  (`target/.stamps/`, any input file newer than the stamp re-runs them; inputs = app/lib, app/test, pubspec*, analysis_options,
+  and app/windows for the build). Targets: no-op and engine/server-edit loops.
+- build_dev, after an engine-only edit: the Flutter build is skipped and the fresh engine DLL is copied into the existing Debug
+  bundle (what the install step would do). A Dart or Windows-runner edit still runs `flutter build windows --debug`.
+- build_check / build_dev run their independent parts in parallel (3 cargo checks + analyzer; cli+server, wasm, and DLL+Flutter),
+  output is buffered per job and replayed. Different target layouts, so cargo's directory locks do not serialise them.
+- `flutter analyze` replaced by `dart analyze --fatal-infos` (same strictness, about 1.5 s less start-up); runs `flutter pub get`
+  first when pubspec.yaml is newer than package_config.json.
+- `_bridge_wasm`: wasm-bindgen / wasm-opt skipped when cargo's wasm output is unchanged for that profile.
+- Cargo.toml: `[profile.dev] debug = "line-tables-only"`, `[profile.dev.package."*"] debug = false` (smaller objects, faster links;
+  not measured separately). Release profile already had LTO / 1 CGU / strip; panic=abort deliberately not set (the FRB bridge
+  and axum rely on unwinding to report a panic instead of dying).
+- Solver `dot` (skyline.rs): 8 independent accumulators, fused multiply-add on aarch64 only (plain mul+add elsewhere, since
+  `mul_add` without hardware FMA is a slow libm call on x64/wasm). Same algorithm (§4.4 LDL^T), summation order differs in the last bits.
+- Server: tokio runtime built by hand with `max_blocking_threads = cores` and at most 4 workers. The default 512-thread blocking
+  pool gave 534 threads and about 1 GB RSS under the oha load; requests now queue instead. Sweep failure flag is an AtomicBool
+  (no mutex lock per iteration).
+
+### Numbers (wall s)
+| metric | before | after |
+|---|---|---|
+| build_check, leaf edit | 7.05 | 1.30 |
+| build_check, struct edit | 6.7 (run1) | 1.40 |
+| build_check, server edit | 5.6 (run1) | 2.0 |
+| build_dev, leaf edit | 12.67 | 3.87 |
+| build_dev, struct edit | 13.5 (run1) | 3.79 |
+| build_dev, server edit | 9.8 (run1) | 1.72 |
+| build_check / build_dev, ui edit | 5.5 / 11.4 (run1) | 4.65 / 10.19 (the Flutter tool's fixed cost remains) |
+| no-op build_check / build_dev | 6.3 / 8.9 (run1) | 0.79 / 0.84 |
+| CLI 100x100 factor_ms | 136.7 | 98.4 (50x50: 9.6 to 6.1) |
+| x64 CLI 100x100 factor_ms (what the desktop DLL runs) | 130 (4 acc) | 113 (8 acc) |
+| server oha --quick (5 s) | run1: 300 rps, p99 716 ms, 534 threads, 1016 MB RSS | 324 rps, p99 276 ms, 26 threads, 380 MB RSS |
+Desktop drag (p50 34 ms, solve 11.8 ms), desktop render, web drag/render are unchanged: they are bound by Impeller GL / CanvasKit
+under emulation, not by the engine. Rendering code was not touched.
+
+Cold builds were not re-measured (cold_dev should gain from the parallel jobs and `debug = false` for dependencies, unmeasured).
+
+### Review defects
+- Fixed: `engine_move_and_solve` left a rejected position (zero_length / unstable) in the session; it now rolls back (test added).
+- Fixed: unchecked id narrowing. Node / member ids outside i32 are now rejected on load with `invalid_model|...`; profile and DOF
+  counts saturate instead of wrapping (test added).
+- Fixed: `Store` mutex poison panics (`lock().unwrap()`); the guard is recovered, SQLite state is unaffected by a panic elsewhere.
+- Fixed: missing numeric tests for releases and springs (engine tests: released end turns a propped cantilever into a simply supported
+  beam, spring shares load with the member).
+- Rejected: process-global `Mutex` session in the bridge. One FRB isolate owns one model by design; changing it would alter the API
+  and regenerate bindings for no measurable gain. `solve_case` length / change-resilience (new load type touches ~10 places) not addressed.
+
+### Not done
+- Hot-reload probe, FRB regeneration timing, Dart-side `flutter build` speed (2.2 s "unpack_windows" check is inside the Flutter tool).
+- Assembly and `solve` (forward/back substitution) tuning; the web wasm path still uses plain mul+add.
+- Server: sqlite access is a single mutexed connection.
+
+### Final conformance
+`conformance.py rust-flutter p1` 17/17, `p2` 7/7, `server_conformance.sh rust-flutter` all passed (port 18097), `test_all`: engine 11, server 3,
+bridge 3, Flutter 4, all pass. Smoke `runtime/run.sh rust-flutter meta build cli desktop web server binsize --quick` ran to completion
+on desktop, web (JS and wasm) and server (F2D_RUN=run1p5). `buildloop edits --quick` ran; edits restored.

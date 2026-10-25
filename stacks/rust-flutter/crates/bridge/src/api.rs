@@ -81,7 +81,20 @@ fn with_session<T>(f: impl FnOnce(&mut Session) -> Result<T, String>) -> Result<
     }
 }
 
+/// The view carries ids as i32; refuse models whose ids do not fit instead of truncating them.
+fn check_id_range(model: &Model) -> Result<(), String> {
+    let fits = |id: i64| i32::try_from(id).is_ok();
+    if let Some(n) = model.nodes.iter().find(|n| !fits(n.id)) {
+        return Err(format!("invalid_model|node id {} is outside the 32-bit range the UI supports", n.id));
+    }
+    if let Some(m) = model.members.iter().find(|m| !fits(m.id)) {
+        return Err(format!("invalid_model|member id {} is outside the 32-bit range the UI supports", m.id));
+    }
+    Ok(())
+}
+
 fn install(model: Model) -> Result<ModelView, String> {
+    check_id_range(&model)?;
     let topo = Topology::build(&model).map_err(err)?;
     let mut node_pos = vec![0; model.nodes.len()];
     for (pos, &k) in topo.node_sorted.iter().enumerate() {
@@ -196,9 +209,9 @@ fn flatten(topo: &Topology, node_pos: &[usize], case_index: u32, results: &Resul
         assemble_ms: s.assemble_ms,
         factor_ms: s.factor_ms,
         solve_ms: s.solve_ms,
-        free_dofs: s.free_dofs as u32,
-        profile_before: s.profile_before as u32,
-        profile_after: s.profile_after as u32,
+        free_dofs: u32::try_from(s.free_dofs).unwrap_or(u32::MAX),
+        profile_before: u32::try_from(s.profile_before).unwrap_or(u32::MAX),
+        profile_after: u32::try_from(s.profile_after).unwrap_or(u32::MAX),
     }
 }
 
@@ -227,9 +240,15 @@ pub fn engine_solve(case_index: u32) -> Result<SolveView, String> {
 pub fn engine_move_and_solve(node_pos: u32, x: f64, y: f64, case_index: u32) -> Result<SolveView, String> {
     with_session(|s| {
         let k = *s.topo.node_sorted.get(node_pos as usize).ok_or("invalid_ref|no such node position")?;
+        let old = (s.model.nodes[k].x, s.model.nodes[k].y);
         s.model.nodes[k].x = x;
         s.model.nodes[k].y = y;
-        solve_view(s, case_index)
+        let result = solve_view(s, case_index);
+        if result.is_err() {
+            // A rejected position (zero-length member, mechanism) must not stay in the session.
+            (s.model.nodes[k].x, s.model.nodes[k].y) = old;
+        }
+        result
     })
 }
 
@@ -274,6 +293,10 @@ mod tests {
         let json = engine_export().unwrap();
         assert!(json.contains("6.5"));
 
+        // A rejected drag (onto the neighbouring node: zero-length beam) leaves the old position in place.
+        assert!(engine_move_and_solve(top, 12.0, 7.0, 2).unwrap_err().starts_with("zero_length|"));
+        assert_eq!(engine_export().unwrap(), json);
+
         // The exported model loads back into an equivalent session.
         let again = engine_load(json).unwrap();
         assert_eq!(again.node_ids, view.node_ids);
@@ -282,6 +305,14 @@ mod tests {
         assert!(engine_load("{ not json".into()).unwrap_err().starts_with("bad_json|"));
         // A failed load keeps the previous session usable.
         assert!(engine_solve(0).is_ok());
+    }
+
+    #[test]
+    fn ids_beyond_32_bits_are_rejected() {
+        let mut model = generate(1, 1);
+        model.nodes[0].id = i64::from(i32::MAX) + 1;
+        assert!(check_id_range(&model).unwrap_err().starts_with("invalid_model|node id"));
+        assert!(check_id_range(&generate(1, 1)).is_ok());
     }
 
     #[test]

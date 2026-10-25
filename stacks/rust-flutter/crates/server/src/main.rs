@@ -145,8 +145,20 @@ fn app(store: AppState) -> Router {
         .with_state(store)
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
+    // Solves are CPU-bound: cap the blocking pool at the core count (tokio's default of 512 threads let a burst of
+    // connections spawn hundreds of threads, each with its own solver buffers) and let extra requests queue.
+    let cores = std::thread::available_parallelism().map_or(4, |n| n.get());
+    tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(cores.min(4))
+        .max_blocking_threads(cores)
+        .enable_all()
+        .build()
+        .expect("cannot start the async runtime")
+        .block_on(serve());
+}
+
+async fn serve() {
     let addr = std::env::var("FRAME2D_ADDR").unwrap_or_else(|_| "127.0.0.1:8080".into());
     let db = std::env::var("FRAME2D_DB").unwrap_or_else(|_| "frame2d.db".into());
     let store = Arc::new(Store::open(&db).unwrap_or_else(|e| {

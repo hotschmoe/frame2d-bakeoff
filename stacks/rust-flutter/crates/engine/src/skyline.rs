@@ -112,21 +112,34 @@ impl<'a> Skyline<'a> {
     }
 }
 
+/// Multiply-add: a fused instruction where the baseline target has one (aarch64), plain mul + add elsewhere
+/// (`f64::mul_add` without hardware FMA falls back to a slow libm call, e.g. on default x86-64 and wasm32).
+#[inline(always)]
+fn madd(acc: f64, x: f64, y: f64) -> f64 {
+    #[cfg(target_arch = "aarch64")]
+    {
+        x.mul_add(y, acc)
+    }
+    #[cfg(not(target_arch = "aarch64"))]
+    {
+        acc + x * y
+    }
+}
+
 #[inline]
 fn dot(a: &[f64], b: &[f64]) -> f64 {
     debug_assert_eq!(a.len(), b.len());
-    let mut acc = [0.0f64; 4];
-    let mut ca = a.chunks_exact(4);
-    let mut cb = b.chunks_exact(4);
+    let mut acc = [0.0f64; 8];
+    let mut ca = a.chunks_exact(8);
+    let mut cb = b.chunks_exact(8);
     for (x, y) in (&mut ca).zip(&mut cb) {
-        acc[0] += x[0] * y[0];
-        acc[1] += x[1] * y[1];
-        acc[2] += x[2] * y[2];
-        acc[3] += x[3] * y[3];
+        for k in 0..8 {
+            acc[k] = madd(acc[k], x[k], y[k]);
+        }
     }
     let mut tail = 0.0;
     for (x, y) in ca.remainder().iter().zip(cb.remainder()) {
-        tail += x * y;
+        tail = madd(tail, *x, *y);
     }
-    (acc[0] + acc[1]) + (acc[2] + acc[3]) + tail
+    ((acc[0] + acc[1]) + (acc[2] + acc[3])) + ((acc[4] + acc[5]) + (acc[6] + acc[7])) + tail
 }

@@ -1,0 +1,1 @@
+{"wall_s": 2.389139699982479, "cpu_s": 8.890625, "parallelism": 3.7212662784286743, "mem_peak_mb": 1076.9921875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 22, "exit_code": 0, "method": "psutil", "stack": "go", "label": "p5-build_desktop_release"}

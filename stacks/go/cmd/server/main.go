@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -20,7 +21,14 @@ import (
 	"frame2d/engine"
 )
 
-const maxBody = 64 << 20
+const (
+	maxBody     = 64 << 20
+	maxVariants = 1 << 20 // sweep size cap: the result holds one entry per variant
+)
+
+// solveSlots bounds concurrent solves to the core count. A solve is CPU-bound and allocates its skyline
+// plus a result document, so more in flight than cores only multiplies peak memory and tail latency.
+var solveSlots = make(chan struct{}, runtime.NumCPU())
 
 const serverTag = "x-frame2d: a" // BENCH-EDIT:server
 
@@ -66,6 +74,13 @@ func tag(next http.Handler) http.Handler {
 	})
 }
 
+// writeResults streams a solve result without building the whole document in memory first.
+func writeResults(w http.ResponseWriter, res *engine.Results) {
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = res.WriteJSON(w)
+}
+
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(status)
@@ -91,12 +106,16 @@ func (s *server) health(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
 }
 
-func solveModel(m *engine.Model) (*engine.Results, error) {
+// solveAndWrite solves m while holding a solve slot and writes the result (or the mapped error).
+func solveAndWrite(w http.ResponseWriter, m *engine.Model) {
+	solveSlots <- struct{}{}
+	defer func() { <-solveSlots }()
 	sol, err := engine.Analyze(m, engine.Options{})
 	if err != nil {
-		return nil, err
+		fail(w, err)
+		return
 	}
-	return sol.Results(), nil
+	writeResults(w, sol.Results())
 }
 
 func (s *server) solve(w http.ResponseWriter, r *http.Request) {
@@ -110,12 +129,7 @@ func (s *server) solve(w http.ResponseWriter, r *http.Request) {
 		fail(w, err)
 		return
 	}
-	res, err := solveModel(m)
-	if err != nil {
-		fail(w, err)
-		return
-	}
-	writeJSON(w, http.StatusOK, res)
+	solveAndWrite(w, m)
 }
 
 func (s *server) putModel(w http.ResponseWriter, r *http.Request) {
@@ -176,12 +190,7 @@ func (s *server) solveStored(w http.ResponseWriter, r *http.Request) {
 		fail(w, err)
 		return
 	}
-	res, err := solveModel(m)
-	if err != nil {
-		fail(w, err)
-		return
-	}
-	writeJSON(w, http.StatusOK, res)
+	solveAndWrite(w, m)
 }
 
 type sweepRequest struct {
@@ -218,7 +227,11 @@ func (s *server) sweep(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.Model == nil && req.ModelID != "" {
 		stored, ok, err := s.load(req.ModelID)
-		if err != nil || !ok {
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "storage", "detail": err.Error()})
+			return
+		}
+		if !ok {
 			writeJSON(w, http.StatusNotFound, map[string]string{"error": "not_found", "detail": "no such model"})
 			return
 		}
@@ -227,8 +240,8 @@ func (s *server) sweep(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	if req.Model == nil || req.Variants < 1 {
-		fail(w, errors.New("sweep needs a model (or model_id) and variants >= 1"))
+	if req.Model == nil || req.Variants < 1 || req.Variants > maxVariants {
+		fail(w, fmt.Errorf("sweep needs a model (or model_id) and 1 <= variants <= %d", maxVariants))
 		return
 	}
 	res, err := runSweep(req)

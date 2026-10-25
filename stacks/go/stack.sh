@@ -14,11 +14,14 @@ source "$STACK_DIR/../../harness/machine-env.sh"   # pinned PATH per machine (SP
 # binary is static and cross-compiles without a C toolchain. (Gio on Linux/macOS needs CGO_ENABLED=1
 # for the desktop app; _go_desktop_env handles that.)
 export CGO_ENABLED=0
-_EXE="$(go env GOEXE)"
-_REL_FLAGS=(-trimpath -ldflags "-s -w")
+# One `go env` call for all three (each spawn costs 50-150 ms, and these used to run on every build).
+{ read -r _EXE; read -r _GOOS; read -r _GOROOT; } < <(go env GOEXE GOOS GOROOT)
+# -buildvcs=false: skip the per-build `git status` stamp (slow in a big monorepo and useless for these binaries).
+_BASE_FLAGS=(-buildvcs=false)
+_REL_FLAGS=("${_BASE_FLAGS[@]}" -trimpath -ldflags "-s -w")
 _JS=(env GOOS=js GOARCH=wasm CGO_ENABLED=0)
 
-_go_desktop_env() { case "$(go env GOOS)" in windows|js) CGO_ENABLED=0 "$@";; *) CGO_ENABLED=1 "$@";; esac; }
+_go_desktop_env() { case "$_GOOS" in windows|js) CGO_ENABLED=0 "$@";; *) CGO_ENABLED=1 "$@";; esac; }
 
 # clean_all: remove build outputs and the Go build cache. KEEPS the module cache (downloaded sources).
 clean_all() {
@@ -46,31 +49,45 @@ build_web_release() {
   local out="$STACK_DIR/build/release/web"
   mkdir -p "$out"
   "${_JS[@]}" go build "${_REL_FLAGS[@]}" -o "$out/main.wasm" ./cmd/app || return 1
-  cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" "$out/wasm_exec.js" && cp web/index.html "$out/index.html" || return 1
+  cp "$_GOROOT/lib/wasm/wasm_exec.js" "$out/wasm_exec.js" && cp web/index.html "$out/index.html" || return 1
   echo "$out"
 }
 
-# build_check: vet + compile everything for the host, plus vet of the js/wasm client (the web target
-# compiles different files, so host-only checks miss errors in platform_js.go).
-build_check() {
-  go vet ./... || return 1
-  go build ./... || return 1
-  "${_JS[@]}" go vet ./cmd/app
+# _all: run the given command strings in parallel (each evaluated in a background subshell) and fail
+# if any failed. Used so independent targets (host, js/wasm) overlap instead of queueing.
+_all() {
+  local pids=() rc=0 p
+  for cmd in "$@"; do
+    ( eval "$cmd" ) &
+    pids+=($!)
+  done
+  for p in "${pids[@]}"; do wait "$p" || rc=1; done
+  return $rc
 }
 
-# build_dev: debug-friendly (no strip) builds of every target the agent rebuilds.
+# build_check: vet (which type-checks every package and test file) for the host, plus vet of the js/wasm
+# client (the web target compiles different files, so host-only checks miss errors in platform_js.go).
+# The two run in parallel; a separate `go build ./...` is redundant with vet's type check and is not run.
+build_check() {
+  _all 'go vet ./...' '"${_JS[@]}" go vet ./cmd/app'
+}
+
+# _sync: copy src to dst only when the content differs (keeps mtimes stable on no-op builds).
+_sync() { cmp -s "$1" "$2" 2>/dev/null || cp "$1" "$2"; }
+
+# build_dev: debug-friendly (no strip) builds of every target the agent rebuilds. The CLI+server, the
+# desktop app and the wasm client are independent go build invocations that run in parallel.
 build_dev() {
   mkdir -p build/dev/web
-  go build -o "build/dev/frame2d$_EXE" ./cmd/frame2d || return 1
-  go build -o "build/dev/server$_EXE" ./cmd/server || return 1
-  _go_desktop_env go build -o "build/dev/app$_EXE" ./cmd/app || return 1
-  "${_JS[@]}" go build -o build/dev/web/main.wasm ./cmd/app || return 1
-  cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" build/dev/web/wasm_exec.js && cp web/index.html build/dev/web/index.html
+  _all 'CGO_ENABLED=0 go build "${_BASE_FLAGS[@]}" -o build/dev/ ./cmd/frame2d ./cmd/server' \
+       '_go_desktop_env go build "${_BASE_FLAGS[@]}" -o "build/dev/app$_EXE" ./cmd/app' \
+       '"${_JS[@]}" go build "${_BASE_FLAGS[@]}" -o build/dev/web/main.wasm ./cmd/app' || return 1
+  _sync "$_GOROOT/lib/wasm/wasm_exec.js" build/dev/web/wasm_exec.js && _sync web/index.html build/dev/web/index.html
 }
 
 run_server() {
   mkdir -p build/dev
-  go build -o "build/dev/server$_EXE" ./cmd/server || return 1
+  go build "${_BASE_FLAGS[@]}" -o "build/dev/server$_EXE" ./cmd/server || return 1
   export FRAME2D_DB="${FRAME2D_DB:-$STACK_DIR/build/dev/frame2d.sqlite}"
   rm -f "$FRAME2D_DB"
   exec "$STACK_DIR/build/dev/server$_EXE"

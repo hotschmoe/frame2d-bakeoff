@@ -1,0 +1,1 @@
+{"wall_s": 1.2880517999874428, "cpu_s": 0.46875, "parallelism": 0.36392169942588476, "mem_peak_mb": 103.25390625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 7, "exit_code": 0, "method": "psutil", "stack": "zig-flutter", "label": "p5-dev2"}

@@ -1,0 +1,1 @@
+{"wall_s": 4.528174400009448, "cpu_s": 7.828125, "parallelism": 1.7287596078418859, "mem_peak_mb": 686.3671875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 9, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "p5-t"}

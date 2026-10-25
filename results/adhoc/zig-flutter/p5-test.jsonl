@@ -1,0 +1,1 @@
+{"wall_s": 11.120807599974796, "cpu_s": 0.125, "parallelism": 0.011240190865300403, "mem_peak_mb": 85.01171875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 5, "exit_code": 0, "method": "psutil", "stack": "zig-flutter", "label": "p5-test"}

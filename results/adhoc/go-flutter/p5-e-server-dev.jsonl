@@ -1,0 +1,1 @@
+{"wall_s": 3.4144202999887057, "cpu_s": 3.453125, "parallelism": 1.0113356577722497, "mem_peak_mb": 419.3203125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 17, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "p5-e-server-dev"}

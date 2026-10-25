@@ -1,0 +1,1 @@
+{"wall_s": 4.378299800038803, "cpu_s": 0.828125, "parallelism": 0.18914305502621373, "mem_peak_mb": 181.4375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 10, "exit_code": 0, "method": "psutil", "stack": "rust-flutter", "label": "p5-after-noop1-check"}

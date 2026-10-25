@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"runtime"
 	"sort"
@@ -77,21 +78,31 @@ func splitArgs(args []string, flags ...string) (pos []string, vals map[string]st
 	return pos, vals, nil
 }
 
-func writeJSON(path string, v any) error {
+// writeOut runs emit against stdout, or the file at path, through a buffered writer. A failed close of
+// the output file is reported (a full disk shows up there).
+func writeOut(path string, emit func(w io.Writer) error) (err error) {
 	w := os.Stdout
 	if path != "" {
 		f, err := os.Create(path)
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer func() {
+			if cerr := f.Close(); err == nil {
+				err = cerr
+			}
+		}()
 		w = f
 	}
-	bw := bufio.NewWriterSize(w, 1<<20)
-	if err := json.NewEncoder(bw).Encode(v); err != nil {
+	bw := bufio.NewWriterSize(w, 256<<10)
+	if err := emit(bw); err != nil {
 		return err
 	}
 	return bw.Flush()
+}
+
+func writeJSON(path string, v any) error {
+	return writeOut(path, func(w io.Writer) error { return json.NewEncoder(w).Encode(v) })
 }
 
 func cmdGen(args []string) error {
@@ -124,7 +135,7 @@ func cmdSolve(args []string) error {
 	if err != nil {
 		return err
 	}
-	return writeJSON(vals["-o"], res)
+	return writeOut(vals["-o"], res.WriteJSON)
 }
 
 // measuredSolve runs one solve and records allocation counts around it (SPEC 5.2, Go row).

@@ -1,8 +1,11 @@
 package engine
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"math"
+	"reflect"
 	"testing"
 )
 
@@ -129,5 +132,98 @@ func TestOnlyCase(t *testing.T) {
 	sol, err := Analyze(Generate(3, 3), Options{OnlyCase: "W"})
 	if err != nil || len(sol.Cases) != 1 || sol.Cases[0].ID != "W" {
 		t.Fatalf("got %v %v", sol, err)
+	}
+}
+
+func BenchmarkAnalyzeDrag50(b *testing.B) {
+	m := Generate(50, 50)
+	opt := Options{OnlyCase: "D"}
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		if _, err := Analyze(m, opt); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// TestWriteJSONMatchesEncodingJSON checks the streaming encoder against encoding/json on a model with
+// releases, springs, warnings and nullable stats.
+func TestWriteJSONMatchesEncodingJSON(t *testing.T) {
+	m := Generate(4, 3)
+	m.Members[5].Release = &Release{I: []string{"mz"}}
+	kx := 1e7
+	m.Springs = []Spring{{Node: 7, KX: &kx}}
+	sol, err := Analyze(m, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := sol.Results()
+	res.Warnings = append(res.Warnings, Warning{Warning: "a\"b<c", Node: 3, DOF: "rz"})
+	n := uint64(5)
+	res.Stats.AllocCount = &n
+	res.LoadCases[0].Displacements[0].UX = 1.5e-9
+	res.LoadCases[0].Displacements[0].UY = -2e22
+	var buf bytes.Buffer
+	if err := res.WriteJSON(&buf); err != nil {
+		t.Fatal(err)
+	}
+	want, _ := json.Marshal(res)
+	var a, b any
+	if err := json.Unmarshal(buf.Bytes(), &a); err != nil {
+		t.Fatalf("invalid json: %v", err)
+	}
+	_ = json.Unmarshal(want, &b)
+	if !reflect.DeepEqual(a, b) {
+		t.Fatalf("streamed JSON differs from encoding/json")
+	}
+}
+
+func TestUnknownOnlyCase(t *testing.T) {
+	_, err := Analyze(Generate(2, 2), Options{OnlyCase: "nope"})
+	var me *ModelError
+	if !errors.As(err, &me) || me.Code != ErrInvalidRef {
+		t.Fatalf("got %v", err)
+	}
+}
+
+// A node with an axial spring in series with a bar: u = F / (EA/L + k).
+func TestSpringStiffness(t *testing.T) {
+	k := 2e8
+	m := beam(1, 5, []Support{{Node: 1, UX: true, UY: true, RZ: true}},
+		LoadCase{ID: "P", Nodal: []NodalLoad{{Node: 2, FX: 1000}}})
+	m.Springs = []Spring{{Node: 2, KX: &k}}
+	cs := solve(t, m).Cases[0]
+	near(t, "ux", cs.Disp[3], 1000/(testE*testA/5+k))
+	near(t, "base fx", cs.Reac[0], -testE*testA/5*cs.Disp[3])
+}
+
+func TestSpringOnRestrainedDOF(t *testing.T) {
+	k := 1.0
+	m := beam(1, 5, []Support{{Node: 1, UX: true, UY: true, RZ: true}}, LoadCase{ID: "P"})
+	m.Springs = []Spring{{Node: 1, KX: &k}}
+	_, err := Analyze(m, Options{})
+	var me *ModelError
+	if !errors.As(err, &me) || me.Code != ErrSupportConflict {
+		t.Fatalf("got %v", err)
+	}
+}
+
+// Propped cantilever through an end release: fixed at node 1, member pinned at j, vertical support at
+// node 2. M_fixed = wL^2/8 and R_prop = 3wL/8; node 2's rz has no stiffness, so it is auto-restrained.
+func TestReleasePropped(t *testing.T) {
+	const w, L = -4000.0, 6.0
+	m := beam(1, L, []Support{{Node: 1, UX: true, UY: true, RZ: true}, {Node: 2, UY: true}},
+		LoadCase{ID: "D", MemberUDL: []MemberUDL{{Member: 1, W: w}}})
+	m.Members[0].Release = &Release{J: []string{"mz"}}
+	sol := solve(t, m)
+	cs := sol.Cases[0]
+	near(t, "fixed-end mz", cs.Reac[2], -w*L*L/8)
+	near(t, "prop fy", cs.Reac[4], -3*w*L/8)
+	near(t, "pin end moment", cs.EndForces[5], 0)
+	if len(sol.Warnings) != 1 || sol.Warnings[0].Warning != "auto_restrained" {
+		t.Errorf("warnings %+v", sol.Warnings)
+	}
+	if cs.Residual > 1e-10 {
+		t.Errorf("residual %g", cs.Residual)
 	}
 }

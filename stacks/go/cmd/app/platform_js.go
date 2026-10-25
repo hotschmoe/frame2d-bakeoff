@@ -43,21 +43,28 @@ func (u *ui) openFile() {
 	input := doc.Call("createElement", "input")
 	input.Set("type", "file")
 	input.Set("accept", ".json,application/json")
-	input.Set("onchange", js.FuncOf(func(this js.Value, args []js.Value) any {
+	// Both callbacks are released once the file has been delivered; a leaked js.Func pins its closure.
+	var onChange, onText js.Func
+	onText = js.FuncOf(func(_ js.Value, a []js.Value) any {
+		defer onText.Release()
+		select {
+		case u.files <- []byte(a[0].String()):
+			u.win.Invalidate()
+		default: // a previous file is still waiting to be consumed
+		}
+		return nil
+	})
+	onChange = js.FuncOf(func(this js.Value, args []js.Value) any {
+		defer onChange.Release()
 		files := input.Get("files")
 		if files.Length() == 0 {
+			onText.Release()
 			return nil
 		}
-		files.Index(0).Call("text").Call("then", js.FuncOf(func(_ js.Value, a []js.Value) any {
-			select {
-			case u.files <- []byte(a[0].String()):
-				u.win.Invalidate()
-			default:
-			}
-			return nil
-		}))
+		files.Index(0).Call("text").Call("then", onText)
 		return nil
-	}))
+	})
+	input.Set("onchange", onChange)
 	input.Call("click")
 }
 

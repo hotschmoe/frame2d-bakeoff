@@ -21,6 +21,9 @@ Orchestrator: Claude Opus 5.5 (`claude-opus-5-5`). Stack agents: Sonnet 5.5 (`cl
 - **SPEC 8.1 classification: one fresh classifier for all stacks** (not one per stack as `harness/agentlog/README.md` suggests), for label consistency.
 - **P5 optimization pass (not in SPEC; human-requested 2026-10-24).** After run1 measurement and report, the run1 code is frozen as the baseline (tag `run1-baseline`). Each stack then gets one fresh Sonnet agent with the same prompt (`harness/kickoff/P5.md`, 75 min time box, own-stack baseline numbers in `harness/kickoff/p5-baseline/` and own review), up to 3 at a time in RUN_ORDER order. Results are re-measured serially with the same trimmed options under run id `run1p5` and compared against run1.
 
+- **P5 prompt notes.** Each P5 agent prompt restates the key rules of `harness/kickoff/P5.md` plus one stack-specific line naming that stack's largest run1 weakness (from its own baseline numbers and review), and, from rust-flutter on, a line that visual fidelity must not be degraded silently (rust's P5 had already switched member lines to non-anti-aliased quads; kept, flagged as a trade-off).
+- **P5 findings outside optimization.** The go P5 agent ran `git stash`/`git stash pop` once in the shared tree (about 1 s; all other stacks' changes restored; stash list empty). The go-zig-flutter P5 agent found that an `mz` release at a member's i end gave wrong results (inherited from go-flutter); conformance missed it because F21-F25 only exercise j-end releases. Orchestrator probe (3 i-end-release models vs `ref.py`): all stacks match except go-flutter (wrong on 2 of 3, also after P5). Reported to the human; no fixture added yet.
+
 ## Timeline
 
 Times are local (UTC-07:00). `overlapping` lists the other agents running at any point during the row's span.
@@ -42,3 +45,10 @@ Times are local (UTC-07:00). `overlapping` lists the other agents running at any
 | go-flutter | P2 | 2026-10-24 01:16 | 2026-10-24 01:18 | GREEN (all 22/22 incl. p2 + goldens, server all passed; verified by orchestrator) | (none) |
 | go-zig-flutter | fork | 2026-10-24 01:19 | 2026-10-24 01:19 | forked from tag p2-done-go-flutter (tracked files via git archive); baseline all 22/22 + server passed in the new dir | (none) |
 | go-zig-flutter | P3 | 2026-10-24 01:19 | 2026-10-24 08:35 | GREEN (all 22/22 incl. p2 + goldens, server all passed; verified by orchestrator). Elapsed includes a ~6.5 h stall (see Deviations); active work ~1.5 h | (none) |
+| zig-flutter | P5 | 2026-10-24 18:08 | 2026-10-24 18:33 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-zig-flutter | other P5 agents (up to 3 at once) |
+| zig | P5 | 2026-10-24 18:08 | 2026-10-24 18:28 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-zig | other P5 agents (up to 3 at once) |
+| rust | P5 | 2026-10-24 18:08 | 2026-10-24 18:27 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-rust | other P5 agents (up to 3 at once) |
+| rust-flutter | P5 | 2026-10-24 18:27 | 2026-10-24 18:49 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-rust-flutter | other P5 agents (up to 3 at once) |
+| go-flutter | P5 | 2026-10-24 18:28 | 2026-10-24 18:42 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-go-flutter | other P5 agents (up to 3 at once) |
+| go | P5 | 2026-10-24 18:33 | 2026-10-24 19:09 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-go | other P5 agents (up to 3 at once) |
+| go-zig-flutter | P5 | 2026-10-24 18:42 | 2026-10-24 19:08 | GREEN after P5 (all 22/22 incl. goldens, server all passed; verified by orchestrator); tag p5-done-go-zig-flutter | other P5 agents (up to 3 at once) |

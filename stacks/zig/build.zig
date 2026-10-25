@@ -4,7 +4,19 @@ const Opts = struct {
     b: *std.Build,
     target: std.Build.ResolvedTarget,
     optimize: std.builtin.Optimize,
+    /// Keep debug info (PDB) in debug builds. Off by default: generating it roughly doubles dev build time.
+    debug_info: bool,
+
+    fn strip(o: Opts) bool {
+        return o.optimize != .debug or !o.debug_info;
+    }
 };
+
+/// Debug builds use Zig's self-hosted backend (no LLVM): much faster edit loop. Release keeps LLVM.
+fn tune(o: Opts, exe: *std.Build.Step.Compile) *std.Build.Step.Compile {
+    if (o.optimize == .debug and exe.rootModuleTarget().cpu.arch == .wasm32) exe.use_llvm = false;
+    return exe;
+}
 
 fn engineModule(o: Opts) *std.Build.Module {
     return o.b.createModule(.{
@@ -15,16 +27,17 @@ fn engineModule(o: Opts) *std.Build.Module {
 }
 
 fn addCli(o: Opts) *std.Build.Step.Compile {
-    return o.b.addExecutable(.{
+    return tune(o, o.b.addExecutable(.{
         .name = "frame2d",
         .root_module = o.b.createModule(.{
             .root_source_file = o.b.path("src/cli.zig"),
             .target = o.target,
             .optimize = o.optimize,
-            .strip = o.optimize != .debug,
+            .strip = o.strip(),
+            .single_threaded = true,
             .imports = &.{.{ .name = "engine", .module = engineModule(o) }},
         }),
-    });
+    }));
 }
 
 fn addServer(o: Opts) *std.Build.Step.Compile {
@@ -34,7 +47,7 @@ fn addServer(o: Opts) *std.Build.Step.Compile {
         .target = o.target,
         .optimize = o.optimize,
         .link_libc = true,
-        .strip = o.optimize != .debug,
+        .strip = o.strip(),
         .imports = &.{.{ .name = "engine", .module = engineModule(o) }},
     });
     const sqlite = b.dependency("sqlite", .{});
@@ -42,7 +55,7 @@ fn addServer(o: Opts) *std.Build.Step.Compile {
         .file = sqlite.path("sqlite3.c"),
         .flags = &.{ "-DSQLITE_THREADSAFE=1", "-DSQLITE_OMIT_LOAD_EXTENSION=1", "-DSQLITE_OMIT_DEPRECATED=1" },
     });
-    return b.addExecutable(.{ .name = "frame2d-server", .root_module = mod });
+    return tune(o, b.addExecutable(.{ .name = "frame2d-server", .root_module = mod }));
 }
 
 const ClientSteps = struct { check: *std.Build.Step };
@@ -58,7 +71,7 @@ fn clientRoot(o: Opts, target: std.Build.ResolvedTarget, dvui_mod: *std.Build.Mo
         .root_source_file = b.path("src/ui.zig"),
         .target = target,
         .optimize = o.optimize,
-        .strip = o.optimize != .debug,
+        .strip = o.strip(),
         .imports = &.{
             .{ .name = "dvui", .module = dvui_mod },
             .{ .name = "engine", .module = eng },
@@ -75,7 +88,7 @@ fn addClients(o: Opts) ClientSteps {
     // desktop (SDL3)
     const dd = b.dependency("dvui", .{ .target = o.target, .optimize = o.optimize, .backend = .sdl3 });
     const dmod = clientRoot(o, o.target, dd.module("dvui_sdl3"), null);
-    const desk = b.addExecutable(.{ .name = "frame2d-app", .root_module = dmod });
+    const desk = tune(o, b.addExecutable(.{ .name = "frame2d-app", .root_module = dmod }));
     const desk_install = b.addInstallArtifact(desk, .{});
     b.step("desktop", "Build the desktop app").dependOn(&desk_install.step);
     b.getInstallStep().dependOn(&desk_install.step);
@@ -99,7 +112,7 @@ fn addClients(o: Opts) ClientSteps {
 fn addWebExe(o: Opts, wasm: std.Build.ResolvedTarget, wd: *std.Build.Dependency) *std.Build.Step.Compile {
     const mod = clientRoot(o, wasm, wd.module("dvui_web"), wd.module("web"));
     mod.single_threaded = true;
-    const exe = o.b.addExecutable(.{ .name = "web", .root_module = mod });
+    const exe = tune(o, o.b.addExecutable(.{ .name = "web", .root_module = mod }));
     exe.entry = .disabled;
     exe.rdynamic = true;
     return exe;
@@ -108,7 +121,8 @@ fn addWebExe(o: Opts, wasm: std.Build.ResolvedTarget, wd: *std.Build.Dependency)
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const o = Opts{ .b = b, .target = target, .optimize = optimize };
+    const debug_info = b.option(bool, "debug-info", "keep debug info in debug builds (slower dev builds)") orelse false;
+    const o = Opts{ .b = b, .target = target, .optimize = optimize, .debug_info = debug_info };
 
     const cli_install = b.addInstallArtifact(addCli(o), .{});
     const server_install = b.addInstallArtifact(addServer(o), .{});

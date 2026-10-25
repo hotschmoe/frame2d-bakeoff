@@ -60,7 +60,7 @@ pub fn main(init: std.process.Init) !void {
 fn serveConnection(app: *App, stream: std.Io.net.Stream) void {
     defer stream.close(app.io);
     var rbuf: [16 * 1024]u8 = undefined;
-    var wbuf: [16 * 1024]u8 = undefined;
+    var wbuf: [32 * 1024]u8 = undefined;
     var sr = stream.reader(app.io, &rbuf);
     var sw = stream.writer(app.io, &wbuf);
     var srv = http.Server.init(&sr.interface, &sw.interface);
@@ -79,10 +79,31 @@ fn respond(req: *http.Server.Request, status: http.Status, body: []const u8) !vo
     try req.respond(body, .{ .status = status, .extra_headers = &headers });
 }
 
+/// Streams the JSON body straight to the socket (chunked): no buffering of multi-MB results per request.
+fn respondResults(req: *http.Server.Request, m: *const model_mod.Model, res: *const solver.Results) !void {
+    const colon = comptime std.mem.indexOf(u8, frame2d_header, ": ").?;
+    const headers = [_]http.Header{
+        .{ .name = "content-type", .value = "application/json" },
+        .{ .name = frame2d_header[0..colon], .value = frame2d_header[colon + 2 ..] },
+    };
+    var buf: [32 * 1024]u8 = undefined;
+    var bw = try req.respondStreaming(&buf, .{ .respond_options = .{ .status = .ok, .extra_headers = &headers } });
+    try report.writeResults(&bw.writer, m, res);
+    try bw.end();
+}
+
 fn respondError(req: *http.Server.Request, status: http.Status, code: []const u8, detail: []const u8) !void {
     var buf: [512]u8 = undefined;
-    const s = std.fmt.bufPrint(&buf, "{{\"error\":\"{s}\",\"detail\":\"{s}\"}}", .{ code, detail }) catch "{\"error\":\"bad_request\"}";
-    try respond(req, status, s);
+    var w = std.Io.Writer.fixed(&buf);
+    const ok = blk: {
+        w.writeAll("{\"error\":") catch break :blk false;
+        std.json.Stringify.encodeJsonString(code, .{}, &w) catch break :blk false;
+        w.writeAll(",\"detail\":") catch break :blk false;
+        std.json.Stringify.encodeJsonString(detail, .{}, &w) catch break :blk false;
+        w.writeByte('}') catch break :blk false;
+        break :blk true;
+    };
+    try respond(req, status, if (ok) w.buffered() else "{\"error\":\"bad_request\"}");
 }
 
 fn respondModelError(req: *http.Server.Request, info: *const solver.ErrorInfo) !void {
@@ -162,10 +183,7 @@ fn solveAndRespond(app: *App, req: *http.Server.Request, body: []const u8) !void
         error.OutOfMemory => return respondError(req, .internal_server_error, "internal", "out of memory"),
     };
     defer res.deinit();
-    var out = std.Io.Writer.Allocating.init(app.gpa);
-    defer out.deinit();
-    report.writeResults(&out.writer, &m, &res) catch return respondError(req, .internal_server_error, "internal", "out of memory");
-    return respond(req, .ok, out.written());
+    return respondResults(req, &m, &res);
 }
 
 const SweepRequest = struct {

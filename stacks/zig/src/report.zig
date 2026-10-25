@@ -12,6 +12,24 @@ fn optU64(w: *Writer, v: ?u64) Writer.Error!void {
     if (v) |x| try w.print("{d}", .{x}) else try w.writeAll("null");
 }
 
+/// Remembers the text of the last float written, so a value repeated across consecutive stations
+/// (N and V are constant along members without a UDL) is formatted once.
+const NumCache = struct {
+    bits: u64 = std.math.maxInt(u64),
+    len: usize = 0,
+    buf: [48]u8 = undefined,
+
+    fn write(c: *NumCache, w: *Writer, v: f64) Writer.Error!void {
+        const bits: u64 = @bitCast(v);
+        if (bits != c.bits) {
+            const text = std.fmt.bufPrint(&c.buf, "{}", .{v}) catch return w.print("{}", .{v});
+            c.bits = bits;
+            c.len = text.len;
+        }
+        try w.writeAll(c.buf[0..c.len]);
+    }
+};
+
 pub fn writeError(w: *Writer, info: *const solver.ErrorInfo) Writer.Error!void {
     try w.print("{{\"error\":\"{s}\",\"detail\":", .{@tagName(info.code)});
     try str(w, info.detail());
@@ -49,14 +67,24 @@ pub fn writeResults(w: *Writer, m: *const model_mod.Model, res: *const solver.Re
             try w.print("{{\"node\":{d},\"fx\":{},\"fy\":{},\"mz\":{}}}", .{ m.nodes[r.node].id, r.f[0], r.f[1], r.f[2] });
         }
         try w.writeAll("],\"members\":[");
+        // Station x depends only on the member length, which repeats across members of a regular frame.
+        var cache_x: [solver.stations]NumCache = @splat(.{});
         for (m.members, 0..) |mem, k| {
             if (k > 0) try w.writeByte(',');
             const ef = c.end_forces[k * 6 ..][0..6];
             try w.print("{{\"id\":{d},\"end_forces\":[{},{},{},{},{},{}],\"stations\":[", .{ mem.id, ef[0], ef[1], ef[2], ef[3], ef[4], ef[5] });
+            var cache_n: NumCache = .{};
+            var cache_v: NumCache = .{};
             for (0..solver.stations) |q| {
                 const st = solver.station(ef, c.w[k], res.length[k], q);
                 if (q > 0) try w.writeByte(',');
-                try w.print("{{\"x\":{},\"N\":{},\"V\":{},\"M\":{}}}", .{ st.x, st.N, st.V, st.M });
+                try w.writeAll("{\"x\":");
+                try cache_x[q].write(w, st.x);
+                try w.writeAll(",\"N\":");
+                try cache_n.write(w, st.N);
+                try w.writeAll(",\"V\":");
+                try cache_v.write(w, st.V);
+                try w.print(",\"M\":{}}}", .{st.M});
             }
             try w.writeAll("]}");
         }

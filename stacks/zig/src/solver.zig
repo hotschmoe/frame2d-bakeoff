@@ -464,7 +464,7 @@ fn rcmOrder(gpa: Allocator, n: usize, graph: Graph) ![]u32 {
 
 const unset: u32 = std.math.maxInt(u32);
 
-const Skyline = struct {
+pub const Skyline = struct {
     n: usize,
     colptr: []usize,
     a: []f64,
@@ -676,7 +676,7 @@ fn autoRestrain(gpa: Allocator, geo: *const Geometry) !?[]u32 {
 
 /// In-place LDL^T on the skyline: the strict upper part becomes L^T (unit), the diagonal becomes D.
 /// Returns the failing dof on a bad pivot.
-fn factor(sk: *Skyline, max_diag: f64) ?usize {
+pub fn factor(sk: *Skyline, max_diag: f64) ?usize {
     const pivot_tol = 1e-12; // BENCH-EDIT:leaf
     var j: usize = 0;
     while (j < sk.n) : (j += 1) {
@@ -704,7 +704,7 @@ fn factor(sk: *Skyline, max_diag: f64) ?usize {
     return null;
 }
 
-fn solveInPlace(sk: *const Skyline, b: []f64) void {
+pub fn solveInPlace(sk: *const Skyline, b: []f64) void {
     // forward: L y = b
     var j: usize = 0;
     while (j < sk.n) : (j += 1) {

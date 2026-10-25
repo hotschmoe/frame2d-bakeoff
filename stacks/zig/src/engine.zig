@@ -8,6 +8,7 @@ pub const Counting = @import("counting.zig");
 test {
     _ = model;
     _ = solver;
+    _ = @import("tests.zig");
 }
 
 test "cantilever tip deflection (F01)" {

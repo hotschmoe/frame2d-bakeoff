@@ -24,6 +24,13 @@ fn setError(d: *const model.Diag) void {
     last_error[text.len] = 0;
 }
 
+/// Record a bad_request message for f2d_last_error and return its ABI code (-1).
+fn fail(d: *model.Diag, comptime msg: []const u8) c_int {
+    _ = d.set(.bad_request, msg, .{}) catch {};
+    setError(d);
+    return d.code.abi();
+}
+
 fn getSession(h: c_int) ?*session.Session {
     if (h < 1 or h > max_sessions) return null;
     return sessions[@intCast(h - 1)];
@@ -79,12 +86,17 @@ export fn f2d_echo(n: c_int) ?[*]f64 {
 
 export fn f2d_load_json(data: ?[*]const u8, n: c_int) c_int {
     var d = model.Diag{};
+    const src = data orelse return fail(&d, "no model data");
+    if (n < 0) return fail(&d, "negative model length");
     var ar = std.heap.ArenaAllocator.init(gpa);
     const a = ar.allocator();
-    const text = a.dupe(u8, (data orelse return -1)[0..@intCast(n)]) catch return -1;
-    const m = model.parseModel(a, text, &d) catch {
+    const text = a.dupe(u8, src[0..@intCast(n)]) catch {
         ar.deinit();
-        if (d.len == 0) _ = d.set(.bad_request, "out of memory", .{}) catch {};
+        return fail(&d, "out of memory");
+    };
+    const m = model.parseModel(a, text, &d) catch |e| {
+        ar.deinit();
+        if (e == error.OutOfMemory) return fail(&d, "out of memory");
         setError(&d);
         return d.code.abi();
     };
@@ -96,7 +108,7 @@ export fn f2d_gen(bays: c_int, stories: c_int) c_int {
     var ar = std.heap.ArenaAllocator.init(gpa);
     const m = model.gen(ar.allocator(), @intCast(@max(bays, 1)), @intCast(@max(stories, 1))) catch {
         ar.deinit();
-        return -1;
+        return fail(&d, "out of memory");
     };
     return register(ar, m, &d);
 }
@@ -128,12 +140,14 @@ export fn f2d_stats(h: c_int) ?[*]f64 {
     return if (getSession(h)) |s| &s.stats else null;
 }
 
-/// Writes the load case ids as a NUL-terminated JSON array into buf and returns its length (-1 if too small).
+/// Returns the length of the load case ids JSON array; when it fits (length + 1 <= capacity) it is also written
+/// into buf, NUL-terminated. A caller whose buffer was too small calls again with a larger one.
 export fn f2d_case_ids(h: c_int, buf: [*]u8, capacity: c_int) c_int {
     const s = getSession(h) orelse return 0;
-    if (s.case_ids.len + 1 > @as(usize, @intCast(capacity))) return -1;
-    @memcpy(buf[0..s.case_ids.len], s.case_ids);
-    buf[s.case_ids.len] = 0;
+    if (s.case_ids.len + 1 <= @as(usize, @intCast(@max(capacity, 0)))) {
+        @memcpy(buf[0..s.case_ids.len], s.case_ids);
+        buf[s.case_ids.len] = 0;
+    }
     return @intCast(s.case_ids.len);
 }
 
@@ -184,6 +198,7 @@ const rc_ok = 0;
 const rc_bad_request = 1; // out holds {"error":"bad_request",...}
 const rc_model_error = 2; // out holds {"error":<code>,...}
 const rc_internal = 3; // out is empty
+const rc_oom: c_int = -100; // f2d_sweep_run: out of memory (the other negative codes are Code.abi() values)
 
 fn outBytes(b: *util.Buf, out: *?[*]u8, out_len: *c_int) c_int {
     const s = b.finish() catch {
@@ -204,15 +219,22 @@ fn errOut(d: *const model.Diag, out: *?[*]u8, out_len: *c_int) c_int {
     return if (d.code == .bad_request) rc_bad_request else rc_model_error;
 }
 
-/// Parse + validate only (no solve): rc_ok, or an error as above.
+/// Parse + validate (parse and prepare, no solve): rc_ok, or an error as above.
 export fn f2d_check_json(data: ?[*]const u8, n: c_int, out: *?[*]u8, out_len: *c_int) c_int {
     var d = model.Diag{};
     var ar = std.heap.ArenaAllocator.init(gpa);
     defer ar.deinit();
-    _ = model.parseModel(ar.allocator(), (data orelse return rc_internal)[0..@intCast(n)], &d) catch |e| {
+    const m = model.parseModel(ar.allocator(), (data orelse return rc_internal)[0..@intCast(n)], &d) catch |e| {
         if (e == error.OutOfMemory) return rc_internal;
         return errOut(&d, out, out_len);
     };
+    // Validate references, ids, lengths and supports too (everything but the numerical solve), so a stored model
+    // is one that can at least be prepared.
+    const p = engine.prepare(gpa, &m, &d) catch |e| {
+        if (e == error.OutOfMemory) return rc_internal;
+        return errOut(&d, out, out_len);
+    };
+    p.deinit();
     out.* = null;
     out_len.* = 0;
     return rc_ok;
@@ -344,16 +366,23 @@ export fn f2d_sweep_worker_free(w: ?*anyopaque) void {
 
 /// Solves one variant with beam I scaled by `scale`; out2 = {roof_drift_W, max_abs_M}. Returns 0 or the error ABI code.
 export fn f2d_sweep_run(w: ?*anyopaque, scale: f64, out2: *[2]f64, err: [*]u8, err_cap: c_int) c_int {
-    const worker: *results.SweepWorker = @ptrCast(@alignCast(w orelse return -1));
+    const worker: *results.SweepWorker = @ptrCast(@alignCast(w orelse return rc_oom));
     var d = model.Diag{};
     const pt = results.sweepRun(worker, scale, &d) catch |e| {
-        if (e == error.OutOfMemory) return -1;
+        if (e == error.OutOfMemory) return rc_oom;
         const text = std.fmt.bufPrint(err[0..@intCast(@max(err_cap - 1, 0))], "{s}", .{d.detail()}) catch "";
         err[text.len] = 0;
         return d.code.abi();
     };
     out2.* = .{ pt.drift, pt.max_m };
     return 0;
+}
+
+/// Name of an error ABI code (the negative integers of Code.abi()); "internal" for anything else. Go maps sweep
+/// error codes through this so the table lives only in model.zig.
+export fn f2d_code_name(code: c_int) [*:0]const u8 {
+    for (std.enums.values(model.Code)) |c| if (c.abi() == code) return @tagName(c).ptr;
+    return "internal";
 }
 
 comptime {

@@ -1,11 +1,11 @@
-// Package zigengine is the cgo boundary to the Zig engine (static library built from ../../zig by stack.sh).
+// Package zigengine is the cgo boundary to the Zig engine (static library built from ../../zig by stack.sh; stack.sh passes the -L directory of the dev or release build in CGO_LDFLAGS).
 // Every function is a thin wrapper over the C ABI in zig/include/frame2d_engine.h: Go moves bytes, Zig does
 // all parsing, analysis and result serialization.
 package zigengine
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/../../zig/include
-#cgo LDFLAGS: -L${SRCDIR}/../../build -lframe2d
+#cgo LDFLAGS: -lframe2d
 #include <stdlib.h>
 #include "frame2d_engine.h"
 */
@@ -13,8 +13,6 @@ import "C"
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"math"
 	"runtime"
 	"sync"
@@ -66,7 +64,7 @@ func decodeErr(rc C.int, out []byte) error {
 	if rc == rcModelError {
 		return &me
 	}
-	return errors.New("engine internal error")
+	return &InternalError{Detail: "engine internal error"}
 }
 
 // SolveJSON parses a model, solves every load case and returns the results JSON (SPEC 5.2). With withAlloc the
@@ -182,7 +180,7 @@ func Sweep(model []byte, n int, lo, hi float64) (*SweepResult, error) {
 	for i := 0; i < nw; i++ {
 		w := C.f2d_sweep_worker(base)
 		if w == nil {
-			return nil, errors.New("sweep: out of memory")
+			return nil, &InternalError{Detail: "sweep: out of memory"}
 		}
 		workers = append(workers, w)
 	}
@@ -203,7 +201,11 @@ func Sweep(model []byte, n int, lo, hi float64) (*SweepResult, error) {
 					scale = lo + (hi-lo)*float64(k)/float64(n-1)
 				}
 				if c := C.f2d_sweep_run(w, C.double(scale), &pt[0], &msg[0], C.int(len(msg))); c != 0 {
-					errs[k] = &ModelError{Code: codeName(int(c)), Detail: C.GoString(&msg[0])}
+					if c == rcOOM {
+						errs[k] = &InternalError{Detail: "out of memory"}
+					} else {
+						errs[k] = &ModelError{Code: codeName(int(c)), Detail: C.GoString(&msg[0])}
+					}
 					continue
 				}
 				res.Variants[k] = SweepVariant{scale, float64(pt[0]), float64(pt[1])}
@@ -229,23 +231,16 @@ func Sweep(model []byte, n int, lo, hi float64) (*SweepResult, error) {
 	return res, nil
 }
 
-func codeName(c int) string {
-	switch c {
-	case -2:
-		return "invalid_ref"
-	case -3:
-		return "zero_length"
-	case -4:
-		return "duplicate_id"
-	case -5:
-		return "unstable"
-	case -6:
-		return "no_free_dofs"
-	case -7:
-		return "support_conflict"
-	}
-	return fmt.Sprintf("internal_%d", c)
-}
+// codeName maps an engine error code to the "error" field of the error JSON (the table lives in Zig).
+func codeName(c int) string { return C.GoString(C.f2d_code_name(C.int(c))) }
+
+// rcOOM is what f2d_sweep_run returns when the engine ran out of memory.
+const rcOOM = -100
+
+// InternalError is an engine failure that is neither the client's nor the model's fault (HTTP 500).
+type InternalError struct{ Detail string }
+
+func (e *InternalError) Error() string { return "internal: " + e.Detail }
 
 // libStamp is set at link time (-ldflags -X) to a hash of the Zig static library, so Go relinks when the
 // library changes (the go command does not hash library contents into the link action).

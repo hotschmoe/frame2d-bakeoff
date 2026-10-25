@@ -108,6 +108,17 @@ class EngineBindings {
         )
       >(isLeaf: true);
 
+  ffi.Pointer<ffi.Char> f2d_code_name(int code) {
+    return _f2d_code_name(code);
+  }
+
+  late final _f2d_code_namePtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int)>>(
+        'f2d_code_name',
+      );
+  late final _f2d_code_name = _f2d_code_namePtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(int)>(isLeaf: true);
+
   void f2d_counts(int h, ffi.Pointer<ffi.Int> out) {
     return _f2d_counts(h, out);
   }

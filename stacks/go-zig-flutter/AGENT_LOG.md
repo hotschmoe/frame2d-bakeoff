@@ -178,3 +178,61 @@ The CLI and server grow slightly: they still carry the Go runtime and now also t
 ### Build-loop notes (not a full 9.x measurement)
 
 `measure.sh` records are in `results/adhoc/go-zig-flutter/` (`p3-*.jsonl`): `build_check` 16.1 s wall, `test_all` 23.6 s wall. The loop now has three toolchains (Zig, Go with zig cc as the C compiler, Flutter), and the Go link must be forced to rebuild when the Zig library changes (libStamp above). Cross-compile (8.7) was not run in this phase; `zig cc` accepted `-target aarch64-windows-gnu` (cgo) and the Zig shared library built for `x86_64-windows-gnu` on the same arm64 host.
+
+## P5 optimization pass
+
+Agent session, run1p5, win-arm64, claude-sonnet-5-5. Records: `results/adhoc/go-zig-flutter/p5-*.jsonl`. Smoke output: `results/run1p5/win-arm64/runtime-smoke/go-zig-flutter/`.
+
+### Changes (stack.sh, dev loop)
+
+- Every step in `build_check` / `build_dev` / `build_*_release` is now incremental: skipped when a hash (path, size, mtime) of its inputs is unchanged and its output exists (stamps in `build/.stamps`). Steps: each Zig artifact (static, dll, wasm), `go build` of CLI and server, `flutter pub get`, `dart analyze`, `flutter build` (desktop debug/release, web). Targets: no-op rebuilds, and edit-to-running-app.
+- Independent chains run concurrently (Zig static -> Go CLI + server; Zig dll; Zig wasm; ffigen -> Flutter debug build; in `build_check` the Zig checks, `go vet`, `dart analyze`).
+- Dependencies are now honest: a Zig edit does not rebuild Flutter (the dll is only copied into the bundle when it changed, `cmp`), a Dart edit rebuilds neither Zig nor Go, a Go edit rebuilds only Go.
+- `build_check` no longer builds the Zig static library (`go vet` needs only the header, not the library; this was 8 s of the 11.7 s).
+- Dev profile of the Zig libs is `-OReleaseFast` (symbols kept) instead of `-OReleaseSafe`: the same sources compile 3.4 s instead of 8.5 s per artifact. Runtime safety checks stay covered by `zig test` (Debug) in `test_all`. Trade-off recorded: dev artifacts no longer trap on Zig safety violations.
+- Dev and release outputs are separate (`build/dev/`, `build/release/`); the cgo `-L` directory moved out of `bridge/zig/zig.go` into `CGO_LDFLAGS` set by `stack.sh`. `run_server` now builds and runs the release server (incremental), so it can no longer overwrite the release artifact, and server benchmarks through `run_server` measure the shipped configuration (trade-off: the P1 numbers were taken against a dev-profile server, so run1 vs P5 server numbers are not like for like).
+- Release: Flutter desktop `--split-debug-info` (bundle 28.17 -> 25.86 MB in the smoke build), Go `-buildvcs=false` next to `-trimpath -s -w`.
+- ffigen regeneration also happens when the generated file is missing; `test_all` runs `pub get` only when pubspec changed.
+
+### Changes (code)
+
+- Fixed a real engine bug: `condense()` (static condensation of member-end releases) read `k[r][j]` after the loop had already zeroed row `r`, so an **i-end** `mz` release gave wrong results (rows after r were not updated). Only j-end releases (the F21-F25 fixtures) were right. A model with an i-end release had equilibrium residual 0.047; after the fix it matches `harness/reference/ref.py` on all 123 compared numbers. Regression tests added.
+- `f2d_load_json` / `f2d_gen`: OOM, null data and negative length now record `last_error` and free the arena (review defect, confirmed).
+- `POST /models` stored unvalidated models (confirmed): `f2d_check_json` now also runs `prepare` (refs, ids, lengths, supports), so an invalid model is a 422 at store time. SPEC does not say; this follows "model errors return 422".
+- `Session.solve`: an out-of-range case index is an `invalid_ref` error instead of silently solving case 0 (a model with no load cases indexed out of bounds, which is UB in ReleaseFast); no load cases now solves to zeros; the fixed 64-case limit is gone (per-session slice).
+- `f2d_case_ids` no longer silently returns `[]` above 4096 bytes: it returns the needed length and Dart/JS retry with a bigger buffer.
+- `f2d_alloc` null check in `f2d_loader.js` (was writing at address 0 on OOM).
+- Go: the error-code table is no longer duplicated; `codeName` calls the new `f2d_code_name` (single table in `model.zig`). Sweep OOM (`-100`) and engine internal errors map to a new `InternalError` -> HTTP 500 instead of a 400/`internal_-1`.
+- Tests added: Zig (springs ky/kx closed forms, fixed-pinned UDL with auto-restraint warning, i-end release mirror, release mechanism = unstable, prepare rejects a bad load ref, session case-index and zero-case behaviour), Go bridge (`Check` reference validation, code names, sweep monotonic), Go server handler tests (200/422/400/404 mapping, store round trip).
+
+### Review defects rejected
+
+- Unsynchronized `sessions` / `last_error` / `echo_buf` globals in `lib.zig`: rejected. The session API is called from one thread by contract (Dart main isolate, single-threaded wasm); the Go side uses only the stateless API, whose state is per call or per forked worker. Making them thread-local would change semantics for no caller. `Echo`/`EchoView` are boundary-bench only.
+- Header duplicated in `app/ffigen/`: left; it is a build-time copy made by `_ffigen` (compared with `cmp`), not a second source.
+
+### Smoke numbers (noisy, other agents on the machine; run1 baseline is from the quiet machine)
+
+| metric | run1 baseline | P5 smoke |
+|---|---:|---:|
+| `noop build_check` | 11.7 s | 1.0 s |
+| `noop build_dev` | 28.8 s | 1.7 s |
+| leaf edit, `build_check` / `build_dev` | 11.7 / 29.0 s | 0.8 / 5.9 s |
+| struct edit, `build_check` / `build_dev` | 11.7 / 28.9 s | 0.8 / 6.3 s |
+| server edit, `build_check` / `build_dev` | 11.8 / 29.0 s | 0.9 / 2.7 s |
+| ui edit, `build_check` / `build_dev` | 11.6 / 31.0 s | 5.0 / 12.0 s |
+| `build_dev` after a first-time stamp-less run (Flutter build included) | cold_dev 63.9 s | 15.5 s (warm toolchain caches; not a cold measurement) |
+| bin_cli / bin_server / desktop bundle (bytes) | 3,024,384 / 10,730,496 / 28,166,652 | 2.72 MB / 10.07 MB / 25.86 MB (harness MB) |
+| desktop drag p50 / startup first frame | 30.5 ms / 928 ms | 30.8 ms / 1078 ms (1 run) |
+| web (skwasm) drag p50 | 23.7 ms | 26.6 ms (1 run, noisy) |
+| server `oha` quick | 180 rps | 238 rps (5 s, release-profile server now; not like for like) |
+
+In-app and engine performance were not changed on purpose: the engine solve is already about 8 ms at 50x50 and the frame is Flutter-bound (raster 6 ms, build 4 ms), so there was no explainable hot-path win to be had in the time box. Cold build was not re-measured (needs `clean_all`); the cold path only gained the parallel dev build and the cheaper dev Zig profile.
+
+### Not done
+
+- Cold build timing; `-fsingle-threaded` / `-OReleaseSmall` experiments for the wasm size; profiling the Dart drag path; wasm-opt (not available); moving `zig build` + `build.zig` (would give incremental compilation, but is a larger change than the time box).
+- A true Debug-profile Zig dev build (1.7 s compile) was measured but rejected: the solver is 10x slower (factor 85 ms vs 9 ms at 50x50), which would hurt the dev app.
+
+### Final conformance
+
+`harness/conformance.py go-zig-flutter p1`: 17/17. `p2`: 7/7. `all` (includes the P3 set): 22/22. `harness/server_conformance.sh go-zig-flutter`: all passed (port 18096). `test_all` (zig test 13/13, go test, flutter test 2/2): green. `build_check` and `build_dev` green. Runtime smoke (`F2D_RUN=run1p5 harness/runtime/run.sh go-zig-flutter build cli desktop web server binsize --quick`): rc 0, all bench modes (boundary, startup, drag, render) ran on desktop and web (wasm and dart2js).

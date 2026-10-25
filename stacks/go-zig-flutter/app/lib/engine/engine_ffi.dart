@@ -77,14 +77,20 @@ class FfiEngine implements Engine {
 
   @override
   List<String> caseIds(int h) {
-    const cap = 4096;
-    final buf = malloc<ffi.Char>(cap);
-    try {
-      final n = _b.f2d_case_ids(h, buf, cap);
-      if (n < 0) return const [];
-      return (jsonDecode(buf.cast<Utf8>().toDartString(length: n)) as List).cast<String>();
-    } finally {
-      malloc.free(buf);
+    var cap = 1024;
+    while (true) {
+      final buf = malloc<ffi.Char>(cap);
+      try {
+        final n = _b.f2d_case_ids(h, buf, cap);
+        if (n + 1 > cap) {
+          cap = n + 1; // too small: the engine reported the needed length
+          continue;
+        }
+        if (n <= 0) return const [];
+        return (jsonDecode(buf.cast<Utf8>().toDartString(length: n)) as List).cast<String>();
+      } finally {
+        malloc.free(buf);
+      }
     }
   }
 

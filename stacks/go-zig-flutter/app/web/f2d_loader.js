@@ -29,6 +29,7 @@
     loadJson: (json) => {
       const bytes = enc.encode(json);
       const p = x.f2d_alloc(bytes.length);
+      if (!p) return x.f2d_load_json(0, bytes.length); // out of memory: the engine records the error for lastError()
       new Uint8Array(mem(), p, bytes.length).set(bytes);
       const h = x.f2d_load_json(p, bytes.length);
       x.f2d_dealloc(p, bytes.length);
@@ -42,11 +43,16 @@
     result: (h) => { const c = counts(h); return f64(x.f2d_result(h), c[0] * 3 + c[1] * 18); },
     stats: (h) => f64(x.f2d_stats(h), 7),
     caseIds: (h) => {
-      const p = x.f2d_alloc(4096);
-      const n = x.f2d_case_ids(h, p, 4096);
-      const s = n > 0 ? dec.decode(new Uint8Array(mem(), p, n)) : '[]';
-      x.f2d_dealloc(p, 4096);
-      return s;
+      let cap = 1024;
+      for (;;) {
+        const p = x.f2d_alloc(cap);
+        if (!p) return '[]';
+        const n = x.f2d_case_ids(h, p, cap);
+        const s = n > 0 && n < cap ? dec.decode(new Uint8Array(mem(), p, n)) : '[]';
+        x.f2d_dealloc(p, cap);
+        if (n < cap) return s;
+        cap = n + 1; // too small: the engine reported the needed length
+      }
     },
     setNode: (h, i, px, py) => x.f2d_set_node(h, i, px, py),
     solve: (h, c) => x.f2d_solve(h, c),

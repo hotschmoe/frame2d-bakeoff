@@ -158,3 +158,130 @@ test "json numbers round trip" {
     const v = try json.parse(ar.allocator(), "{\"a\":[1,2,{\"b\":\"x\\u0041\\n\"}],\"c\":null}");
     try testing.expectEqualStrings("xA\n", v.get("a").?.arr[2].get("b").?.str);
 }
+
+// ---- P2: springs, releases, auto-restraint (closed forms; E = 200e9, I = 8e-5, A = 0.01, L = 5)
+
+test "spring: tip uy spring in parallel with the cantilever (3EI/L^3)" {
+    var ar = std.heap.ArenaAllocator.init(gpa);
+    defer ar.deinit();
+    var d = model.Diag{};
+    const r = try solveText(ar.allocator(),
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+            \\ "nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":5,"y":0}],
+            \\ "supports":[{"node":1,"ux":true,"uy":true,"rz":true}],
+            \\ "springs":[{"node":2,"ky":100000}],
+            \\ "members":[{"id":1,"i":1,"j":2,"material":"s","section":"b"}],
+            \\ "load_cases":[{"id":"P","nodal":[{"node":2,"fy":-10000}],"member_udl":[]}]}
+    , &d);
+    defer r.p.deinit();
+    const k_beam = 3.0 * 200e9 * 8e-5 / 125.0; // 384000 N/m
+    try testing.expectApproxEqAbs(-10000.0 / (k_beam + 100000.0), r.outs[0].u[4], 1e-12);
+    // the support carries only what the spring does not: V = P * k_beam / (k_beam + k)
+    try testing.expectApproxEqAbs(10000.0 * k_beam / (k_beam + 100000.0), r.outs[0].react[1], 1e-6);
+    try testing.expect(r.outs[0].residual < 1e-9);
+}
+
+test "spring: axial spring in parallel with EA/L" {
+    var ar = std.heap.ArenaAllocator.init(gpa);
+    defer ar.deinit();
+    var d = model.Diag{};
+    const r = try solveText(ar.allocator(),
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+            \\ "nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":5,"y":0}],
+            \\ "supports":[{"node":1,"ux":true,"uy":true,"rz":true}],
+            \\ "springs":[{"node":2,"kx":1e8}],
+            \\ "members":[{"id":1,"i":1,"j":2,"material":"s","section":"b"}],
+            \\ "load_cases":[{"id":"P","nodal":[{"node":2,"fx":1000}],"member_udl":[]}]}
+    , &d);
+    defer r.p.deinit();
+    try testing.expectApproxEqAbs(1000.0 / (200e9 * 0.01 / 5.0 + 1e8), r.outs[0].u[3], 1e-15);
+}
+
+test "release: fixed-pinned beam under UDL, and the pinned end is auto-restrained with a warning" {
+    var ar = std.heap.ArenaAllocator.init(gpa);
+    defer ar.deinit();
+    var d = model.Diag{};
+    const r = try solveText(ar.allocator(),
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+            \\ "nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":5,"y":0}],
+            \\ "supports":[{"node":1,"ux":true,"uy":true,"rz":true},{"node":2,"uy":true}],
+            \\ "members":[{"id":1,"i":1,"j":2,"material":"s","section":"b","release":{"i":[],"j":["mz"]}}],
+            \\ "load_cases":[{"id":"W","nodal":[],"member_udl":[{"member":1,"w":-10000}]}]}
+    , &d);
+    defer r.p.deinit();
+    // node 2's rz would be a singular free DOF (only a released member attaches to it): restrained, with a warning
+    try testing.expectEqual(@as(usize, 1), r.p.warns.len);
+    try testing.expectEqual(@as(i64, 2), r.p.warns[0]);
+    const w = 10000.0;
+    try testing.expectApproxEqAbs(5.0 * w * 5.0 / 8.0, r.outs[0].react[1], 1e-6); // fixed end shear 5wL/8
+    try testing.expectApproxEqAbs(w * 25.0 / 8.0, r.outs[0].react[2], 1e-6); // fixed end moment wL^2/8
+    try testing.expectApproxEqAbs(3.0 * w * 5.0 / 8.0, r.outs[0].react[4], 1e-6); // pinned end 3wL/8
+    try testing.expectApproxEqAbs(0.0, r.outs[0].ef[5], 1e-6); // released end carries no moment
+    try testing.expect(r.outs[0].residual < 1e-9);
+}
+
+test "release: a mechanism (both ends released, free node) is unstable" {
+    try expectCode(
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+            \\ "nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":5,"y":0}],
+            \\ "supports":[{"node":1,"ux":true,"uy":true,"rz":true}],
+            \\ "members":[{"id":1,"i":1,"j":2,"material":"s","section":"b","release":{"i":["mz"],"j":["mz"]}}],
+            \\ "load_cases":[{"id":"P","nodal":[{"node":2,"fy":-1}],"member_udl":[]}]}
+    , .unstable);
+}
+
+test "check_json style validation: prepare rejects a bad load reference that parsing accepts" {
+    var ar = std.heap.ArenaAllocator.init(gpa);
+    defer ar.deinit();
+    var d = model.Diag{};
+    const m = try model.parseModel(ar.allocator(),
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+            \\ "nodes":[{"id":1,"x":0,"y":0}],"supports":[{"node":1,"ux":true,"uy":true,"rz":true}],"members":[],
+            \\ "load_cases":[{"id":"P","nodal":[{"node":42,"fy":-1}],"member_udl":[]}]}
+    , &d);
+    try testing.expectError(error.Model, engine.prepare(gpa, &m, &d));
+    try testing.expectEqual(model.Code.invalid_ref, d.code);
+}
+
+test "session: out-of-range case index is an error; no load cases solves to zeros" {
+    var d = model.Diag{};
+    var ar = std.heap.ArenaAllocator.init(gpa);
+    const m = try model.gen(ar.allocator(), 2, 2);
+    const s = try session.create(ar, m, &d);
+    defer session.destroy(s);
+    try testing.expectError(error.Model, s.solve(3, &d));
+    try testing.expectEqual(model.Code.invalid_ref, d.code);
+    try testing.expectError(error.Model, s.solve(-1, &d));
+
+    var ar2 = std.heap.ArenaAllocator.init(gpa);
+    const m2 = try model.parseModel(ar2.allocator(),
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+            \\ "nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":5,"y":0}],"supports":[{"node":1,"ux":true,"uy":true,"rz":true}],
+            \\ "members":[{"id":1,"i":1,"j":2,"material":"s","section":"b"}],"load_cases":[]}
+    , &d);
+    const s2 = try session.create(ar2, m2, &d);
+    defer session.destroy(s2);
+    try s2.solve(0, &d);
+    for (s2.res) |v| try testing.expectEqual(@as(f64, 0), v);
+}
+
+test "release: i-end release mirrors j-end release (fixed at the released side's far end)" {
+    // Same physical beam, described both ways: pinned at the left / fixed at the right, and the mirror image.
+    var ar = std.heap.ArenaAllocator.init(gpa);
+    defer ar.deinit();
+    var d = model.Diag{};
+    const a = try solveText(ar.allocator(),
+        \\{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+        \\ "nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":5,"y":0}],
+        \\ "supports":[{"node":1,"uy":true},{"node":2,"ux":true,"uy":true,"rz":true}],
+        \\ "members":[{"id":1,"i":1,"j":2,"material":"s","section":"b","release":{"i":["mz"],"j":[]}}],
+        \\ "load_cases":[{"id":"W","nodal":[],"member_udl":[{"member":1,"w":-10000}]}]}
+    , &d);
+    defer a.p.deinit();
+    const w = 10000.0;
+    try testing.expectApproxEqAbs(3.0 * w * 5.0 / 8.0, a.outs[0].react[1], 1e-6); // pinned end 3wL/8
+    try testing.expectApproxEqAbs(5.0 * w * 5.0 / 8.0, a.outs[0].react[4], 1e-6); // fixed end 5wL/8
+    try testing.expectApproxEqAbs(-w * 25.0 / 8.0, a.outs[0].react[5], 1e-6); // fixed end moment wL^2/8 (clockwise at the right end)
+    try testing.expectApproxEqAbs(0.0, a.outs[0].ef[2], 1e-6); // released i end carries no moment
+    try testing.expect(a.outs[0].residual < 1e-9);
+}

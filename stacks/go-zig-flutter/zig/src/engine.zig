@@ -576,10 +576,16 @@ fn condense(rel: Rel, k: *K6, f: ?*[6]f64) void {
         if (!on) continue;
         const piv = k[r][r];
         if (piv == 0) continue;
+        // Copy row and column r first: the update below rewrites row r itself (i == r), so reading k[r][j] inside
+        // the loop would see zeros for every row after r (wrong for an i-end release, dof 2).
         var col: [6]f64 = undefined;
-        for (0..6) |i| col[i] = k[i][r];
+        var row: [6]f64 = undefined;
+        for (0..6) |i| {
+            col[i] = k[i][r];
+            row[i] = k[r][i];
+        }
         for (0..6) |i| for (0..6) |j| {
-            k[i][j] -= col[i] * k[r][j] / piv;
+            k[i][j] -= col[i] * row[j] / piv;
         };
         if (f) |ff| {
             const fr = ff[r];

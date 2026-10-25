@@ -71,3 +71,45 @@ func TestEchoLength(t *testing.T) {
 		t.Fatal("echo mismatch")
 	}
 }
+
+const badLoadRef = `{"materials":[{"id":"s","E":200e9}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+"nodes":[{"id":1,"x":0,"y":0}],"supports":[{"node":1,"ux":true,"uy":true,"rz":true}],"members":[],
+"load_cases":[{"id":"P","nodal":[{"node":42,"fy":-1}],"member_udl":[]}]}`
+
+// Check validates references too (not just JSON syntax), so a model that cannot be prepared is never stored.
+func TestCheckRejectsBadReferences(t *testing.T) {
+	if err := Check([]byte(cantilever)); err != nil {
+		t.Fatalf("valid model rejected: %v", err)
+	}
+	var me *ModelError
+	if err := Check([]byte(badLoadRef)); !errors.As(err, &me) || me.Code != "invalid_ref" {
+		t.Fatalf("want invalid_ref, got %v", err)
+	}
+	var br *BadRequestError
+	if err := Check([]byte(`{"nodes":[`)); !errors.As(err, &br) {
+		t.Fatalf("want bad request, got %v", err)
+	}
+}
+
+func TestCodeNames(t *testing.T) {
+	for code, want := range map[int]string{-1: "bad_request", -2: "invalid_ref", -3: "zero_length", -4: "duplicate_id",
+		-5: "unstable", -6: "no_free_dofs", -7: "support_conflict", -42: "internal"} {
+		if got := codeName(code); got != want {
+			t.Errorf("codeName(%d) = %q, want %q", code, got, want)
+		}
+	}
+}
+
+func TestSweepRoofDriftStable(t *testing.T) {
+	g, err := GenJSON(3, 3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Sweep(g, 5, 0.5, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Variants) != 5 || res.Variants[0].RoofDrift <= res.Variants[4].RoofDrift {
+		t.Fatalf("stiffer beams must reduce drift: %+v", res.Variants)
+	}
+}

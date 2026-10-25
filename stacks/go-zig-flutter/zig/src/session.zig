@@ -20,6 +20,7 @@ pub const Session = struct {
     res: []f64,
     stats: [stat_count]f64,
     out: engine.CaseOut,
+    outs: []engine.CaseOut, // one slot per load case; solve fills only the requested one
     case_ids: []u8, // JSON array
     json: []u8, // last serialized model (kept alive for the caller)
 
@@ -42,11 +43,16 @@ pub const Session = struct {
     pub fn solve(self: *Session, c_in: i32, d: *model.Diag) model.Error!void {
         const p = self.p;
         const nc = p.cases.len;
-        const c: usize = if (c_in < 0 or c_in >= nc) 0 else @intCast(c_in);
+        if (nc == 0) { // nothing to solve: all-zero result, not an error (the CLI also accepts a model without load cases)
+            @memset(self.res, 0);
+            self.stats = @splat(0);
+            return;
+        }
+        if (c_in < 0 or c_in >= nc) return d.set(.invalid_ref, "load case index {d} out of range (0..{d})", .{ c_in, nc - 1 });
+        const c: usize = @intCast(c_in);
         var st: engine.Stats = undefined;
         // only case c gets buffers; engine.solve skips the others
-        var outs_buf: [64]engine.CaseOut = undefined;
-        const outs: []engine.CaseOut = if (nc <= outs_buf.len) outs_buf[0..nc] else return d.set(.bad_request, "too many load cases", .{});
+        const outs = self.outs;
         outs[c] = self.out;
         try engine.solve(p, c, outs, &st, d);
         const co = outs[c];
@@ -103,6 +109,7 @@ pub fn create(ar: std.heap.ArenaAllocator, m: model.Model, d: *model.Diag) model
         .res = try a.alloc(f64, nn * 3 + nm * res_member),
         .stats = @splat(0),
         .out = try engine.CaseOut.alloc(a, p),
+        .outs = try a.alloc(engine.CaseOut, p.cases.len),
         .case_ids = &.{},
         .json = &.{},
     };

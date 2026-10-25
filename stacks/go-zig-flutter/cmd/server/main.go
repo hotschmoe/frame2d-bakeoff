@@ -76,7 +76,10 @@ func reply(w http.ResponseWriter, status int, v any) {
 func replyErr(w http.ResponseWriter, err error) {
 	var me *zigengine.ModelError
 	var br *zigengine.BadRequestError
+	var ie *zigengine.InternalError
 	switch {
+	case errors.As(err, &ie):
+		reply(w, http.StatusInternalServerError, map[string]string{"error": "internal", "detail": ie.Detail})
 	case errors.As(err, &me):
 		reply(w, http.StatusUnprocessableEntity, me)
 	case errors.As(err, &br):

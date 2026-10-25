@@ -17,6 +17,7 @@ extern void f2d_counts(int h, int* out);
 extern void* f2d_geometry(int h);
 extern void* f2d_result(int h);
 extern void* f2d_stats(int h);
+/* Returns the length of the ids JSON array; written NUL-terminated into buf only if length + 1 <= capacity. */
 extern int f2d_case_ids(int h, char* buf, int capacity);
 extern void f2d_set_node(int h, int idx, double x, double y);
 extern int f2d_solve(int h, int c);
@@ -27,6 +28,7 @@ extern double f2d_process_age_ms(void);
  * Functions returning rc: 0 ok, 1 bad request (out = error JSON), 2 model error (out = error JSON), 3 internal.
  * Buffers returned through out/out_len are freed with f2d_buf_free. */
 extern void f2d_buf_free(void* p, int n);
+/* Parses and validates (everything except the numerical solve). */
 extern int f2d_check_json(const void* data, int n, void** out, int* out_len);
 extern int f2d_solve_json(const void* data, int n, int with_alloc, void** out, int* out_len);
 extern int f2d_gen_json(int b, int s, void** out, int* out_len);
@@ -37,7 +39,10 @@ extern void* f2d_sweep_open(const void* data, int n, void** out, int* out_len, i
 extern void f2d_sweep_close(void* sweep);
 extern void* f2d_sweep_worker(void* sweep);
 extern void f2d_sweep_worker_free(void* worker);
+/* Returns 0, a negative error code (see f2d_code_name) with a message in err, or -100 for out of memory. */
 extern int f2d_sweep_run(void* worker, double scale, double* out2, char* err, int err_cap);
+/* Name of a negative error code (the "error" field of the error JSON); "internal" for unknown codes. */
+extern const char* f2d_code_name(int code);
 
 #ifdef __cplusplus
 }

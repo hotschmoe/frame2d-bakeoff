@@ -1,0 +1,266 @@
+{
+  "stack": "go",
+  "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go\\build\\release\\app.exe",
+  "runs_per_mode": 3,
+  "host_arch": "ARM64",
+  "emulation_note": null,
+  "modes": {
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 132.03,
+        "peak_rss_mb_tree_sampled": 122.605
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 132.19
+          },
+          "rc": 0,
+          "wall_s": 0.238,
+          "peak_rss_mb_tree": 122.605,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 95.45
+          },
+          "rc": 0,
+          "wall_s": 0.218,
+          "peak_rss_mb_tree": 12.715,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 132.03
+          },
+          "rc": 0,
+          "wall_s": 0.226,
+          "peak_rss_mb_tree": 155.863,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 25.638,
+        "p95": 33.909,
+        "p99": 49.551,
+        "max": 92.181,
+        "solve_p50": 16.551,
+        "lag_max": 0,
+        "rss_mb": 181.0,
+        "peak_rss_mb_tree_sampled": 180.961
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 25.364,
+            "p95": 35.264,
+            "p99": 50.644,
+            "max": 82.047,
+            "solve_p50": 16.551,
+            "lag_max": 0,
+            "rss_mb": 181.0
+          },
+          "rc": 0,
+          "wall_s": 16.207,
+          "peak_rss_mb_tree": 181.012,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 26.117,
+            "p95": 33.503,
+            "p99": 44.183,
+            "max": 94.221,
+            "solve_p50": 16.954,
+            "lag_max": 0,
+            "rss_mb": 181.0
+          },
+          "rc": 0,
+          "wall_s": 16.397,
+          "peak_rss_mb_tree": 180.961,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 25.638,
+            "p95": 33.909,
+            "p99": 49.551,
+            "max": 92.181,
+            "solve_p50": 16.549,
+            "lag_max": 0,
+            "rss_mb": 177.4
+          },
+          "rc": 0,
+          "wall_s": 16.189,
+          "peak_rss_mb_tree": 177.434,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 11.424,
+        "p95": 19.643,
+        "p99": 24.31,
+        "max": 89.479,
+        "rss_mb": 1132.8,
+        "peak_rss_mb_tree_sampled": 1132.832
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 11.647,
+            "p95": 19.522,
+            "p99": 23.468,
+            "max": 95.327,
+            "rss_mb": 1132.8
+          },
+          "rc": 0,
+          "wall_s": 10.235,
+          "peak_rss_mb_tree": 1132.832,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 10.919,
+            "p95": 20.425,
+            "p99": 24.998,
+            "max": 77.757,
+            "rss_mb": 1136.3
+          },
+          "rc": 0,
+          "wall_s": 10.406,
+          "peak_rss_mb_tree": 1136.992,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 11.424,
+            "p95": 19.643,
+            "p99": 24.31,
+            "max": 89.479,
+            "rss_mb": 1049.2
+          },
+          "rc": 0,
+          "wall_s": 10.342,
+          "peak_rss_mb_tree": 1049.156,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 1.71,
+        "transfer_us": 30.66,
+        "peak_rss_mb_tree_sampled": 15.191
+      },
+      "mechanism": "in-process Go call, no boundary (fresh []float64 per call)",
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 1.6,
+            "transfer_us": 30.66,
+            "mechanism": "in-process Go call, no boundary (fresh []float64 per call)"
+          },
+          "rc": 0,
+          "wall_s": 0.138,
+          "peak_rss_mb_tree": 15.383,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 1.71,
+            "transfer_us": 30.45,
+            "mechanism": "in-process Go call, no boundary (fresh []float64 per call)"
+          },
+          "rc": 0,
+          "wall_s": 0.123,
+          "peak_rss_mb_tree": 10.395,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 1.94,
+            "transfer_us": 30.89,
+            "mechanism": "in-process Go call, no boundary (fresh []float64 per call)"
+          },
+          "rc": 0,
+          "wall_s": 0.122,
+          "peak_rss_mb_tree": 15.191,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    }
+  },
+  "renderer_lines": [],
+  "renderer_note": "renderer lines are whatever the app printed matching impeller/opengl/d3d/vulkan/software/...; empty means the app does not report its renderer (see AGENT_LOG.md / env.md for GPU)"
+}

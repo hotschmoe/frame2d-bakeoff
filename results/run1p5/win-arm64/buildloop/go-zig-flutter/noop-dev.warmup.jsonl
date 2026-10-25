@@ -1,0 +1,1 @@
+{"wall_s": 1.6970838999841362, "cpu_s": 1.71875, "parallelism": 1.0127666640500603, "mem_peak_mb": 226.72265625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 15, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "noop-dev"}

@@ -1,0 +1,480 @@
+{
+ "run": "run1",
+ "machine": "win-arm64",
+ "rows": [
+  {
+   "stack": "rust",
+   "phase": "P2",
+   "diff": {
+    "from": "p1-done-rust",
+    "to": "p2-done-rust",
+    "added": 147,
+    "removed": 13,
+    "files": 3,
+    "added_all": 156,
+    "removed_all": 13,
+    "files_all": 4,
+    "excluded_files": [],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": "src/engine.rs",
+      "added": 120,
+      "removed": 12
+     },
+     {
+      "path": "src/generator.rs",
+      "added": 2,
+      "removed": 1
+     },
+     {
+      "path": "src/model.rs",
+      "added": 25,
+      "removed": 0
+     }
+    ]
+   },
+   "time_to_green_wall_s": 112.756,
+   "time_to_green_raw_s": 112.756,
+   "failed_builds": 1,
+   "builds": 4,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  },
+  {
+   "stack": "zig",
+   "phase": "P2",
+   "diff": {
+    "from": "p1-done-zig",
+    "to": "p2-done-zig",
+    "added": 162,
+    "removed": 12,
+    "files": 3,
+    "added_all": 170,
+    "removed_all": 12,
+    "files_all": 4,
+    "excluded_files": [],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": "src/model.zig",
+      "added": 23,
+      "removed": 2
+     },
+     {
+      "path": "src/report.zig",
+      "added": 6,
+      "removed": 1
+     },
+     {
+      "path": "src/solver.zig",
+      "added": 133,
+      "removed": 9
+     }
+    ]
+   },
+   "time_to_green_wall_s": 103.981,
+   "time_to_green_raw_s": 103.981,
+   "failed_builds": 1,
+   "builds": 3,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  },
+  {
+   "stack": "go",
+   "phase": "P2",
+   "diff": {
+    "from": "p1-done-go",
+    "to": "p2-done-go",
+    "added": 158,
+    "removed": 18,
+    "files": 2,
+    "added_all": 169,
+    "removed_all": 18,
+    "files_all": 3,
+    "excluded_files": [],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": "engine/model.go",
+      "added": 27,
+      "removed": 10
+     },
+     {
+      "path": "engine/solve.go",
+      "added": 131,
+      "removed": 8
+     }
+    ]
+   },
+   "time_to_green_wall_s": 64.878,
+   "time_to_green_raw_s": 64.878,
+   "failed_builds": 0,
+   "builds": 1,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  },
+  {
+   "stack": "rust-flutter",
+   "phase": "P2",
+   "diff": {
+    "from": "p1-done-rust-flutter",
+    "to": "p2-done-rust-flutter",
+    "added": 158,
+    "removed": 6,
+    "files": 5,
+    "added_all": 167,
+    "removed_all": 6,
+    "files_all": 6,
+    "excluded_files": [],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": "crates/engine/src/analysis.rs",
+      "added": 73,
+      "removed": 6
+     },
+     {
+      "path": "crates/engine/src/generate.rs",
+      "added": 2,
+      "removed": 0
+     },
+     {
+      "path": "crates/engine/src/model.rs",
+      "added": 39,
+      "removed": 0
+     },
+     {
+      "path": "crates/engine/src/topology.rs",
+      "added": 43,
+      "removed": 0
+     },
+     {
+      "path": "crates/engine/tests/engine.rs",
+      "added": 1,
+      "removed": 0
+     }
+    ]
+   },
+   "time_to_green_wall_s": 123.044,
+   "time_to_green_raw_s": 123.044,
+   "failed_builds": 1,
+   "builds": 2,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  },
+  {
+   "stack": "zig-flutter",
+   "phase": "P2",
+   "diff": {
+    "from": "p1-done-zig-flutter",
+    "to": "p2-done-zig-flutter",
+    "added": 195,
+    "removed": 14,
+    "files": 4,
+    "added_all": 204,
+    "removed_all": 14,
+    "files_all": 5,
+    "excluded_files": [],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": "src/engine/model.zig",
+      "added": 5,
+      "removed": 0
+     },
+     {
+      "path": "src/engine/model_json.zig",
+      "added": 60,
+      "removed": 5
+     },
+     {
+      "path": "src/engine/results_json.zig",
+      "added": 6,
+      "removed": 1
+     },
+     {
+      "path": "src/engine/solver.zig",
+      "added": 124,
+      "removed": 8
+     }
+    ]
+   },
+   "time_to_green_wall_s": 181.639,
+   "time_to_green_raw_s": 181.639,
+   "failed_builds": 1,
+   "builds": 3,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  },
+  {
+   "stack": "go-flutter",
+   "phase": "P2",
+   "diff": {
+    "from": "p1-done-go-flutter",
+    "to": "p2-done-go-flutter",
+    "added": 137,
+    "removed": 17,
+    "files": 3,
+    "added_all": 146,
+    "removed_all": 17,
+    "files_all": 4,
+    "excluded_files": [],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": "engine/model.go",
+      "added": 27,
+      "removed": 10
+     },
+     {
+      "path": "engine/prepare.go",
+      "added": 50,
+      "removed": 1
+     },
+     {
+      "path": "engine/solve.go",
+      "added": 60,
+      "removed": 6
+     }
+    ]
+   },
+   "time_to_green_wall_s": 95.519,
+   "time_to_green_raw_s": 95.519,
+   "failed_builds": 0,
+   "builds": 3,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  },
+  {
+   "stack": "go-zig-flutter",
+   "phase": "P3",
+   "diff": {
+    "from": "fork-go-zig-flutter",
+    "to": "p3-done-go-zig-flutter",
+    "added": 3096,
+    "removed": 1938,
+    "files": 35,
+    "added_all": 3480,
+    "removed_all": 2140,
+    "files_all": 39,
+    "excluded_files": [
+     {
+      "path": "app/ffigen/frame2d_engine.h",
+      "added": 22,
+      "removed": 79
+     },
+     {
+      "path": "app/lib/generated/engine_bindings.dart",
+      "added": 259,
+      "removed": 122
+     },
+     {
+      "path": "app/web/index.html",
+      "added": 0,
+      "removed": 1
+     }
+    ],
+    "notes_files": [
+     "AGENT_LOG.md"
+    ],
+    "touched": [
+     {
+      "path": ".gitignore",
+      "added": 2,
+      "removed": 0
+     },
+     {
+      "path": "app/ffigen.yaml",
+      "added": 1,
+      "removed": 1
+     },
+     {
+      "path": "app/lib/app_state.dart",
+      "added": 1,
+      "removed": 1
+     },
+     {
+      "path": "app/lib/engine/engine.dart",
+      "added": 3,
+      "removed": 3
+     },
+     {
+      "path": "app/lib/engine/engine_ffi.dart",
+      "added": 1,
+      "removed": 1
+     },
+     {
+      "path": "app/lib/engine/engine_web.dart",
+      "added": 1,
+      "removed": 1
+     },
+     {
+      "path": "app/lib/io/platform_io.dart",
+      "added": 1,
+      "removed": 1
+     },
+     {
+      "path": "app/web/f2d_loader.js",
+      "added": 65,
+      "removed": 12
+     },
+     {
+      "path": "bridge/native/main.go",
+      "added": 0,
+      "removed": 127
+     },
+     {
+      "path": "bridge/native/proc_other.go",
+      "added": 0,
+      "removed": 5
+     },
+     {
+      "path": "bridge/native/proc_windows.go",
+      "added": 0,
+      "removed": 19
+     },
+     {
+      "path": "bridge/session/session.go",
+      "added": 0,
+      "removed": 259
+     },
+     {
+      "path": "bridge/session/session_test.go",
+      "added": 0,
+      "removed": 55
+     },
+     {
+      "path": "bridge/wasm/main.go",
+      "added": 0,
+      "removed": 53
+     },
+     {
+      "path": "bridge/zig/zig.go",
+      "added": 255,
+      "removed": 0
+     },
+     {
+      "path": "bridge/zig/zig_test.go",
+      "added": 73,
+      "removed": 0
+     },
+     {
+      "path": "cmd/frame2d/main.go",
+      "added": 21,
+      "removed": 101
+     },
+     {
+      "path": "cmd/server/main.go",
+      "added": 51,
+      "removed": 24
+     },
+     {
+      "path": "engine/engine_test.go",
+      "added": 0,
+      "removed": 102
+     },
+     {
+      "path": "engine/gen.go",
+      "added": 0,
+      "removed": 40
+     },
+     {
+      "path": "engine/model.go",
+      "added": 0,
+      "removed": 174
+     },
+     {
+      "path": "engine/prepare.go",
+      "added": 0,
+      "removed": 256
+     },
+     {
+      "path": "engine/rcm.go",
+      "added": 0,
+      "removed": 127
+     },
+     {
+      "path": "engine/solve.go",
+      "added": 0,
+      "removed": 409
+     },
+     {
+      "path": "engine/sweep.go",
+      "added": 0,
+      "removed": 113
+     },
+     {
+      "path": "stack.sh",
+      "added": 102,
+      "removed": 54
+     },
+     {
+      "path": "zig/include/frame2d_engine.h",
+      "added": 46,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/engine.zig",
+      "added": 874,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/json.zig",
+      "added": 195,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/lib.zig",
+      "added": 362,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/model.zig",
+      "added": 372,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/results.zig",
+      "added": 205,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/session.zig",
+      "added": 139,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/tests.zig",
+      "added": 160,
+      "removed": 0
+     },
+     {
+      "path": "zig/src/util.zig",
+      "added": 166,
+      "removed": 0
+     }
+    ]
+   },
+   "note": "P3 diff = fork..p3-done (a different change than the P2 spring-support CR; not comparable with the P2 rows)",
+   "time_to_green_wall_s": 2839.0469999999987,
+   "time_to_green_raw_s": 26214.856,
+   "failed_builds": 2,
+   "builds": 10,
+   "failed_tests": 0,
+   "failed_conformance": 0
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+[rust] sections: build meta loc cli desktop web binsize server  quick=0  out=C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\rust
+[rust] build_cli_release ...
+[rust]   rc=0 2.1s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d.exe
+[rust] build_server_release ...
+[rust]   rc=0 1.0s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d-server.exe
+[rust] build_desktop_release ...
+[rust]   rc=0 8.3s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d-app.exe
+[rust] build_web_release ...
+[rust]   rc=0 6.1s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/web-dist
+[rust] loc: engine=1173, ui=1024, server=215, glue=89, tests=0, other=0, total_excluding_generated=2501, generated=0
+[rust] cli bench 10x10: assemble_ms=0.0826, factor_ms=0.027299999999999998, solve_ms=0.0809, peak_rss_mb=7.211
+[rust] cli bench 50x50: assemble_ms=2.8655, factor_ms=6.096299999999999, solve_ms=2.2072, peak_rss_mb=22.125
+[rust] cli bench 100x100: assemble_ms=15.716199999999999, factor_ms=94.2873, solve_ms=22.7179, peak_rss_mb=90.246
+[rust] cli bench 200x200: assemble_ms=79.241, factor_ms=1364.6837999999998, solve_ms=113.9269, peak_rss_mb=514.207
+[rust] desktop startup run 1/3: mode=startup, first_frame_ms=213.572
+[rust] desktop startup run 2/3: mode=startup, first_frame_ms=135.489
+[rust] desktop startup run 3/3: mode=startup, first_frame_ms=123.328
+[rust] desktop drag run 1/3: mode=drag, p50=257.981, p95=290.482, p99=293.845, max=299.389, solve_p50=15.138, lag_max=0, rss_mb=118.9
+[rust] desktop drag run 2/3: mode=drag, p50=256.696, p95=287.274, p99=291.424, max=301.852, solve_p50=16.27, lag_max=0, rss_mb=118.2
+[rust] desktop drag run 3/3: mode=drag, p50=257.385, p95=289.979, p99=293.281, max=309.225, solve_p50=15.006, lag_max=0, rss_mb=117.3
+[rust] desktop render run 1/3: mode=render, p50=257.666, p95=289.056, p99=292.273, max=297.234, solve_p50=1589.775, lag_max=0, rss_mb=567.7
+[rust] desktop render run 2/3: mode=render, p50=257.755, p95=289.806, p99=293.816, max=298.817, solve_p50=1591.405, lag_max=0, rss_mb=568.0
+[rust] desktop render run 3/3: mode=render, p50=257.31, p95=289.188, p99=292.922, max=304.683, solve_p50=1613.365, lag_max=0, rss_mb=567.9
+[rust] desktop boundary run 1/3: mode=boundary, noop_ns=0.21, transfer_us=72.33
+[rust] desktop boundary run 2/3: mode=boundary, noop_ns=0.21, transfer_us=71.72
+[rust] desktop boundary run 3/3: mode=boundary, noop_ns=0.22, transfer_us=72.28
+[rust] web bench (default): C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\harness\runtime\.work\rust\webdist\default
+[rust/default] web ready run 1/3: {"mode":"ready","tti_ms":395.6} | body 1227279 B br / 4318150 B raw
+[rust/default] web ready run 2/3: {"mode":"ready","tti_ms":396.68} | body 1227279 B br / 4318150 B raw
+[rust/default] web ready run 3/3: {"mode":"ready","tti_ms":390.34} | body 1227279 B br / 4318150 B raw
+[rust/default] web startup run 1/3: {"mode":"startup","first_frame_ms":573.26} | body 1227279 B br / 4318150 B raw
+[rust/default] web startup run 2/3: {"mode":"startup","first_frame_ms":581.475} | body 1227279 B br / 4318150 B raw
+[rust/default] web startup run 3/3: {"mode":"startup","first_frame_ms":567.605} | body 1227279 B br / 4318150 B raw
+[rust/default] web drag run 1/3: {"mode":"drag","p50":42.96,"p95":54.59,"p99":75.985,"max":378.08,"solve_p50":18.36,"lag_max":0,"rss_mb":22.9} | body 1227279 B br / 4318150 B raw
+[rust/default] web drag run 2/3: {"mode":"drag","p50":42.41,"p95":50.93,"p99":69.595,"max":333.995,"solve_p50":19.105,"lag_max":0,"rss_mb":22.9} | body 1227279 B br / 4318150 B raw
+[rust/default] web drag run 3/3: {"mode":"drag","p50":43.56,"p95":55.185,"p99":74,"max":347.97,"solve_p50":20.21,"lag_max":0,"rss_mb":22.9} | body 1227279 B br / 4318150 B raw
+[rust/default] web render run 1/3: {"mode":"render","p50":194.99,"p95":278.58,"p99":299.655,"max":312.18,"solve_p50":6150.69,"lag_max":0,"rss_mb":507.1} | body 1227279 B br / 4318150 B raw
+[rust/default] web render run 2/3: {"mode":"render","p50":192.16,"p95":276.375,"p99":293.13,"max":304.615,"solve_p50":6113.845,"lag_max":0,"rss_mb":507.1} | body 1227279 B br / 4318150 B raw
+[rust/default] web render run 3/3: {"mode":"render","p50":190.51,"p95":272.005,"p99":293.96,"max":309.915,"solve_p50":6068.825,"lag_max":0,"rss_mb":507.1} | body 1227279 B br / 4318150 B raw
+[rust/default] web boundary run 1/3: {"mode":"boundary","noop_ns":12.925000011920929,"transfer_us":53.125,"mechanism":"wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"} | body 1227279 B br / 4318150 B raw
+[rust/default] web boundary run 2/3: {"mode":"boundary","noop_ns":12.73499995470047,"transfer_us":51.35999995470047,"mechanism":"wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"} | body 1227279 B br / 4318150 B raw
+[rust/default] web boundary run 3/3: {"mode":"boundary","noop_ns":12.944999992847443,"transfer_us":54.24500000476837,"mechanism":"wasm-bindgen memcpy (Vec<f64> in linear memory copied into a new Float64Array)"} | body 1227279 B br / 4318150 B raw
+[rust] sizes MB: cli=0.41 server=2.72 desktop_bundle=5.36 engine_lib=None web_br=1.17 web_engine_br=1.16
+[rust] oha: rps=319.2493042002558 p50=198.704ms p99=262.412ms rss=538.922MB cpu_s=471.062 threads=40 util=0.8694
+[rust] sweep_1000_gen10x10: ok=True wall=0.037s cpu_s=0.031 util=0.0468 (cores busy 0.84/18) rss=36.219MB threads=22
+[rust] sweep_200_gen50x50: ok=True wall=0.224s cpu_s=3.297 util=0.8165 (cores busy 14.7/18) rss=289.402MB threads=41
+[rust] done rc=0  records in C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\rust

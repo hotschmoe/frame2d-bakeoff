@@ -1,0 +1,87 @@
+{
+  "stack": "rust",
+  "port": 18080,
+  "cores_logical": 18,
+  "quick": false,
+  "started_via": "run_server",
+  "oha": {
+    "cmd": "C:\\Users\\hotschmoe\\AppData\\Local\\Microsoft\\WinGet\\Links\\oha.EXE -z 30s -c 64 -m POST -D C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\rust\\gen_50_50.json -H Content-Type: application/json --output-format json --no-tui http://127.0.0.1:18080/solve",
+    "duration": "30s",
+    "connections": 64,
+    "rps": 319.2493042002558,
+    "success_rate": 1.0,
+    "p50_ms": 198.704,
+    "p95_ms": 240.932,
+    "p99_ms": 262.412,
+    "latency_avg_ms": 200.946,
+    "slowest_ms": 301.348,
+    "status_codes": {
+      "200": 9519
+    },
+    "errors": {
+      "aborted due to deadline": 64
+    },
+    "total_responses": 9519,
+    "response_bytes_per_req": 16274826,
+    "cpu_s_per_1000_req": 49.4865,
+    "wall_s": 30.1,
+    "cpu_s": 471.062,
+    "core_utilization": 0.8694,
+    "avg_cores_busy": 15.65,
+    "peak_rss_mb": 538.922,
+    "peak_threads": 40,
+    "rss_end_mb": 366.113,
+    "oha_rc": 0,
+    "oha_stderr_tail": ""
+  },
+  "tools": {
+    "oha": "C:\\Users\\hotschmoe\\AppData\\Local\\Microsoft\\WinGet\\Links\\oha.EXE"
+  },
+  "server_process": {
+    "pid_measured": 22676,
+    "name": "frame2d-server.exe",
+    "startup_to_healthy_s": 0.54,
+    "note": "startup includes the build step run_server performs"
+  },
+  "idle_rss_mb": 8.574,
+  "idle_threads": 22,
+  "sweep_1000_gen10x10": {
+    "variants": 1000,
+    "model": "gen 10 10",
+    "http_status": 200,
+    "idle_rss_mb": 8.566,
+    "wall_s": 0.037,
+    "cpu_s": 0.031,
+    "core_utilization": 0.0468,
+    "avg_cores_busy": 0.84,
+    "peak_rss_mb": 36.219,
+    "peak_threads": 22,
+    "rss_end_mb": 21.57,
+    "variants_returned": 1000,
+    "envelope": {
+      "max_abs_M": 63916.26029657911,
+      "max_roof_drift_W": 0.06513898679886568
+    },
+    "ok": true
+  },
+  "sweep_200_gen50x50": {
+    "variants": 200,
+    "model": "gen 50 50",
+    "http_status": 200,
+    "idle_rss_mb": 8.555,
+    "wall_s": 0.224,
+    "cpu_s": 3.297,
+    "core_utilization": 0.8165,
+    "avg_cores_busy": 14.7,
+    "peak_rss_mb": 289.402,
+    "peak_threads": 41,
+    "rss_end_mb": 52.035,
+    "variants_returned": 200,
+    "envelope": {
+      "max_abs_M": 149993.59508100257,
+      "max_roof_drift_W": 0.34351166428751234
+    },
+    "ok": true
+  },
+  "notes": "Each phase is a fresh server process (run_server rebuilds if needed; that time is excluded from the metrics). peak_rss_mb = OS-maintained peak (Windows PeakWorkingSetSize / Linux VmHWM) of the listening server process; cpu_s = psutil user+system of that process delta over the phase; core_utilization = cpu_s / (wall * logical cores); cpu_s_per_1000_req = cpu_s / responses * 1000. Client and server share this machine."
+}

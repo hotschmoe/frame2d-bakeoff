@@ -1,0 +1,51 @@
+[
+ {
+  "id": "F1",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "shell quoting slip in heredoc stopped the command from running",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F2",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "measure.sh resolved bash to the WSL stub",
+  "minutes_to_fix": 0.1
+ },
+ {
+  "id": "F3",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "build.zig.zon fingerprint invalid (agent-made value)",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F4",
+  "category": "build_config",
+  "caught_at": "harness",
+  "note": "conformance.py got a relative --bin path",
+  "minutes_to_fix": 0.1
+ },
+ {
+  "id": "F5",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "pubspec.yaml description with an unquoted colon is invalid YAML",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F6",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "ffigen loaded arm64 system libclang.dll in an x64 dart; needs x64 libclang",
+  "minutes_to_fix": 1
+ },
+ {
+  "id": "F7",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "wrong member path inside libclang wheel zip when extracting the dll",
+  "minutes_to_fix": 0.1
+ }
+]

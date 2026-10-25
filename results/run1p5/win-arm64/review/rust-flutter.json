@@ -1,0 +1,44 @@
+{
+  "stack": "rust-flutter",
+  "scores": {"structure": 5, "naming": 4, "errors": 4, "boundary": 4, "tests": 3, "change_resilience": 2},
+  "justifications": {
+    "structure": "Clean Cargo workspace: engine (model/topology/rcm/skyline/analysis/output) has no I/O; cli, server, bridge are thin consumers; Dart splits engine/state/ui with native/web engine impls behind one Engine interface.",
+    "naming": "Small focused modules with doc comments (skyline.rs factor explains g_ij/U_ij/d_j; topology.rs documents dof maps); analysis.rs solve_case is a long ~150-line function and the 3*node+comp / pos*6 index arithmetic needs care.",
+    "errors": "ModelError{code,detail} flows to CLI exit 2 + JSON (main.rs Failure), HTTP 422 via ApiError::Model (server main.rs), and 'code|detail' strings parsed by EngineError.from into UI banner (app_state.dart); weak spots: CLI treats malformed JSON as exit 1 not a model error, string-prefix parsing is brittle, and engine_move_and_solve leaves the dragged position committed when the solve fails.",
+    "boundary": "No hand-written unsafe except the counting GlobalAlloc in cli/alloc.rs; FRB/wasm-bindgen wrap one plain-Rust api.rs with a Mutex<Option<Session>> (poison handled), views are owned flat Vecs copied across, web views free()'d; node ids narrowed i64->i32 and u32 profile casts are unchecked, and the global singleton session is implicit.",
+    "tests": "Real unit tests: engine/tests/engine.rs (closed-form cantilever and SS UDL, factor-once, error codes, RCM determinism, skyline vs dense solve, JSON shape), bridge session lifecycle test, sweep tests, Dart tests; but no tests for releases/springs numerics or condense(), and Dart tests are thin (3).",
+    "change_resilience": "A new load type touches model, validation, assembly/equilibrium, flat-array view, wasm getters, regenerated FRB, two Dart mappers, ModelData and the scene renderer (about 10 places), with positional flat arrays like udlIx/udlW making each addition ad hoc."
+  },
+  "load_type_touch_points": [
+    "crates/engine/src/model.rs:LoadCase (new struct + field)",
+    "crates/engine/src/topology.rs:Topology::build (load reference validation)",
+    "crates/engine/src/analysis.rs:solve_case (rhs / equivalent nodal loads)",
+    "crates/engine/src/analysis.rs:solve_case (end forces, udl storage, equilibrium sums)",
+    "crates/engine/src/analysis.rs:CaseResult/station (if it affects diagrams)",
+    "crates/bridge/src/api.rs:ModelView + model_view (flat arrays)",
+    "crates/bridge/src/web.rs:js_view!(ModelView) (getters)",
+    "crates/bridge/src/frb_generated.rs + app/lib/generated/*: regenerate",
+    "app/lib/engine/engine.dart:ModelData",
+    "app/lib/engine/engine_native.dart:_model",
+    "app/lib/engine/engine_web.dart:_ModelView/_model",
+    "app/lib/ui/scene.dart:load drawing (nodal/udl)",
+    "crates/server/src/sweep.rs (only if sweep should vary it)"
+  ],
+  "generated_excluded": [
+    "crates/bridge/src/frb_generated.rs",
+    "app/lib/generated/api.dart",
+    "app/lib/generated/frb_generated.dart",
+    "app/lib/generated/frb_generated.io.dart",
+    "app/lib/generated/frb_generated.web.dart",
+    "app/web/engine/frame2d_engine.js",
+    "app/web/engine/frame2d_engine_bg.wasm",
+    "app/.idea/*, app/.metadata, pubspec.lock, Cargo.lock, frame2d.db*"
+  ],
+  "notable": [
+    "Strength: engine is dependency-light and pure; Topology is separated from coordinates/loads so drag re-solves reuse it and only reassemble/refactor.",
+    "Strength: output.rs streams stations from end forces, and CLI/server/bridge share one ModelError type.",
+    "Risk: api.rs engine_move_and_solve mutates the session node before solving; a zero_length or unstable result leaves the bad position in the session (no rollback).",
+    "Risk: bridge casts node/member ids i64->i32 and profile u64->u32 with no check; session is a process-global Mutex singleton.",
+    "Risk: server store.rs uses Mutex::unwrap on SQLite connection (poison panics) and engine tests do not cover releases/springs/condense numerics."
+  ]
+}

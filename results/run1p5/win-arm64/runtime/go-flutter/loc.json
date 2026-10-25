@@ -1,0 +1,393 @@
+{
+  "stack": "go-flutter",
+  "tool": "scc scc version 4.1.0",
+  "metric": "code lines (not blank, not comment)",
+  "totals_code": {
+    "engine": 1195,
+    "ui": 964,
+    "server": 178,
+    "glue": 824,
+    "tests": 256,
+    "other": 0,
+    "total_excluding_generated": 3417
+  },
+  "engine_of_which_cli": 200,
+  "buckets": {
+    "engine": {
+      "files": 6,
+      "code": 995,
+      "comment": 70,
+      "blank": 77
+    },
+    "ui": {
+      "files": 6,
+      "code": 964,
+      "comment": 34,
+      "blank": 102
+    },
+    "server": {
+      "files": 1,
+      "code": 178,
+      "comment": 1,
+      "blank": 20
+    },
+    "glue": {
+      "files": 15,
+      "code": 824,
+      "comment": 98,
+      "blank": 150
+    },
+    "tests": {
+      "files": 3,
+      "code": 256,
+      "comment": 4,
+      "blank": 20
+    },
+    "cli": {
+      "files": 1,
+      "code": 200,
+      "comment": 4,
+      "blank": 16
+    },
+    "generated": {
+      "files": 2,
+      "code": 303,
+      "comment": 19,
+      "blank": 77
+    }
+  },
+  "generated_code_not_in_totals": 303,
+  "loc_exclude_entries": [
+    "app/lib/generated",
+    "app/windows",
+    "app/web/index.html",
+    "app/web/manifest.json",
+    "app/web/icons",
+    "app/web/favicon.png",
+    "app/ffigen",
+    "app/pubspec.lock",
+    ".tools",
+    "go.sum"
+  ],
+  "loc_exclude_dropped": {
+    "files": 16,
+    "code": 709,
+    "by_entry": {
+      "app/windows": 688,
+      "app/web/index.html": 21
+    }
+  },
+  "ignored": {
+    "hard_excluded_files": 0,
+    "data_or_doc_language_files": 6,
+    "languages": [
+      "Dockerfile",
+      "Document",
+      "JSON",
+      "License",
+      "Lockfile",
+      "Markdown",
+      "Plain Text",
+      "Properties",
+      "SVG",
+      "Systemd",
+      "TOML",
+      "YAML",
+      "gitignore"
+    ]
+  },
+  "by_language_code": {
+    "Go": {
+      "code": 1915,
+      "files": 15
+    },
+    "Dart": {
+      "code": 1305,
+      "files": 15
+    },
+    "Shell": {
+      "code": 180,
+      "files": 1
+    },
+    "JavaScript": {
+      "code": 17,
+      "files": 1
+    }
+  },
+  "unbucketed_files": [],
+  "notes": "cli is part of engine in totals_code. tests bucket is path-based only; inline #[cfg(test)]/test blocks stay in their source bucket.",
+  "files": [
+    {
+      "path": "app/test/state_test.dart",
+      "language": "Dart",
+      "bucket": "tests",
+      "code": 70,
+      "comment": 1,
+      "blank": 6
+    },
+    {
+      "path": "app/lib/main.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 45,
+      "comment": 2,
+      "blank": 6
+    },
+    {
+      "path": "app/lib/app_state.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 194,
+      "comment": 16,
+      "blank": 33
+    },
+    {
+      "path": "app/lib/bench.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 159,
+      "comment": 3,
+      "blank": 16
+    },
+    {
+      "path": "app/lib/ui/member_table.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 148,
+      "comment": 2,
+      "blank": 13
+    },
+    {
+      "path": "app/lib/io/platform_web.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 37,
+      "comment": 6,
+      "blank": 9
+    },
+    {
+      "path": "app/lib/io/platform_io.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 42,
+      "comment": 4,
+      "blank": 10
+    },
+    {
+      "path": "app/lib/ui/canvas_view.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 291,
+      "comment": 9,
+      "blank": 22
+    },
+    {
+      "path": "app/lib/io/platform.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 3,
+      "comment": 0,
+      "blank": 0
+    },
+    {
+      "path": "app/lib/io/platform_stub.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 9,
+      "comment": 0,
+      "blank": 2
+    },
+    {
+      "path": "app/lib/ui/home.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 127,
+      "comment": 2,
+      "blank": 12
+    },
+    {
+      "path": "app/lib/generated/engine_bindings.dart",
+      "language": "Dart",
+      "bucket": "generated",
+      "code": 233,
+      "comment": 9,
+      "blank": 54
+    },
+    {
+      "path": "app/lib/engine/engine.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 29,
+      "comment": 5,
+      "blank": 6
+    },
+    {
+      "path": "app/lib/engine/engine_ffi.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 84,
+      "comment": 2,
+      "blank": 21
+    },
+    {
+      "path": "app/lib/engine/engine_web.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 65,
+      "comment": 1,
+      "blank": 20
+    },
+    {
+      "path": "app/lib/engine/engine_stub.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 2,
+      "comment": 0,
+      "blank": 1
+    },
+    {
+      "path": "engine/rcm.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 116,
+      "comment": 6,
+      "blank": 5
+    },
+    {
+      "path": "cmd/frame2d/main.go",
+      "language": "Go",
+      "bucket": "cli",
+      "code": 200,
+      "comment": 4,
+      "blank": 16
+    },
+    {
+      "path": "bridge/native/proc_windows.go",
+      "language": "Go",
+      "bucket": "glue",
+      "code": 17,
+      "comment": 0,
+      "blank": 2
+    },
+    {
+      "path": "cmd/server/main.go",
+      "language": "Go",
+      "bucket": "server",
+      "code": 178,
+      "comment": 1,
+      "blank": 20
+    },
+    {
+      "path": "bridge/native/proc_other.go",
+      "language": "Go",
+      "bucket": "glue",
+      "code": 2,
+      "comment": 1,
+      "blank": 2
+    },
+    {
+      "path": "bridge/native/main.go",
+      "language": "Go",
+      "bucket": "glue",
+      "code": 83,
+      "comment": 24,
+      "blank": 20
+    },
+    {
+      "path": "engine/sweep.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 102,
+      "comment": 5,
+      "blank": 5
+    },
+    {
+      "path": "engine/solve.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 382,
+      "comment": 24,
+      "blank": 27
+    },
+    {
+      "path": "bridge/session/session_test.go",
+      "language": "Go",
+      "bucket": "tests",
+      "code": 51,
+      "comment": 0,
+      "blank": 4
+    },
+    {
+      "path": "bridge/wasm/main.go",
+      "language": "Go",
+      "bucket": "glue",
+      "code": 44,
+      "comment": 3,
+      "blank": 6
+    },
+    {
+      "path": "engine/engine_test.go",
+      "language": "Go",
+      "bucket": "tests",
+      "code": 135,
+      "comment": 3,
+      "blank": 10
+    },
+    {
+      "path": "engine/model.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 129,
+      "comment": 22,
+      "blank": 23
+    },
+    {
+      "path": "engine/prepare.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 228,
+      "comment": 12,
+      "blank": 16
+    },
+    {
+      "path": "bridge/session/session.go",
+      "language": "Go",
+      "bucket": "glue",
+      "code": 210,
+      "comment": 19,
+      "blank": 27
+    },
+    {
+      "path": "engine/gen.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 38,
+      "comment": 1,
+      "blank": 1
+    },
+    {
+      "path": "app/ffigen/frame2d_engine.h",
+      "language": "C++ Header",
+      "bucket": "generated",
+      "code": 70,
+      "comment": 10,
+      "blank": 23
+    },
+    {
+      "path": "app/web/f2d_loader.js",
+      "language": "JavaScript",
+      "bucket": "glue",
+      "code": 17,
+      "comment": 2,
+      "blank": 0
+    },
+    {
+      "path": "stack.sh",
+      "language": "Shell",
+      "bucket": "glue",
+      "code": 180,
+      "comment": 31,
+      "blank": 24
+    }
+  ]
+}

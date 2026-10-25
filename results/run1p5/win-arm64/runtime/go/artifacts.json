@@ -1,0 +1,14 @@
+{
+  "stack": "go",
+  "cli": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go/build/release/frame2d.exe",
+  "server": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go/build/release/server.exe",
+  "desktop_exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go\\build\\release\\app.exe",
+  "desktop_bundle_dir": null,
+  "web": {
+    "label": "default",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go/build/release/web",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go\\webdist\\default",
+    "what": "build_web_release (stack default)"
+  },
+  "web_alt": null
+}

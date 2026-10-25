@@ -1,0 +1,83 @@
+[buildloop 19:47:23] === zig: section cold (quick=0) ===
+[buildloop 19:47:23] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   44.975 s   ±   2.164 s     43.445 s   …  46.506 s
+ 
+[buildloop 19:48:56] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   52.095 s   ±   0.140 s     51.996 s   …  52.194 s
+ 
+[buildloop 19:50:42] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.5 min ±     0.0 min      1.5 min …     1.5 min
+ 
+[buildloop 19:53:41] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.0 min ±     0.0 min      1.0 min …     1.0 min
+ 
+[buildloop 19:55:45] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.1 min ±     0.1 min      1.1 min …     1.2 min
+ 
+[buildloop 19:58:05] section cold: ok in 642 s
+[buildloop 19:58:05] === zig: section edits (quick=0) ===
+[buildloop 19:58:05] edits: priming build_check and build_dev
+[buildloop 19:58:12] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.198 s   ±   0.024 s      1.180 s   …   1.225 s
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.197 s   ±   0.043 s      1.163 s   …   1.244 s             -0.1%
+ 
+[buildloop 19:58:45] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.854 s   ±   0.017 s      1.834 s   …   1.864 s
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.341 s   ±   0.065 s      4.277 s   …   4.407 s           +134.2%  (2.3x slower)
+ 
+[buildloop 19:59:19] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.842 s   ±   0.013 s      1.833 s   …   1.857 s
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.272 s   ±   0.063 s      4.205 s   …   4.330 s           +131.9%  (2.3x slower)
+ 
+[buildloop 19:59:54] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.319 s   ±   0.038 s      1.275 s   …   1.342 s
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.022 s   ±   0.023 s      2.000 s   …   2.047 s            +53.3%  (1.5x slower)
+ 
+[buildloop 20:00:19] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.808 s   ±   0.016 s      1.795 s   …   1.826 s
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.163 s   ±   0.012 s      4.151 s   …   4.176 s           +130.3%  (2.3x slower)
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+[buildloop 20:00:56] section edits: ok in 171 s
+[buildloop 20:00:57] === zig: section hotreload (quick=0) ===
+[buildloop 20:00:57] section hotreload: skipped (not a Flutter stack) in 0 s
+[buildloop 20:00:57] === zig: section engine (quick=0) ===
+[buildloop 20:00:57] section engine: skipped (not a Flutter stack) in 0 s

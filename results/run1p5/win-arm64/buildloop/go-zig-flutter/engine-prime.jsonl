@@ -1,0 +1,1 @@
+{"wall_s": 11.137930499971844, "cpu_s": 1.625, "parallelism": 0.14589783981899582, "mem_peak_mb": 316.0390625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 21, "exit_code": 0, "method": "psutil", "stack": "go-zig-flutter", "label": "engine-prime"}

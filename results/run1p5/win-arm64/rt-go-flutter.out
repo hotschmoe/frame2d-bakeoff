@@ -1,0 +1,49 @@
+[go-flutter] sections: build meta loc cli desktop web binsize server  quick=0  out=C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\go-flutter
+[go-flutter] build_cli_release ...
+[go-flutter]   rc=0 0.4s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d.exe
+[go-flutter] build_server_release ...
+[go-flutter]   rc=0 0.2s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/build/frame2d-server.exe
+[go-flutter] build_desktop_release ...
+[go-flutter]   rc=0 19.5s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/windows/x64/runner/Release/frame2d_app.exe
+[go-flutter] build_web_release ...
+[go-flutter]   rc=0 38.9s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/web
+[go-flutter] build_web_release ...
+[go-flutter]   rc=0 27.8s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter/app/build/web
+[go-flutter] loc: engine=1195, ui=964, server=178, glue=824, tests=256, other=0, total_excluding_generated=3417, generated=303
+[go-flutter] cli bench 10x10: assemble_ms=0, factor_ms=0, solve_ms=0, peak_rss_mb=11.582
+[go-flutter] cli bench 50x50: assemble_ms=1.0206, factor_ms=10.4093, solve_ms=3.1227, peak_rss_mb=29.605
+[go-flutter] cli bench 100x100: assemble_ms=4.8275, factor_ms=157.1918, solve_ms=27.9777, peak_rss_mb=108.273
+[go-flutter] cli bench 200x200: assemble_ms=21.3176, factor_ms=2309.7058, solve_ms=201.4832, peak_rss_mb=589.699
+[go-flutter] desktop startup run 1/3: mode=startup, first_frame_ms=984.1633
+[go-flutter] desktop startup run 2/3: mode=startup, first_frame_ms=942.7064
+[go-flutter] desktop startup run 3/3: mode=startup, first_frame_ms=943.0242
+[go-flutter] desktop drag run 1/3: mode=drag, p50=24.978, p95=26.931, p99=28.839, max=35.431, solve_p50=16.641, lag_max=0, rss_mb=316.65625, paint_p50=2.253, build_p50=3.128, raster_p50=3.726
+[go-flutter] desktop drag run 2/3: mode=drag, p50=25.025, p95=27.032, p99=29.685, max=33.196, solve_p50=17.118, lag_max=0, rss_mb=320.359375, paint_p50=2.281, build_p50=3.177, raster_p50=3.67
+[go-flutter] desktop drag run 3/3: mode=drag, p50=25.034, p95=26.819, p99=29.707, max=35.762, solve_p50=16.706, lag_max=0, rss_mb=320.65625, paint_p50=2.283, build_p50=3.222, raster_p50=3.701
+[go-flutter] desktop render run 1/3: mode=render, p50=8.419, p95=16.524, p99=18.807, max=64.185, solve_p50=0.0, lag_max=0, rss_mb=780.5390625, paint_p50=2.142, build_p50=2.813, raster_p50=2.402
+[go-flutter] desktop render run 2/3: mode=render, p50=8.503, p95=16.152, p99=18.359, max=60.573, solve_p50=0.0, lag_max=0, rss_mb=788.02734375, paint_p50=2.16, build_p50=2.8, raster_p50=2.34
+[go-flutter] desktop render run 3/3: mode=render, p50=8.431, p95=16.695, p99=18.372, max=63.106, solve_p50=0.0, lag_max=0, rss_mb=778.8828125, paint_p50=2.122, build_p50=2.763, raster_p50=2.483
+[go-flutter] desktop boundary run 1/3: mode=boundary, noop_ns=1036.981, transfer_us=1.153, check=38102000.0
+[go-flutter] desktop boundary run 2/3: mode=boundary, noop_ns=1057.907, transfer_us=1.206, check=38102000.0
+[go-flutter] desktop boundary run 3/3: mode=boundary, noop_ns=1085.715, transfer_us=1.204, check=38102000.0
+[go-flutter] web bench (default): C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\harness\runtime\.work\go-flutter\webdist\default
+[go-flutter/default] web ready run 1/3: {"mode":"ready","tti_ms":11686.574999988079} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web ready run 2/3: {"mode":"ready","tti_ms":1707.8349999785423} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web ready run 3/3: {"mode":"ready","tti_ms":1598.5550000071526} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web startup run 1/3: {"mode":"startup","first_frame_ms":2409.639999985695} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web startup run 2/3: {"mode":"startup","first_frame_ms":2384.100000023842} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web startup run 3/3: {"mode":"startup","first_frame_ms":2443.2800000309944} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web drag run 1/3: {"mode":"drag","p50":68.88,"p95":116.89,"p99":286.31,"max":355.584,"solve_p50":59.13,"lag_max":0,"rss_mb":null,"paint_p50":4.48,"build_p50":69.699,"raster_p50":133.174} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web drag run 2/3: {"mode":"drag","p50":75.46,"p95":97.63,"p99":168.42,"max":326.375,"solve_p50":61.196,"lag_max":0,"rss_mb":null,"paint_p50":4.39,"build_p50":75.155,"raster_p50":145.935} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web drag run 3/3: {"mode":"drag","p50":78.586,"p95":149.676,"p99":187.966,"max":240.555,"solve_p50":62.95,"lag_max":0,"rss_mb":null,"paint_p50":5.156,"build_p50":77.19,"raster_p50":139.024} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web render run 1/3: {"mode":"render","p50":17.165,"p95":31.285,"p99":48.735,"max":98.61,"solve_p50":0,"lag_max":0,"rss_mb":null,"paint_p50":7.655,"build_p50":15.08,"raster_p50":42.155} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web render run 2/3: {"mode":"render","p50":17.32,"p95":32.865,"p99":50.789,"max":92.399,"solve_p50":0,"lag_max":0,"rss_mb":null,"paint_p50":7.145,"build_p50":13.835,"raster_p50":45.486} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web render run 3/3: {"mode":"render","p50":16.875,"p95":32.495,"p99":44.236,"max":108.06,"solve_p50":0,"lag_max":0,"rss_mb":null,"paint_p50":7.135,"build_p50":13.195,"raster_p50":36.609} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web boundary run 1/3: {"mode":"boundary","noop_ns":12164.601,"transfer_us":84.534,"mechanism":"memcpy","check":38102000} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web boundary run 2/3: {"mode":"boundary","noop_ns":20191.465,"transfer_us":90.625,"mechanism":"memcpy","check":38102000} | body 1570580 B br / 6824925 B raw
+[go-flutter/default] web boundary run 3/3: {"mode":"boundary","noop_ns":12540.47,"transfer_us":88.159,"mechanism":"memcpy","check":38102000} | body 1570580 B br / 6824925 B raw
+[go-flutter] sizes MB: cli=2.6 server=9.87 desktop_bundle=28.47 engine_lib=2.93 web_br=11.65 web_engine_br=0.9
+[go-flutter] oha: rps=185.45939994354583 p50=338.264ms p99=599.342ms rss=3029.457MB cpu_s=488.125 threads=25 util=0.9016
+[go-flutter] sweep_1000_gen10x10: ok=True wall=0.086s cpu_s=0.562 util=0.3631 (cores busy 6.54/18) rss=32.746MB threads=7
+[go-flutter] sweep_200_gen50x50: ok=True wall=0.359s cpu_s=4.906 util=0.7592 (cores busy 13.66/18) rss=334.051MB threads=22
+[go-flutter] done rc=0  records in C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\go-flutter

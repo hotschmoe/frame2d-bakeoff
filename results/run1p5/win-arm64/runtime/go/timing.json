@@ -1,0 +1,34 @@
+{
+  "build": {
+    "wall_s": 21,
+    "rc": 0
+  },
+  "meta": {
+    "wall_s": 2,
+    "rc": 0
+  },
+  "loc": {
+    "wall_s": 0,
+    "rc": 0
+  },
+  "cli": {
+    "wall_s": 12,
+    "rc": 0
+  },
+  "desktop": {
+    "wall_s": 81,
+    "rc": 0
+  },
+  "web": {
+    "wall_s": 576,
+    "rc": 0
+  },
+  "binsize": {
+    "wall_s": 0,
+    "rc": 0
+  },
+  "server": {
+    "wall_s": 39,
+    "rc": 0
+  }
+}

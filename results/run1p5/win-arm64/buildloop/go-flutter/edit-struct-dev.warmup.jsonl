@@ -1,0 +1,1 @@
+{"wall_s": 3.53991049999604, "cpu_s": 2.9375, "parallelism": 0.8298232398822756, "mem_peak_mb": 285.38671875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 16, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "edit-struct-dev"}

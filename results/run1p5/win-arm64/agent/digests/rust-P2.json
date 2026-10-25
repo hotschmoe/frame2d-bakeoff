@@ -1,0 +1,31 @@
+{
+ "stack": "rust",
+ "phase": "P2",
+ "build_check_commands": 4,
+ "n_failures": 1,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T06:21:13Z",
+   "minutes_since_phase_start": 1.4,
+   "kinds": [
+    "check"
+   ],
+   "primary_kind": "check",
+   "reasons": [
+    "inferred: error: line",
+    "inferred: file:line diagnostic",
+    "inferred: build failed text"
+   ],
+   "signature": "FILE:N:            .map(|k| Member { id: k as iN + N, i: k as iN + N, j: k as iN + N, material: \"s\".",
+   "next_success": {
+    "ts": "2026-10-24T06:21:18Z",
+    "command": "cd $REPO/stacks/rust; sed -i 's/section: sec.into() }/section: sec.into(), release: Default::default() }/; s/^ Model {$/ Model {\\n springs: Vec::new() ... on: \"b\".into(), release: Default::default() })/; s/^ Model {$/ Model {\\n springs: vec![],/' src/engine.rs\nsource stack.sh; build_check 2>&1 | tail -30",
+    "kinds": [
+     "check"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  }
+ ]
+}

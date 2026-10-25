@@ -1,0 +1,37 @@
+{
+  "cli": {
+    "fn": "build_cli_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 0.296,
+    "last_line": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d.exe"
+  },
+  "server": {
+    "fn": "build_server_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 0.302,
+    "last_line": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d-server.exe"
+  },
+  "desktop": {
+    "fn": "build_desktop_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 34.288,
+    "last_line": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/windows/x64/runner/Release/frame2d_app.exe"
+  },
+  "web": {
+    "fn": "build_web_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 28.88,
+    "last_line": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/web"
+  },
+  "web_alt": {
+    "fn": "build_web_wasm_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 37.921,
+    "last_line": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/web_wasm"
+  }
+}

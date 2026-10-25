@@ -1,0 +1,273 @@
+{
+  "stack": "go",
+  "tool": "scc scc version 4.1.0",
+  "metric": "code lines (not blank, not comment)",
+  "totals_code": {
+    "engine": 1423,
+    "ui": 1333,
+    "server": 312,
+    "glue": 91,
+    "tests": 206,
+    "other": 0,
+    "total_excluding_generated": 3365
+  },
+  "engine_of_which_cli": 210,
+  "buckets": {
+    "engine": {
+      "files": 6,
+      "code": 1213,
+      "comment": 75,
+      "blank": 92
+    },
+    "ui": {
+      "files": 10,
+      "code": 1333,
+      "comment": 60,
+      "blank": 131
+    },
+    "server": {
+      "files": 1,
+      "code": 312,
+      "comment": 10,
+      "blank": 28
+    },
+    "glue": {
+      "files": 2,
+      "code": 91,
+      "comment": 24,
+      "blank": 16
+    },
+    "tests": {
+      "files": 1,
+      "code": 206,
+      "comment": 6,
+      "blank": 17
+    },
+    "cli": {
+      "files": 1,
+      "code": 210,
+      "comment": 5,
+      "blank": 13
+    },
+    "generated": {
+      "files": 0,
+      "code": 0,
+      "comment": 0,
+      "blank": 0
+    }
+  },
+  "generated_code_not_in_totals": 0,
+  "loc_exclude_entries": [
+    "web/wasm_exec.js"
+  ],
+  "loc_exclude_dropped": {
+    "files": 0,
+    "code": 0,
+    "by_entry": {}
+  },
+  "ignored": {
+    "hard_excluded_files": 0,
+    "data_or_doc_language_files": 1,
+    "languages": [
+      "Dockerfile",
+      "Document",
+      "JSON",
+      "License",
+      "Lockfile",
+      "Markdown",
+      "Plain Text",
+      "Properties",
+      "SVG",
+      "Systemd",
+      "TOML",
+      "YAML",
+      "gitignore"
+    ]
+  },
+  "by_language_code": {
+    "Go": {
+      "code": 3274,
+      "files": 19
+    },
+    "Shell": {
+      "code": 70,
+      "files": 1
+    },
+    "HTML": {
+      "code": 21,
+      "files": 1
+    }
+  },
+  "unbucketed_files": [],
+  "notes": "cli is part of engine in totals_code. tests bucket is path-based only; inline #[cfg(test)]/test blocks stay in their source bucket.",
+  "files": [
+    {
+      "path": "engine/echo.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 8,
+      "comment": 2,
+      "blank": 1
+    },
+    {
+      "path": "cmd/server/main.go",
+      "language": "Go",
+      "bucket": "server",
+      "code": 312,
+      "comment": 10,
+      "blank": 28
+    },
+    {
+      "path": "engine/engine_test.go",
+      "language": "Go",
+      "bucket": "tests",
+      "code": 206,
+      "comment": 6,
+      "blank": 17
+    },
+    {
+      "path": "cmd/frame2d/main.go",
+      "language": "Go",
+      "bucket": "cli",
+      "code": 210,
+      "comment": 5,
+      "blank": 13
+    },
+    {
+      "path": "engine/model.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 144,
+      "comment": 24,
+      "blank": 25
+    },
+    {
+      "path": "engine/solve.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 697,
+      "comment": 34,
+      "blank": 42
+    },
+    {
+      "path": "engine/encode.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 198,
+      "comment": 5,
+      "blank": 15
+    },
+    {
+      "path": "engine/rcm.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 126,
+      "comment": 9,
+      "blank": 8
+    },
+    {
+      "path": "engine/gen.go",
+      "language": "Go",
+      "bucket": "engine",
+      "code": 40,
+      "comment": 1,
+      "blank": 1
+    },
+    {
+      "path": "cmd/app/bench.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 140,
+      "comment": 10,
+      "blank": 13
+    },
+    {
+      "path": "cmd/app/canvas.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 412,
+      "comment": 21,
+      "blank": 33
+    },
+    {
+      "path": "cmd/app/platform_desktop.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 30,
+      "comment": 3,
+      "blank": 7
+    },
+    {
+      "path": "cmd/app/main.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 29,
+      "comment": 1,
+      "blank": 3
+    },
+    {
+      "path": "cmd/app/platform_js.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 65,
+      "comment": 8,
+      "blank": 9
+    },
+    {
+      "path": "cmd/app/state.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 184,
+      "comment": 7,
+      "blank": 23
+    },
+    {
+      "path": "cmd/app/platform_other.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 27,
+      "comment": 2,
+      "blank": 5
+    },
+    {
+      "path": "cmd/app/table.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 147,
+      "comment": 2,
+      "blank": 11
+    },
+    {
+      "path": "cmd/app/platform_windows.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 45,
+      "comment": 3,
+      "blank": 6
+    },
+    {
+      "path": "cmd/app/ui.go",
+      "language": "Go",
+      "bucket": "ui",
+      "code": 254,
+      "comment": 3,
+      "blank": 21
+    },
+    {
+      "path": "web/index.html",
+      "language": "HTML",
+      "bucket": "glue",
+      "code": 21,
+      "comment": 0,
+      "blank": 0
+    },
+    {
+      "path": "stack.sh",
+      "language": "Shell",
+      "bucket": "glue",
+      "code": 70,
+      "comment": 24,
+      "blank": 16
+    }
+  ]
+}

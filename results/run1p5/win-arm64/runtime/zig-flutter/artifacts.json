@@ -1,0 +1,19 @@
+{
+  "stack": "zig-flutter",
+  "cli": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d.exe",
+  "server": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d-server.exe",
+  "desktop_exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\zig-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+  "desktop_bundle_dir": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\zig-flutter\\app\\build\\windows\\x64\\runner\\Release",
+  "web": {
+    "label": "default",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/web",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\webdist\\default",
+    "what": "build_web_release (stack default)"
+  },
+  "web_alt": {
+    "label": "wasm",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/web_wasm",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\webdist\\alt-wasm",
+    "what": "build_web_wasm_release"
+  }
+}

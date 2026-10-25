@@ -1,0 +1,29 @@
+{
+ "stack": "zig",
+ "phase": "P2",
+ "build_check_commands": 3,
+ "n_failures": 1,
+ "failures": [
+  {
+   "id": "F1",
+   "ts": "2026-10-24T06:40:07Z",
+   "minutes_since_phase_start": 1.2,
+   "kinds": [
+    "check"
+   ],
+   "primary_kind": "check",
+   "reasons": [
+    "inferred: missing tool/file"
+   ],
+   "signature": "/usr/bin/bash: line 1: stacks/zig/stack.sh: No such file or directory",
+   "next_success": {
+    "ts": "2026-10-24T06:40:12Z",
+    "command": "cd $REPO; bash harness/measure.sh zig p2_build -- bash -c 'source stacks/zig/stack.sh && build_check' 2>&1 | tail -30",
+    "kinds": [
+     "check"
+    ],
+    "minutes_after_failure": 0.1
+   }
+  }
+ ]
+}

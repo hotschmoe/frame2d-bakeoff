@@ -1,0 +1,26 @@
+[
+ {
+  "id": "F1",
+  "category": "build_config",
+  "caught_at": "compile",
+  "note": "build.zig.zon fingerprint invalid (agent-made value)"
+ },
+ {
+  "id": "F2",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "std.builtin optimize enum has no 'Debug' field in zig 0.17"
+ },
+ {
+  "id": "F3",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "dvui pinned API: color_fill takes ColorOrGradient union, not {.r,.g,.b,.a}"
+ },
+ {
+  "id": "F4",
+  "category": "stale_api",
+  "caught_at": "compile",
+  "note": "dvui pinned API: color_text union, same mistake in a second site"
+ }
+]

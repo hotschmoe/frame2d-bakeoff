@@ -1,0 +1,1 @@
+{"wall_s": 1.5824628999689594, "cpu_s": 1.890625, "parallelism": 1.194735750226489, "mem_peak_mb": 823.30859375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 11, "exit_code": 0, "method": "psutil", "stack": "rust", "label": "edit-leaf-dev"}

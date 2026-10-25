@@ -1,0 +1,134 @@
+{
+  "stack": "rust",
+  "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\rust\\target\\release\\frame2d-app.exe",
+  "runs_per_mode": 1,
+  "host_arch": "ARM64",
+  "emulation_note": null,
+  "modes": {
+    "startup": {
+      "ok_runs": 1,
+      "median": {
+        "first_frame_ms": 150.844,
+        "peak_rss_mb_tree_sampled": 119.473
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 150.844
+          },
+          "rc": 0,
+          "wall_s": 0.337,
+          "peak_rss_mb_tree": 119.473,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 1,
+      "median": {
+        "p50": 9.708,
+        "p95": 12.05,
+        "p99": 13.772,
+        "max": 55.68,
+        "solve_p50": 8.453,
+        "lag_max": 0,
+        "rss_mb": 122.9,
+        "peak_rss_mb_tree_sampled": 122.902
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 9.708,
+            "p95": 12.05,
+            "p99": 13.772,
+            "max": 55.68,
+            "solve_p50": 8.453,
+            "lag_max": 0,
+            "rss_mb": 122.9
+          },
+          "rc": 0,
+          "wall_s": 6.381,
+          "peak_rss_mb_tree": 122.902,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 1,
+      "median": {
+        "p50": 8.327,
+        "p95": 9.369,
+        "p99": 14.458,
+        "max": 31.903,
+        "solve_p50": 1670.507,
+        "lag_max": 0,
+        "rss_mb": 572.4,
+        "peak_rss_mb_tree_sampled": 572.402
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 8.327,
+            "p95": 9.369,
+            "p99": 14.458,
+            "max": 31.903,
+            "solve_p50": 1670.507,
+            "lag_max": 0,
+            "rss_mb": 572.4
+          },
+          "rc": 0,
+          "wall_s": 7.111,
+          "peak_rss_mb_tree": 572.402,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 1,
+      "median": {
+        "noop_ns": 0.21,
+        "transfer_us": 78.55,
+        "peak_rss_mb_tree_sampled": 10.668
+      },
+      "mechanism": "none (same-language call; result is an owned Vec, no marshalling)",
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 0.21,
+            "transfer_us": 78.55,
+            "mechanism": "none (same-language call; result is an owned Vec, no marshalling)"
+          },
+          "rc": 0,
+          "wall_s": 0.24,
+          "peak_rss_mb_tree": 10.668,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    }
+  },
+  "renderer_lines": [],
+  "renderer_note": "renderer lines are whatever the app printed matching impeller/opengl/d3d/vulkan/software/...; empty means the app does not report its renderer (see AGENT_LOG.md / env.md for GPU)"
+}

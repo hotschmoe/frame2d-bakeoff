@@ -1,0 +1,880 @@
+{
+  "stack": "zig",
+  "label": "default",
+  "root": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig\\webdist\\default",
+  "runs": 3,
+  "modes": [
+    "ready",
+    "startup",
+    "drag",
+    "render",
+    "boundary"
+  ],
+  "date": "2026-10-25T02:43:50.345Z",
+  "server": {
+    "kind": "node static_server (harness/runtime/web_common.mjs)",
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "headers": {
+      "Content-Encoding": "br (precompressed)",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp"
+    },
+    "cache": "Cache-Control: no-store + CDP Network.setCacheDisabled + fresh browser per run + service workers blocked"
+  },
+  "manifest": {
+    "total_raw": 2570366,
+    "total_br": 610521,
+    "files": [
+      {
+        "path": "index.html",
+        "raw": 1556,
+        "br": 674,
+        "type": "text/html; charset=utf-8"
+      },
+      {
+        "path": "web.js",
+        "raw": 60367,
+        "br": 9083,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "web.wasm",
+        "raw": 2508443,
+        "br": 600764,
+        "type": "application/wasm"
+      }
+    ]
+  },
+  "env": {
+    "browser_version": "156.0.8078.4",
+    "playwright_version": "1.64.1",
+    "launch_args": [
+      "--ignore-gpu-blocklist",
+      "--enable-unsafe-swiftshader",
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows"
+    ],
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "node": "v24.22.1",
+    "platform": "win32/arm64",
+    "gl": {
+      "webgl2": true,
+      "webgl2_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl2_vendor": "Google Inc. (Google)",
+      "webgl": true,
+      "webgl_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl_vendor": "Google Inc. (Google)",
+      "webgpu": false,
+      "crossOriginIsolated": true,
+      "hardwareConcurrency": 18,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+    },
+    "software_rendering_suspected": true,
+    "chrome_gpu_error": "Error: page.goto: net::ERR_FAILED at chrome://gpu"
+  },
+  "modes_out": {
+    "ready": {
+      "ok_runs": 3,
+      "median": {
+        "tti_ms": 174
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 610521,
+      "uncompressed_bytes_median": 2570366,
+      "wire_bytes_cdp_median": 611609,
+      "nav_to_bench_wall_ms_median": 176,
+      "runs": [
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 174
+          },
+          "nav_to_bench_wall_ms": 176,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x29d400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x29d400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x29d400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x29d400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 171.9
+          },
+          "nav_to_bench_wall_ms": 174,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x51ec00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x51ec00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x51ec00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x51ec00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 193.9
+          },
+          "nav_to_bench_wall_ms": 196,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x641400434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x641400434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x641400434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x641400434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 297.7
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 610521,
+      "uncompressed_bytes_median": 2570366,
+      "wire_bytes_cdp_median": 611609,
+      "nav_to_bench_wall_ms_median": 300,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 297.7
+          },
+          "nav_to_bench_wall_ms": 300,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x113400440800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x113400440800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x113400440800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 294
+          },
+          "nav_to_bench_wall_ms": 297,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x42bc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x42bc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x42bc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 303.2
+          },
+          "nav_to_bench_wall_ms": 306,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x6c7c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x6c7c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x6c7c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 39.815,
+        "p95": 80.64,
+        "p99": 101.37,
+        "max": 179.095,
+        "solve_p50": 16.425,
+        "lag_max": 0,
+        "rss_mb": 51.9
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 610521,
+      "uncompressed_bytes_median": 2570366,
+      "wire_bytes_cdp_median": 611609,
+      "nav_to_bench_wall_ms_median": 32202,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 40.74,
+            "p95": 85.52,
+            "p99": 101.37,
+            "max": 179.095,
+            "solve_p50": 17.26,
+            "lag_max": 0,
+            "rss_mb": 51.9
+          },
+          "nav_to_bench_wall_ms": 32809,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x338c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x338c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x338c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x338c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 39.815,
+            "p95": 80.64,
+            "p99": 101.86,
+            "max": 180.36,
+            "solve_p50": 16.425,
+            "lag_max": 0,
+            "rss_mb": 51.9
+          },
+          "nav_to_bench_wall_ms": 32202,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x443c00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x443c00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x443c00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x443c00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 38.235,
+            "p95": 71.285,
+            "p99": 95.095,
+            "max": 134.545,
+            "solve_p50": 16.08,
+            "lag_max": 0,
+            "rss_mb": 51.9
+          },
+          "nav_to_bench_wall_ms": 26530,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x54ac00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x54ac00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x54ac00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x54ac00434800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 18.925,
+        "p95": 45.165,
+        "p99": 71.695,
+        "max": 92.265,
+        "solve_p50": 0,
+        "lag_max": 0,
+        "rss_mb": 602.3
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 610521,
+      "uncompressed_bytes_median": 2570366,
+      "wire_bytes_cdp_median": 611609,
+      "nav_to_bench_wall_ms_median": 22401,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 18.87,
+            "p95": 44.44,
+            "p99": 72.755,
+            "max": 93.025,
+            "solve_p50": 0,
+            "lag_max": 0,
+            "rss_mb": 602.3
+          },
+          "nav_to_bench_wall_ms": 21993,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x4c6400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4c6400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4c6400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4c6400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 19.1,
+            "p95": 45.695,
+            "p99": 71.695,
+            "max": 92.265,
+            "solve_p50": 0,
+            "lag_max": 0,
+            "rss_mb": 602.3
+          },
+          "nav_to_bench_wall_ms": 22463,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x5eb400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x5eb400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x5eb400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x5eb400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 18.925,
+            "p95": 45.165,
+            "p99": 69.835,
+            "max": 90.415,
+            "solve_p50": 0,
+            "lag_max": 0,
+            "rss_mb": 602.3
+          },
+          "nav_to_bench_wall_ms": 22401,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x3c4c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x3c4c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x3c4c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x3c4c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 12.0450000166893,
+        "transfer_us": 11.075000017881393,
+        "sink": 38102000
+      },
+      "mechanism": "zero-copy view",
+      "transferred_body_bytes_median": 610521,
+      "uncompressed_bytes_median": 2570366,
+      "wire_bytes_cdp_median": 611609,
+      "nav_to_bench_wall_ms_median": 109,
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.064999997615814,
+            "transfer_us": 11.075000017881393,
+            "mechanism": "zero-copy view",
+            "sink": 38102000
+          },
+          "nav_to_bench_wall_ms": 109,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x316c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x316c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x316c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x316c00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12.0450000166893,
+            "transfer_us": 10.919999986886978,
+            "mechanism": "zero-copy view",
+            "sink": 38102000
+          },
+          "nav_to_bench_wall_ms": 112,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x487400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x487400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x487400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x487400430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 12,
+            "transfer_us": 11.11999997496605,
+            "mechanism": "zero-copy view",
+            "sink": 38102000
+          },
+          "nav_to_bench_wall_ms": 108,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "(dvui): window logical Size.Natural{ 1280 800 } pixels Size.Physical{ 300 150 } pixel scale 0.234375 initial content scale 1 snap_to_pixels true accesskit false\n",
+            "[.WebGL-0x22cc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x22cc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x22cc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x22cc00430800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 610521,
+            "uncompressed_bytes": 2570366,
+            "wire_bytes_cdp": 611609,
+            "requests": 3,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 674,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "web.js",
+                "sent": 9083,
+                "raw": 60367,
+                "encoding": "br"
+              },
+              {
+                "path": "web.wasm",
+                "sent": 600764,
+                "raw": 2508443,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "transferred_br_bytes": 610521,
+    "uncompressed_bytes": 2570366,
+    "tti_ms": 174,
+    "startup_first_frame_ms": 297.7,
+    "drag": {
+      "p50": 39.815,
+      "p95": 80.64,
+      "p99": 101.37,
+      "max": 179.095,
+      "lag_max": 0
+    },
+    "render": {
+      "p50": 18.925,
+      "p95": 45.165,
+      "p99": 71.695,
+      "max": 92.265
+    },
+    "solve_p50_ms": 16.425,
+    "boundary": {
+      "noop_ns": 12.0450000166893,
+      "transfer_us": 11.075000017881393,
+      "mechanism": "zero-copy view"
+    },
+    "directory_total_br_bytes": 610521,
+    "directory_total_raw_bytes": 2570366
+  },
+  "what": "build_web_release (stack default)",
+  "is_alternate_extra": false
+}

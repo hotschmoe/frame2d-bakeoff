@@ -1,0 +1,7 @@
+{
+ "stack": "go-flutter",
+ "phase": "P2",
+ "build_check_commands": 3,
+ "n_failures": 0,
+ "failures": []
+}

@@ -1,0 +1,49 @@
+[zig-flutter] sections: build meta loc cli desktop web binsize server  quick=0  out=C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\zig-flutter
+[zig-flutter] build_cli_release ...
+[zig-flutter]   rc=0 0.3s -> C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d.exe
+[zig-flutter] build_server_release ...
+[zig-flutter]   rc=0 0.3s -> C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/zig-out/bin/frame2d-server.exe
+[zig-flutter] build_desktop_release ...
+[zig-flutter]   rc=0 34.3s -> C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/windows/x64/runner/Release/frame2d_app.exe
+[zig-flutter] build_web_release ...
+[zig-flutter]   rc=0 28.9s -> C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/web
+[zig-flutter] build_web_wasm_release ...
+[zig-flutter]   rc=0 37.9s -> C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter/app/build/web_wasm
+[zig-flutter] loc: engine=1685, ui=1192, server=268, glue=997, tests=166, other=0, total_excluding_generated=4308, generated=289
+[zig-flutter] cli bench 10x10: assemble_ms=0.065, factor_ms=0.031, solve_ms=0.108, peak_rss_mb=6.953
+[zig-flutter] cli bench 50x50: assemble_ms=0.81, factor_ms=6.018, solve_ms=2.184, peak_rss_mb=16.035
+[zig-flutter] cli bench 100x100: assemble_ms=5.142, factor_ms=91.983, solve_ms=21.917, peak_rss_mb=66.371
+[zig-flutter] cli bench 200x200: assemble_ms=31.141, factor_ms=1286.711, solve_ms=158.769, peak_rss_mb=428.664
+[zig-flutter] desktop startup run 1/3: mode=startup, first_frame_ms=1257.574, backend=ffi
+[zig-flutter] desktop startup run 2/3: mode=startup, first_frame_ms=922.806, backend=ffi
+[zig-flutter] desktop startup run 3/3: mode=startup, first_frame_ms=945.423, backend=ffi
+[zig-flutter] desktop drag run 1/3: ui_p50=13.616, raster_p50=3.881, mode=drag, p50=24.835, p95=36.579, p99=42.318, max=47.702, solve_p50=9.447, lag_max=0, rss_mb=366.0859375, backend=ffi
+[zig-flutter] desktop drag run 2/3: ui_p50=13.636, raster_p50=3.892, mode=drag, p50=24.474, p95=34.212, p99=37.751, max=50.763, solve_p50=9.61, lag_max=0, rss_mb=365.26171875, backend=ffi
+[zig-flutter] desktop drag run 3/3: ui_p50=13.925, raster_p50=3.968, mode=drag, p50=24.963, p95=36.004, p99=40.547, max=52.44, solve_p50=9.837, lag_max=0, rss_mb=369.203125, backend=ffi
+[zig-flutter] desktop render run 1/3: ui_p50=12.565, raster_p50=12.853, mode=render, p50=32.403, p95=40.77, p99=47.204, max=59.847, rss_mb=982.8046875, backend=ffi
+[zig-flutter] desktop render run 2/3: ui_p50=12.389, raster_p50=12.37, mode=render, p50=31.43, p95=41.645, p99=47.548, max=55.494, rss_mb=996.63671875, backend=ffi
+[zig-flutter] desktop render run 3/3: ui_p50=12.616, raster_p50=12.857, mode=render, p50=32.527, p95=41.924, p99=46.506, max=56.047, rss_mb=1013.8828125, backend=ffi
+[zig-flutter] desktop boundary run 1/3: mode=boundary, noop_ns=5.607, transfer_us=8.434, backend=ffi
+[zig-flutter] desktop boundary run 2/3: mode=boundary, noop_ns=5.426, transfer_us=8.137, backend=ffi
+[zig-flutter] desktop boundary run 3/3: mode=boundary, noop_ns=5.662, transfer_us=8.2, backend=ffi
+[zig-flutter] web bench (default): C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\harness\runtime\.work\zig-flutter\webdist\default
+[zig-flutter/default] web ready run 1/3: {"mode":"ready","tti_ms":763.455,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web ready run 2/3: {"mode":"ready","tti_ms":731.845,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web ready run 3/3: {"mode":"ready","tti_ms":752.315,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web startup run 1/3: {"mode":"startup","first_frame_ms":2079.545,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web startup run 2/3: {"mode":"startup","first_frame_ms":2100.331,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web startup run 3/3: {"mode":"startup","first_frame_ms":2052.72,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web drag run 1/3: {"ui_p50":32.405,"raster_p50":38.68,"mode":"drag","p50":71.55,"p95":104.549,"p99":157.516,"max":469.359,"solve_p50":20.604,"lag_max":0,"rss_mb":61.03515625,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web drag run 2/3: {"ui_p50":31.6,"raster_p50":48.16,"mode":"drag","p50":79.67,"p95":104.975,"p99":158.02,"max":472.275,"solve_p50":20.39,"lag_max":0,"rss_mb":51.021575927734375,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web drag run 3/3: {"ui_p50":46.115,"raster_p50":39.771,"mode":"drag","p50":91.99,"p95":117.4,"p99":169.86,"max":496.26,"solve_p50":15.955,"lag_max":0,"rss_mb":68.85528564453125,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web render run 1/3: {"ui_p50":11.744,"raster_p50":33.72,"mode":"render","p50":48.11,"p95":98.075,"p99":157.955,"max":706.385,"rss_mb":149.72686767578125,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web render run 2/3: {"ui_p50":11.704,"raster_p50":33.849,"mode":"render","p50":48.125,"p95":105.965,"p99":156.155,"max":684.35,"rss_mb":141.143798828125,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web render run 3/3: {"ui_p50":11.105,"raster_p50":34.35,"mode":"render","p50":48.905,"p95":104.275,"p99":184.94,"max":670.49,"rss_mb":189.78118896484375,"backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web boundary run 1/3: {"mode":"boundary","noop_ns":5.805,"transfer_us":14.48,"mechanism":"zero-copy view","backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web boundary run 2/3: {"mode":"boundary","noop_ns":11.605,"transfer_us":11.141,"mechanism":"zero-copy view","backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter/default] web boundary run 3/3: {"mode":"boundary","noop_ns":6.6,"transfer_us":11.35,"mechanism":"zero-copy view","backend":"wasm (dart2js)"} | body 2312056 B br / 8498262 B raw
+[zig-flutter] sizes MB: cli=0.73 server=1.72 desktop_bundle=26.0 engine_lib=0.34 web_br=10.31 web_engine_br=0.08
+[zig-flutter] oha: rps=297.4156181079042 p50=192.897ms p99=367.078ms rss=722.715MB cpu_s=455.406 threads=66 util=0.8405
+[zig-flutter] sweep_1000_gen10x10: ok=True wall=0.028s cpu_s=0.281 util=0.5557 (cores busy 10.0/18) rss=12.008MB threads=2
+[zig-flutter] sweep_200_gen50x50: ok=True wall=0.191s cpu_s=2.781 util=0.8076 (cores busy 14.54/18) rss=180.508MB threads=21
+[zig-flutter] done rc=0  records in C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\zig-flutter

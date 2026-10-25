@@ -1,0 +1,85 @@
+[buildloop 20:24:54] === rust: section cold (quick=0) ===
+[buildloop 20:24:55] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    8.113 s   ±   1.446 s      7.091 s   …   9.135 s
+ 
+[buildloop 20:25:20] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   16.476 s   ±   0.467 s     16.146 s   …  16.806 s
+ 
+[buildloop 20:25:54] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   24.198 s   ±   3.162 s     21.962 s   …  26.434 s
+ 
+[buildloop 20:26:45] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   36.915 s   ±   0.693 s     36.426 s   …  37.405 s
+ 
+[buildloop 20:28:01] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   16.716 s   ±   0.996 s     16.011 s   …  17.421 s
+ 
+[buildloop 20:28:36] section cold: ok in 222 s
+[buildloop 20:28:37] === rust: section edits (quick=0) ===
+[buildloop 20:28:37] edits: priming build_check and build_dev
+[buildloop 20:28:47] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.129 s   ±   0.034 s      1.095 s   …   1.163 s
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.154 s   ±   0.025 s      1.126 s   …   1.176 s             +2.1%
+ 
+[buildloop 20:28:57] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.490 s   ±   0.054 s      1.427 s   …   1.526 s
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.825 s   ±   0.006 s      2.819 s   …   2.830 s            +89.6%  (1.9x slower)
+ 
+[buildloop 20:29:21] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.570 s   ±   0.075 s      1.484 s   …   1.618 s
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.896 s   ±   0.073 s      2.826 s   …   2.971 s            +84.5%  (1.8x slower)
+ 
+[buildloop 20:29:46] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.344 s   ±   0.017 s      1.333 s   …   1.364 s
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (1.364 s). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.011 s   ±   0.106 s      1.898 s   …   2.107 s            +49.6%  (1.5x slower)
+ 
+[buildloop 20:30:07] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.549 s   ±   0.043 s      1.506 s   …   1.591 s
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.627 s   ±   0.192 s      2.502 s   …   2.848 s            +69.6%  (1.7x slower)
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust
+[buildloop 20:30:33] section edits: ok in 116 s
+[buildloop 20:30:33] === rust: section hotreload (quick=0) ===
+[buildloop 20:30:33] section hotreload: skipped (not a Flutter stack) in 0 s
+[buildloop 20:30:33] === rust: section engine (quick=0) ===
+[buildloop 20:30:34] section engine: skipped (not a Flutter stack) in 0 s

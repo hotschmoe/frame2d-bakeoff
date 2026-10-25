@@ -1,0 +1,1643 @@
+{
+  "stack": "zig-flutter",
+  "label": "default",
+  "root": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig-flutter\\webdist\\default",
+  "runs": 3,
+  "modes": [
+    "ready",
+    "startup",
+    "drag",
+    "render",
+    "boundary"
+  ],
+  "date": "2026-10-25T02:14:35.659Z",
+  "server": {
+    "kind": "node static_server (harness/runtime/web_common.mjs)",
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "headers": {
+      "Content-Encoding": "br (precompressed)",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp"
+    },
+    "cache": "Cache-Control: no-store + CDP Network.setCacheDisabled + fresh browser per run + service workers blocked"
+  },
+  "manifest": {
+    "total_raw": 42239885,
+    "total_br": 10811131,
+    "files": [
+      {
+        "path": ".last_build_id",
+        "raw": 32,
+        "br": 32,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/AssetManifest.bin",
+        "raw": 2,
+        "br": 6,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/AssetManifest.bin.json",
+        "raw": 6,
+        "br": 10,
+        "type": "application/json"
+      },
+      {
+        "path": "assets/FontManifest.json",
+        "raw": 158,
+        "br": 95,
+        "type": "application/json"
+      },
+      {
+        "path": "assets/NOTICES",
+        "raw": 1335342,
+        "br": 41223,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/fonts/MaterialIcons-Regular.otf",
+        "raw": 7736,
+        "br": 3350,
+        "type": "font/otf"
+      },
+      {
+        "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+        "raw": 171676,
+        "br": 74845,
+        "type": "font/ttf"
+      },
+      {
+        "path": "assets/shaders/ink_sparkle.frag",
+        "raw": 8890,
+        "br": 1787,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "assets/shaders/stretch_effect.frag",
+        "raw": 6737,
+        "br": 1204,
+        "type": "application/octet-stream"
+      },
+      {
+        "path": "canvaskit/canvaskit.js",
+        "raw": 86987,
+        "br": 24371,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/canvaskit.js.symbols",
+        "raw": 1356926,
+        "br": 137423,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/canvaskit.wasm",
+        "raw": 7284602,
+        "br": 2257085,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js",
+        "raw": 86226,
+        "br": 24146,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js.symbols",
+        "raw": 1235870,
+        "br": 120287,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.wasm",
+        "raw": 5428806,
+        "br": 1540246,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/skwasm.js",
+        "raw": 63537,
+        "br": 14886,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm.js.symbols",
+        "raw": 1540006,
+        "br": 149549,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm.wasm",
+        "raw": 3593715,
+        "br": 1209789,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.js",
+        "raw": 63650,
+        "br": 14903,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.js.symbols",
+        "raw": 1672152,
+        "br": 167664,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/skwasm_heavy.wasm",
+        "raw": 5216217,
+        "br": 1858459,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.js",
+        "raw": 76114,
+        "br": 21952,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.js.symbols",
+        "raw": 963641,
+        "br": 95720,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/webparagraph/canvaskit.wasm",
+        "raw": 3729129,
+        "br": 1055638,
+        "type": "application/wasm"
+      },
+      {
+        "path": "canvaskit/wimp.js",
+        "raw": 59127,
+        "br": 14653,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/wimp.js.symbols",
+        "raw": 1813030,
+        "br": 134058,
+        "type": "text/plain; charset=utf-8"
+      },
+      {
+        "path": "canvaskit/wimp.wasm",
+        "raw": 3581677,
+        "br": 1132927,
+        "type": "application/wasm"
+      },
+      {
+        "path": "favicon.png",
+        "raw": 917,
+        "br": 917,
+        "type": "image/png"
+      },
+      {
+        "path": "flutter.js",
+        "raw": 12136,
+        "br": 4074,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "flutter_bootstrap.js",
+        "raw": 13041,
+        "br": 4485,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "flutter_service_worker.js",
+        "raw": 0,
+        "br": 0,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "frame2d_engine.wasm",
+        "raw": 264989,
+        "br": 87885,
+        "type": "application/wasm"
+      },
+      {
+        "path": "icons/Icon-192.png",
+        "raw": 5292,
+        "br": 5292,
+        "type": "image/png"
+      },
+      {
+        "path": "icons/Icon-512.png",
+        "raw": 8252,
+        "br": 8252,
+        "type": "image/png"
+      },
+      {
+        "path": "icons/Icon-maskable-192.png",
+        "raw": 5594,
+        "br": 5594,
+        "type": "image/png"
+      },
+      {
+        "path": "icons/Icon-maskable-512.png",
+        "raw": 20998,
+        "br": 20998,
+        "type": "image/png"
+      },
+      {
+        "path": "index.html",
+        "raw": 1556,
+        "br": 546,
+        "type": "text/html; charset=utf-8"
+      },
+      {
+        "path": "main.dart.js",
+        "raw": 2524074,
+        "br": 576458,
+        "type": "text/javascript; charset=utf-8"
+      },
+      {
+        "path": "manifest.json",
+        "raw": 953,
+        "br": 245,
+        "type": "application/json"
+      },
+      {
+        "path": "version.json",
+        "raw": 92,
+        "br": 77,
+        "type": "application/json"
+      }
+    ]
+  },
+  "env": {
+    "browser_version": "156.0.8078.4",
+    "playwright_version": "1.64.1",
+    "launch_args": [
+      "--ignore-gpu-blocklist",
+      "--enable-unsafe-swiftshader",
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows"
+    ],
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "node": "v24.22.1",
+    "platform": "win32/arm64",
+    "gl": {
+      "webgl2": true,
+      "webgl2_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl2_vendor": "Google Inc. (Google)",
+      "webgl": true,
+      "webgl_renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webgl_vendor": "Google Inc. (Google)",
+      "webgpu": false,
+      "crossOriginIsolated": true,
+      "hardwareConcurrency": 18,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+    },
+    "software_rendering_suspected": true,
+    "chrome_gpu_error": "Error: page.goto: net::ERR_FAILED at chrome://gpu"
+  },
+  "modes_out": {
+    "ready": {
+      "ok_runs": 3,
+      "median": {
+        "tti_ms": 752.315
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2312056,
+      "uncompressed_bytes_median": 8498262,
+      "wire_bytes_cdp_median": 2315290,
+      "nav_to_bench_wall_ms_median": 756,
+      "runs": [
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 763.455,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 767,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x150c00436200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2315290,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 731.845,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 734,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x2dac00436200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2315290,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "ready",
+            "tti_ms": 752.315,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 756,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x26dc00436200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2315290,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 2079.545
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2312056,
+      "uncompressed_bytes_median": 8498262,
+      "wire_bytes_cdp_median": 2354773,
+      "nav_to_bench_wall_ms_median": 3092,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 2079.545,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 3136,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x12640043a800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x12640043a800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x12640043a800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354779,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 2100.331,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 3092,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x136400436800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x136400436800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x136400436800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354773,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 2052.72,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 3005,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x669400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x669400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x669400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354773,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "ui_p50": 32.405,
+        "raster_p50": 39.771,
+        "p50": 79.67,
+        "p95": 104.975,
+        "p99": 158.02,
+        "max": 472.275,
+        "solve_p50": 20.39,
+        "lag_max": 0,
+        "rss_mb": 61.03515625
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2312056,
+      "uncompressed_bytes_median": 8498262,
+      "wire_bytes_cdp_median": 2354774,
+      "nav_to_bench_wall_ms_median": 53621,
+      "runs": [
+        {
+          "bench": {
+            "ui_p50": 32.405,
+            "raster_p50": 38.68,
+            "mode": "drag",
+            "p50": 71.55,
+            "p95": 104.549,
+            "p99": 157.516,
+            "max": 469.359,
+            "solve_p50": 20.604,
+            "lag_max": 0,
+            "rss_mb": 61.03515625,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 50103,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x5c3400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x5c3400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x5c3400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x5c3400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354774,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 31.6,
+            "raster_p50": 48.16,
+            "mode": "drag",
+            "p50": 79.67,
+            "p95": 104.975,
+            "p99": 158.02,
+            "max": 472.275,
+            "solve_p50": 20.39,
+            "lag_max": 0,
+            "rss_mb": 51.021575927734375,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 53621,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x766c066cf000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x766c066cf000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x766c066cf000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x766c066cf000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354774,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 46.115,
+            "raster_p50": 39.771,
+            "mode": "drag",
+            "p50": 91.99,
+            "p95": 117.4,
+            "p99": 169.86,
+            "max": 496.26,
+            "solve_p50": 15.955,
+            "lag_max": 0,
+            "rss_mb": 68.85528564453125,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 55563,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x4a940652fc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4a940652fc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4a940652fc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x4a940652fc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354774,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "ui_p50": 11.704,
+        "raster_p50": 33.849,
+        "p50": 48.125,
+        "p95": 104.275,
+        "p99": 157.955,
+        "max": 684.35,
+        "rss_mb": 149.72686767578125
+      },
+      "mechanism": null,
+      "transferred_body_bytes_median": 2312056,
+      "uncompressed_bytes_median": 8498262,
+      "wire_bytes_cdp_median": 2354775,
+      "nav_to_bench_wall_ms_median": 43255,
+      "runs": [
+        {
+          "bench": {
+            "ui_p50": 11.744,
+            "raster_p50": 33.72,
+            "mode": "render",
+            "p50": 48.11,
+            "p95": 98.075,
+            "p99": 157.955,
+            "max": 706.385,
+            "rss_mb": 149.72686767578125,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 42590,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x502400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x502400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x502400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x502400435600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354775,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 11.704,
+            "raster_p50": 33.849,
+            "mode": "render",
+            "p50": 48.125,
+            "p95": 105.965,
+            "p99": 156.155,
+            "max": 684.35,
+            "rss_mb": 141.143798828125,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 43413,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x679c066fc600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x679c066fc600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x679c066fc600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x679c066fc600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354774,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "ui_p50": 11.105,
+            "raster_p50": 34.35,
+            "mode": "render",
+            "p50": 48.905,
+            "p95": 104.275,
+            "p99": 184.94,
+            "max": 670.49,
+            "rss_mb": 189.78118896484375,
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 43255,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x13cc0042f000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x13cc0042f000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x13cc0042f000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+            "[.WebGL-0x13cc0042f000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2354775,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 6.6,
+        "transfer_us": 11.35
+      },
+      "mechanism": "zero-copy view",
+      "transferred_body_bytes_median": 2312056,
+      "uncompressed_bytes_median": 8498262,
+      "wire_bytes_cdp_median": 2315290,
+      "nav_to_bench_wall_ms_median": 463,
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 5.805,
+            "transfer_us": 14.48,
+            "mechanism": "zero-copy view",
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 463,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x107c00436800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2315290,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 11.605,
+            "transfer_us": 11.141,
+            "mechanism": "zero-copy view",
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 461,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x72740043e800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2315290,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 6.6,
+            "transfer_us": 11.35,
+            "mechanism": "zero-copy view",
+            "backend": "wasm (dart2js)"
+          },
+          "nav_to_bench_wall_ms": 469,
+          "timed_out": false,
+          "page_errors": [],
+          "console_head": [
+            "Injecting <script> tag. Using callback.",
+            "[.WebGL-0x39b400436800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+          ],
+          "transfer": {
+            "transferred_body_bytes": 2312056,
+            "uncompressed_bytes": 8498262,
+            "wire_bytes_cdp": 2315290,
+            "requests": 9,
+            "not_found": [],
+            "files": [
+              {
+                "path": "index.html",
+                "sent": 546,
+                "raw": 1556,
+                "encoding": "br"
+              },
+              {
+                "path": "flutter_bootstrap.js",
+                "sent": 4485,
+                "raw": 13041,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.wasm",
+                "sent": 1540246,
+                "raw": 5428806,
+                "encoding": "br"
+              },
+              {
+                "path": "canvaskit/chromium/canvaskit.js",
+                "sent": 24146,
+                "raw": 86226,
+                "encoding": "br"
+              },
+              {
+                "path": "main.dart.js",
+                "sent": 576458,
+                "raw": 2524074,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/FontManifest.json",
+                "sent": 95,
+                "raw": 158,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/MaterialIcons-Regular.otf",
+                "sent": 3350,
+                "raw": 7736,
+                "encoding": "br"
+              },
+              {
+                "path": "assets/fonts/fallback/Roboto-Regular.ttf",
+                "sent": 74845,
+                "raw": 171676,
+                "encoding": "br"
+              },
+              {
+                "path": "frame2d_engine.wasm",
+                "sent": 87885,
+                "raw": 264989,
+                "encoding": "br"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "transferred_br_bytes": 2312056,
+    "uncompressed_bytes": 8498262,
+    "tti_ms": 752.315,
+    "startup_first_frame_ms": 2079.545,
+    "drag": {
+      "p50": 79.67,
+      "p95": 104.975,
+      "p99": 158.02,
+      "max": 472.275,
+      "lag_max": 0
+    },
+    "render": {
+      "p50": 48.125,
+      "p95": 104.275,
+      "p99": 157.955,
+      "max": 684.35
+    },
+    "solve_p50_ms": 20.39,
+    "boundary": {
+      "noop_ns": 6.6,
+      "transfer_us": 11.35,
+      "mechanism": "zero-copy view"
+    },
+    "directory_total_br_bytes": 10811131,
+    "directory_total_raw_bytes": 42239885
+  },
+  "what": "build_web_release (stack default)",
+  "is_alternate_extra": false
+}

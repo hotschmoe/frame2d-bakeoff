@@ -1,0 +1,1 @@
+{"wall_s": 15.025528100028168, "cpu_s": 4.28125, "parallelism": 0.28493174892082324, "mem_peak_mb": 605.90625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 19, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "hotreload-prep"}

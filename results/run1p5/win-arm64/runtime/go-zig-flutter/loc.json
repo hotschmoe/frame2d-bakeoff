@@ -1,0 +1,393 @@
+{
+  "stack": "go-zig-flutter",
+  "tool": "scc scc version 4.1.0",
+  "metric": "code lines (not blank, not comment)",
+  "totals_code": {
+    "engine": 1893,
+    "ui": 964,
+    "server": 204,
+    "glue": 1130,
+    "tests": 530,
+    "other": 0,
+    "total_excluding_generated": 4721
+  },
+  "engine_of_which_cli": 126,
+  "buckets": {
+    "engine": {
+      "files": 6,
+      "code": 1767,
+      "comment": 61,
+      "blank": 136
+    },
+    "ui": {
+      "files": 6,
+      "code": 964,
+      "comment": 34,
+      "blank": 102
+    },
+    "server": {
+      "files": 1,
+      "code": 204,
+      "comment": 4,
+      "blank": 21
+    },
+    "glue": {
+      "files": 13,
+      "code": 1130,
+      "comment": 138,
+      "blank": 188
+    },
+    "tests": {
+      "files": 4,
+      "code": 530,
+      "comment": 4,
+      "blank": 26
+    },
+    "cli": {
+      "files": 1,
+      "code": 126,
+      "comment": 3,
+      "blank": 11
+    },
+    "generated": {
+      "files": 2,
+      "code": 414,
+      "comment": 19,
+      "blank": 62
+    }
+  },
+  "generated_code_not_in_totals": 414,
+  "loc_exclude_entries": [
+    "app/lib/generated",
+    "app/windows",
+    "app/web/index.html",
+    "app/web/manifest.json",
+    "app/web/icons",
+    "app/web/favicon.png",
+    "app/ffigen",
+    "app/pubspec.lock",
+    ".tools",
+    "go.sum"
+  ],
+  "loc_exclude_dropped": {
+    "files": 16,
+    "code": 708,
+    "by_entry": {
+      "app/windows": 688,
+      "app/web/index.html": 20
+    }
+  },
+  "ignored": {
+    "hard_excluded_files": 0,
+    "data_or_doc_language_files": 6,
+    "languages": [
+      "Dockerfile",
+      "Document",
+      "JSON",
+      "License",
+      "Lockfile",
+      "Markdown",
+      "Plain Text",
+      "Properties",
+      "SVG",
+      "Systemd",
+      "TOML",
+      "YAML",
+      "gitignore"
+    ]
+  },
+  "by_language_code": {
+    "Zig": {
+      "code": 2368,
+      "files": 8
+    },
+    "Dart": {
+      "code": 1311,
+      "files": 15
+    },
+    "Go": {
+      "code": 694,
+      "files": 5
+    },
+    "Shell": {
+      "code": 243,
+      "files": 1
+    },
+    "JavaScript": {
+      "code": 70,
+      "files": 1
+    },
+    "C Header": {
+      "code": 35,
+      "files": 1
+    }
+  },
+  "unbucketed_files": [],
+  "notes": "cli is part of engine in totals_code. tests bucket is path-based only; inline #[cfg(test)]/test blocks stay in their source bucket.",
+  "files": [
+    {
+      "path": "app/lib/bench.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 159,
+      "comment": 3,
+      "blank": 16
+    },
+    {
+      "path": "app/lib/app_state.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 194,
+      "comment": 16,
+      "blank": 33
+    },
+    {
+      "path": "app/lib/main.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 45,
+      "comment": 2,
+      "blank": 6
+    },
+    {
+      "path": "app/lib/generated/engine_bindings.dart",
+      "language": "Dart",
+      "bucket": "generated",
+      "code": 379,
+      "comment": 9,
+      "blank": 56
+    },
+    {
+      "path": "app/lib/ui/member_table.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 148,
+      "comment": 2,
+      "blank": 13
+    },
+    {
+      "path": "app/lib/ui/home.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 127,
+      "comment": 2,
+      "blank": 12
+    },
+    {
+      "path": "app/lib/ui/canvas_view.dart",
+      "language": "Dart",
+      "bucket": "ui",
+      "code": 291,
+      "comment": 9,
+      "blank": 22
+    },
+    {
+      "path": "app/lib/engine/engine.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 29,
+      "comment": 5,
+      "blank": 6
+    },
+    {
+      "path": "app/lib/engine/engine_stub.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 2,
+      "comment": 0,
+      "blank": 1
+    },
+    {
+      "path": "app/lib/engine/engine_web.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 65,
+      "comment": 1,
+      "blank": 20
+    },
+    {
+      "path": "app/lib/io/platform_stub.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 9,
+      "comment": 0,
+      "blank": 2
+    },
+    {
+      "path": "app/lib/io/platform.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 3,
+      "comment": 0,
+      "blank": 0
+    },
+    {
+      "path": "app/lib/engine/engine_ffi.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 90,
+      "comment": 2,
+      "blank": 21
+    },
+    {
+      "path": "app/lib/io/platform_io.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 42,
+      "comment": 4,
+      "blank": 10
+    },
+    {
+      "path": "app/lib/io/platform_web.dart",
+      "language": "Dart",
+      "bucket": "glue",
+      "code": 37,
+      "comment": 6,
+      "blank": 9
+    },
+    {
+      "path": "app/test/state_test.dart",
+      "language": "Dart",
+      "bucket": "tests",
+      "code": 70,
+      "comment": 1,
+      "blank": 6
+    },
+    {
+      "path": "zig/src/lib.zig",
+      "language": "Zig",
+      "bucket": "glue",
+      "code": 317,
+      "comment": 26,
+      "blank": 48
+    },
+    {
+      "path": "zig/src/util.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 151,
+      "comment": 4,
+      "blank": 11
+    },
+    {
+      "path": "zig/src/model.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 331,
+      "comment": 10,
+      "blank": 31
+    },
+    {
+      "path": "zig/src/tests.zig",
+      "language": "Zig",
+      "bucket": "tests",
+      "code": 284,
+      "comment": 1,
+      "blank": 2
+    },
+    {
+      "path": "zig/src/session.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 131,
+      "comment": 7,
+      "blank": 8
+    },
+    {
+      "path": "zig/src/engine.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 783,
+      "comment": 33,
+      "blank": 64
+    },
+    {
+      "path": "zig/src/results.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 189,
+      "comment": 4,
+      "blank": 12
+    },
+    {
+      "path": "zig/src/json.zig",
+      "language": "Zig",
+      "bucket": "engine",
+      "code": 182,
+      "comment": 3,
+      "blank": 10
+    },
+    {
+      "path": "bridge/zig/zig_test.go",
+      "language": "Go",
+      "bucket": "tests",
+      "code": 104,
+      "comment": 1,
+      "blank": 10
+    },
+    {
+      "path": "cmd/server/main_test.go",
+      "language": "Go",
+      "bucket": "tests",
+      "code": 72,
+      "comment": 1,
+      "blank": 8
+    },
+    {
+      "path": "bridge/zig/zig.go",
+      "language": "Go",
+      "bucket": "glue",
+      "code": 188,
+      "comment": 32,
+      "blank": 30
+    },
+    {
+      "path": "cmd/frame2d/main.go",
+      "language": "Go",
+      "bucket": "cli",
+      "code": 126,
+      "comment": 3,
+      "blank": 11
+    },
+    {
+      "path": "cmd/server/main.go",
+      "language": "Go",
+      "bucket": "server",
+      "code": 204,
+      "comment": 4,
+      "blank": 21
+    },
+    {
+      "path": "app/ffigen/frame2d_engine.h",
+      "language": "C Header",
+      "bucket": "generated",
+      "code": 35,
+      "comment": 10,
+      "blank": 6
+    },
+    {
+      "path": "zig/include/frame2d_engine.h",
+      "language": "C Header",
+      "bucket": "glue",
+      "code": 35,
+      "comment": 10,
+      "blank": 6
+    },
+    {
+      "path": "app/web/f2d_loader.js",
+      "language": "JavaScript",
+      "bucket": "glue",
+      "code": 70,
+      "comment": 5,
+      "blank": 3
+    },
+    {
+      "path": "stack.sh",
+      "language": "Shell",
+      "bucket": "glue",
+      "code": 243,
+      "comment": 47,
+      "blank": 32
+    }
+  ]
+}

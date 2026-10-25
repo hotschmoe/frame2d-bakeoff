@@ -1,0 +1,47 @@
+[rust-flutter] sections: build meta loc cli desktop web binsize server  quick=0  out=C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\rust-flutter
+[rust-flutter] build_cli_release ...
+[rust-flutter]   rc=0 0.8s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/target/release/frame2d.exe
+[rust-flutter] build_server_release ...
+[rust-flutter]   rc=0 0.6s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/target/release/frame2d-server.exe
+[rust-flutter] build_desktop_release ...
+[rust-flutter]   rc=0 31.0s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/app/build/windows/x64/runner/Release/frame2d_app.exe
+[rust-flutter] build_web_release ...
+[rust-flutter]   rc=0 25.5s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/app/build/web_js
+[rust-flutter] loc: engine=1380, ui=1493, server=298, glue=988, tests=284, other=0, total_excluding_generated=4443, generated=1634
+[rust-flutter] cli bench 10x10: assemble_ms=0.0932, factor_ms=0.03209999999999996, solve_ms=0.04590000000000005, peak_rss_mb=6.52
+[rust-flutter] cli bench 50x50: assemble_ms=3.0045, factor_ms=5.8418, solve_ms=1.586000000000002, peak_rss_mb=15.438
+[rust-flutter] cli bench 100x100: assemble_ms=14.5043, factor_ms=91.93470000000002, solve_ms=17.805799999999977, peak_rss_mb=66.852
+[rust-flutter] cli bench 200x200: assemble_ms=85.17089999999985, factor_ms=1325.7554, solve_ms=117.86409999999978, peak_rss_mb=426.062
+[rust-flutter] desktop startup run 1/3: mode=startup, first_frame_ms=1085.949
+[rust-flutter] desktop startup run 2/3: mode=startup, first_frame_ms=995.417
+[rust-flutter] desktop startup run 3/3: mode=startup, first_frame_ms=986.798
+[rust-flutter] desktop drag run 1/3: mode=drag, p50=25.062, p95=27.127, p99=30.181, max=33.254, solve_p50=10.132, lag_max=2, rss_mb=593.324
+[rust-flutter] desktop drag run 2/3: mode=drag, p50=25.073, p95=29.016, p99=33.961, max=484.555, solve_p50=10.219, lag_max=2, rss_mb=596.395
+[rust-flutter] desktop drag run 3/3: mode=drag, p50=25.768, p95=44.811, p99=52.397, max=60.37, solve_p50=10.352, lag_max=2, rss_mb=599.949
+[rust-flutter] desktop render run 1/3: mode=render, p50=8.403, p95=13.45, p99=18.215, max=28.957, solve_p50=1593.586, lag_max=0, rss_mb=808.188
+[rust-flutter] desktop render run 2/3: mode=render, p50=8.446, p95=13.21, p99=16.637, max=23.126, solve_p50=1600.414, lag_max=0, rss_mb=800.863
+[rust-flutter] desktop render run 3/3: mode=render, p50=13.383, p95=19.208, p99=23.523, max=28.893, solve_p50=1596.997, lag_max=0, rss_mb=798.695
+[rust-flutter] desktop boundary run 1/3: mode=boundary, noop_ns=315.138, transfer_us=309.08
+[rust-flutter] desktop boundary run 2/3: mode=boundary, noop_ns=359.754, transfer_us=294.115
+[rust-flutter] desktop boundary run 3/3: mode=boundary, noop_ns=350.52, transfer_us=325.888
+[rust-flutter] web bench (default): C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\harness\runtime\.work\rust-flutter\webdist\default
+[rust-flutter/default] web ready run 1/3: {"mode":"ready","tti_ms":688.995} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web ready run 2/3: {"mode":"ready","tti_ms":680.615} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web ready run 3/3: {"mode":"ready","tti_ms":672.395} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web startup run 1/3: {"mode":"startup","first_frame_ms":1865.89} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web startup run 2/3: {"mode":"startup","first_frame_ms":1861.385} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web startup run 3/3: {"mode":"startup","first_frame_ms":1860.605} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web drag run 1/3: {"mode":"drag","p50":46.121,"p95":75.846,"p99":95.664,"max":248.836,"solve_p50":11.47,"lag_max":0,"rss_mb":103.951} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web drag run 2/3: {"mode":"drag","p50":47.175,"p95":79.33,"p99":101.61,"max":246.745,"solve_p50":11.03,"lag_max":0,"rss_mb":82.397} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web drag run 3/3: {"mode":"drag","p50":47.609,"p95":69.335,"p99":102.96,"max":244.981,"solve_p50":11.515,"lag_max":0,"rss_mb":92.888} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web render run 1/3: {"mode":"render","p50":70.58,"p95":111.465,"p99":129.565,"max":212.055,"solve_p50":3823.65,"lag_max":0,"rss_mb":61.035} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web render run 2/3: {"mode":"render","p50":67.62,"p95":111.99,"p99":141.556,"max":226.545,"solve_p50":3879.85,"lag_max":0,"rss_mb":61.035} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web render run 3/3: {"mode":"render","p50":68.46,"p95":107.984,"p99":136.974,"max":233.461,"solve_p50":3748.255,"lag_max":0,"rss_mb":68.855} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web boundary run 1/3: {"mode":"boundary","noop_ns":15.46,"transfer_us":53.53,"mechanism":"wasm-bindgen-copy (Float64Array copied out of WASM linear memory)"} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web boundary run 2/3: {"mode":"boundary","noop_ns":17.349,"transfer_us":55.87,"mechanism":"wasm-bindgen-copy (Float64Array copied out of WASM linear memory)"} | body 2320363 B br / 8554302 B raw
+[rust-flutter/default] web boundary run 3/3: {"mode":"boundary","noop_ns":15.414,"transfer_us":54.53,"mechanism":"wasm-bindgen-copy (Float64Array copied out of WASM linear memory)"} | body 2320363 B br / 8554302 B raw
+[rust-flutter] sizes MB: cli=0.46 server=2.63 desktop_bundle=27.83 engine_lib=0.71 web_br=10.32 web_engine_br=0.08
+[rust-flutter] oha: rps=294.5334648816313 p50=215.361ms p99=288.929ms rss=382.652MB cpu_s=472.578 threads=26 util=0.8707
+[rust-flutter] sweep_1000_gen10x10: ok=True wall=0.028s cpu_s=0.016 util=0.0307 (cores busy 0.55/18) rss=26.695MB threads=8
+[rust-flutter] sweep_200_gen50x50: ok=True wall=0.189s cpu_s=2.734 util=0.8022 (cores busy 14.44/18) rss=161.43MB threads=27
+[rust-flutter] done rc=0  records in C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\rust-flutter

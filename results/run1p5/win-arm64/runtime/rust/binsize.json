@@ -1,0 +1,78 @@
+{
+  "stack": "rust",
+  "flags": {
+    "cli": "cargo build --release --bin frame2d",
+    "server": "cargo build --release --bin frame2d-server --features server",
+    "desktop": "cargo build --release --bin frame2d-app --features ui",
+    "web": "cargo build --release --target wasm32-unknown-unknown --features ui; wasm-bindgen --target web; wasm-opt -O3 (if available)",
+    "profile": "opt-level=3, lto=thin, codegen-units=1, strip=true (Cargo.toml)"
+  },
+  "stripped": {
+    "cli": true,
+    "server": true,
+    "desktop": true,
+    "web": "wasm-opt only; name section state not verified"
+  },
+  "release_profile": "opt-level=3, lto=thin, codegen-units=1, strip=true (Cargo.toml)",
+  "unit": "bytes",
+  "cli": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d.exe",
+    "bytes": 429056
+  },
+  "server": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d-server.exe",
+    "bytes": 2847232
+  },
+  "desktop": {
+    "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\rust\\target\\release\\frame2d-app.exe",
+    "exe_bytes": 5622272,
+    "bundle_bytes": 5622272,
+    "engine_lib": null,
+    "engine_lib_bytes": null,
+    "engine_lib_note": "engine is linked statically into the app; the CLI binary (engine only, no UI or server deps) is the engine-alone proxy",
+    "engine_alone_proxy": {
+      "what": "frame2d CLI binary (engine, no UI/server)",
+      "bytes": 429056
+    }
+  },
+  "web": {
+    "label": "default",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\rust\\webdist\\default",
+    "files": 3,
+    "total_br_bytes": 1227279,
+    "total_raw_bytes": 4318150,
+    "engine_wasm": [
+      {
+        "path": "frame2d_bg.wasm",
+        "raw": 4229802,
+        "br": 1216133
+      }
+    ],
+    "engine_wasm_br_bytes": 1216133,
+    "engine_wasm_raw_bytes": 4229802,
+    "engine_note": "the whole eframe app is the wasm module (engine not separable)",
+    "flutter_app_code": null,
+    "largest_by_br": [
+      {
+        "path": "frame2d_bg.wasm",
+        "raw": 4229802,
+        "br": 1216133
+      },
+      {
+        "path": "frame2d.js",
+        "raw": 87073,
+        "br": 10608
+      },
+      {
+        "path": "index.html",
+        "raw": 1275,
+        "br": 538
+      }
+    ],
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "note": "total = every file in the static dir (what a deploy ships), including files a given load never fetches"
+  }
+}

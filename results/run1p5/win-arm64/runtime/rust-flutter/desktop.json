@@ -1,0 +1,300 @@
+{
+  "stack": "rust-flutter",
+  "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\rust-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+  "runs_per_mode": 3,
+  "host_arch": "ARM64",
+  "emulation_note": "Flutter desktop apps are x64 builds run under emulation on win-arm64; pure stacks are native arm64 (do not compare directly on this machine, versions.md)",
+  "modes": {
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 995.417,
+        "peak_rss_mb_tree_sampled": 549.117
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 1085.949
+          },
+          "rc": 0,
+          "wall_s": 1.24,
+          "peak_rss_mb_tree": 546.523,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 995.417
+          },
+          "rc": 0,
+          "wall_s": 1.126,
+          "peak_rss_mb_tree": 557.113,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 986.798
+          },
+          "rc": 0,
+          "wall_s": 1.144,
+          "peak_rss_mb_tree": 549.117,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 25.073,
+        "p95": 29.016,
+        "p99": 33.961,
+        "max": 60.37,
+        "solve_p50": 10.219,
+        "lag_max": 2,
+        "rss_mb": 596.395,
+        "peak_rss_mb_tree_sampled": 613.953
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 25.062,
+            "p95": 27.127,
+            "p99": 30.181,
+            "max": 33.254,
+            "solve_p50": 10.132,
+            "lag_max": 2,
+            "rss_mb": 593.324
+          },
+          "rc": 0,
+          "wall_s": 16.203,
+          "peak_rss_mb_tree": 607.844,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 25.073,
+            "p95": 29.016,
+            "p99": 33.961,
+            "max": 484.555,
+            "solve_p50": 10.219,
+            "lag_max": 2,
+            "rss_mb": 596.395
+          },
+          "rc": 0,
+          "wall_s": 16.794,
+          "peak_rss_mb_tree": 613.953,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 25.768,
+            "p95": 44.811,
+            "p99": 52.397,
+            "max": 60.37,
+            "solve_p50": 10.352,
+            "lag_max": 2,
+            "rss_mb": 599.949
+          },
+          "rc": 0,
+          "wall_s": 18.418,
+          "peak_rss_mb_tree": 616.918,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 8.446,
+        "p95": 13.45,
+        "p99": 18.215,
+        "max": 28.893,
+        "solve_p50": 1596.997,
+        "lag_max": 0,
+        "rss_mb": 800.863,
+        "peak_rss_mb_tree_sampled": 854.227
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 8.403,
+            "p95": 13.45,
+            "p99": 18.215,
+            "max": 28.957,
+            "solve_p50": 1593.586,
+            "lag_max": 0,
+            "rss_mb": 808.188
+          },
+          "rc": 0,
+          "wall_s": 8.152,
+          "peak_rss_mb_tree": 854.918,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 8.446,
+            "p95": 13.21,
+            "p99": 16.637,
+            "max": 23.126,
+            "solve_p50": 1600.414,
+            "lag_max": 0,
+            "rss_mb": 800.863
+          },
+          "rc": 0,
+          "wall_s": 8.133,
+          "peak_rss_mb_tree": 839.156,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 13.383,
+            "p95": 19.208,
+            "p99": 23.523,
+            "max": 28.893,
+            "solve_p50": 1596.997,
+            "lag_max": 0,
+            "rss_mb": 798.695
+          },
+          "rc": 0,
+          "wall_s": 10.381,
+          "peak_rss_mb_tree": 854.227,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 350.52,
+        "transfer_us": 309.08,
+        "peak_rss_mb_tree_sampled": 138.195
+      },
+      "mechanism": "frb-sync-sse (Rust serializes to a byte buffer, Dart copies it into a Float64List)",
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 315.138,
+            "transfer_us": 309.08,
+            "mechanism": "frb-sync-sse (Rust serializes to a byte buffer, Dart copies it into a Float64List)"
+          },
+          "rc": 0,
+          "wall_s": 1.649,
+          "peak_rss_mb_tree": 138.195,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 359.754,
+            "transfer_us": 294.115,
+            "mechanism": "frb-sync-sse (Rust serializes to a byte buffer, Dart copies it into a Float64List)"
+          },
+          "rc": 0,
+          "wall_s": 1.643,
+          "peak_rss_mb_tree": 137.969,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 350.52,
+            "transfer_us": 325.888,
+            "mechanism": "frb-sync-sse (Rust serializes to a byte buffer, Dart copies it into a Float64List)"
+          },
+          "rc": 0,
+          "wall_s": 1.631,
+          "peak_rss_mb_tree": 138.242,
+          "peak_procs": 1,
+          "renderer_lines": [
+            "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+          ],
+          "stdout_other_head": [],
+          "stderr_tail": "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+          "timed_out": false
+        }
+      ]
+    }
+  },
+  "renderer_lines": [
+    "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF)."
+  ],
+  "renderer_note": "renderer lines are whatever the app printed matching impeller/opengl/d3d/vulkan/software/...; empty means the app does not report its renderer (see AGENT_LOG.md / env.md for GPU)"
+}

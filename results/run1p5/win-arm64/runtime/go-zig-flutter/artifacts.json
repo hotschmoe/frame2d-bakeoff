@@ -1,0 +1,19 @@
+{
+  "stack": "go-zig-flutter",
+  "cli": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter/build/release/frame2d.exe",
+  "server": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter/build/release/frame2d-server.exe",
+  "desktop_exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-zig-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+  "desktop_bundle_dir": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go-zig-flutter\\app\\build\\windows\\x64\\runner\\Release",
+  "web": {
+    "label": "default",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter/app/build/web",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-zig-flutter\\webdist\\default",
+    "what": "build_web_release (stack default)"
+  },
+  "web_alt": {
+    "label": "dart2js",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter/app/build/web",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go-zig-flutter\\webdist\\alt-dart2js",
+    "what": "build_web_release defaults to --wasm in this stack; the dart2js build is the extra"
+  }
+}

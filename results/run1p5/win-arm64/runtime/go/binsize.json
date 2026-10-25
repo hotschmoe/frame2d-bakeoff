@@ -1,0 +1,77 @@
+{
+  "stack": "go",
+  "flags": {
+    "cli": "go build -trimpath -ldflags '-s -w' ./cmd/frame2d (CGO_ENABLED=0)",
+    "server": "go build -trimpath -ldflags '-s -w' ./cmd/server (CGO_ENABLED=0)",
+    "desktop": "go build -trimpath -ldflags '-s -w' ./cmd/app (CGO_ENABLED=0 on windows)",
+    "web": "GOOS=js GOARCH=wasm go build -trimpath -ldflags '-s -w' ./cmd/app"
+  },
+  "stripped": {
+    "cli": true,
+    "server": true,
+    "desktop": true,
+    "web": true
+  },
+  "release_profile": null,
+  "unit": "bytes",
+  "cli": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go/build/release/frame2d.exe",
+    "bytes": 2725888
+  },
+  "server": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go/build/release/server.exe",
+    "bytes": 10381312
+  },
+  "desktop": {
+    "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\go\\build\\release\\app.exe",
+    "exe_bytes": 7204352,
+    "bundle_bytes": 7204352,
+    "engine_lib": null,
+    "engine_lib_bytes": null,
+    "engine_lib_note": "engine is linked statically into the app; CLI binary is the engine-alone proxy",
+    "engine_alone_proxy": {
+      "what": "frame2d CLI binary (engine, no UI/server)",
+      "bytes": 2725888
+    }
+  },
+  "web": {
+    "label": "default",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\go\\webdist\\default",
+    "files": 3,
+    "total_br_bytes": 2334761,
+    "total_raw_bytes": 12444662,
+    "engine_wasm": [
+      {
+        "path": "main.wasm",
+        "raw": 12427005,
+        "br": 2330741
+      }
+    ],
+    "engine_wasm_br_bytes": 2330741,
+    "engine_wasm_raw_bytes": 12427005,
+    "engine_note": "the whole Gio app is the wasm module (engine not separable)",
+    "flutter_app_code": null,
+    "largest_by_br": [
+      {
+        "path": "main.wasm",
+        "raw": 12427005,
+        "br": 2330741
+      },
+      {
+        "path": "wasm_exec.js",
+        "raw": 16992,
+        "br": 3752
+      },
+      {
+        "path": "index.html",
+        "raw": 665,
+        "br": 268
+      }
+    ],
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "note": "total = every file in the static dir (what a deploy ships), including files a given load never fetches"
+  }
+}

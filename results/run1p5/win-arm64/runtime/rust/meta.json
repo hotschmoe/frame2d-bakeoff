@@ -1,0 +1,39 @@
+{
+  "run": "run1p5",
+  "machine": "win-arm64",
+  "stack": "rust",
+  "date": "2026-10-24T20:01:20-0700",
+  "quick": false,
+  "git_rev": "7a14b40",
+  "stack_sh_sha256": "42c8e6f11fa72149bbbbf6a8324d08a5f8918669144419cf228d7a1a5f4d5103",
+  "stacks_json_sha256": "c4712dba5692d3936e5c9459506a61f7ea6d9f96bb52e2fbfa5a4aab6f6f0f67",
+  "host": {
+    "platform": "Windows-11-10.0.28000-SP0",
+    "machine": "ARM64",
+    "cpu": "ARMv8 (64-bit) Family 8 Model 2 Revision 201, Qualcomm Technologies Inc",
+    "logical_cpus": 18,
+    "ram_gb": 47.6,
+    "gpu": "Qualcomm(R) Adreno(TM) X2-90 GPU 32.0.172.1",
+    "env_md": "results/run1p5/win-arm64/env.md (authoritative: GPU driver, power mode, disk)"
+  },
+  "tools": {
+    "scc": "scc version 4.1.0",
+    "oha": "oha 1.16.0",
+    "node": "v24.22.1",
+    "twiggy": "twiggy-opt 0.8.0",
+    "hyperfine": "hyperfine 2.0.0",
+    "bloaty": null,
+    "python": "3.12.10",
+    "psutil": "7.2.2"
+  },
+  "toolchains": {
+    "rustc --version": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "go version": "go version go1.27.0 windows/arm64",
+    "zig version": "0.17.0",
+    "flutter --version": "Flutter 3.47.8 \u2022 channel stable \u2022 https://github.com/flutter/flutter.git",
+    "wasm-bindgen --version": "wasm-bindgen 0.2.129",
+    "wasm-opt --version": "wasm-opt version 133 (version_133)"
+  },
+  "versions_md": "results/run1p5/versions.md",
+  "note": "Run on a quiet machine, plugged in, performance power mode (SPEC 15.2). Other agents' builds distort every number."
+}

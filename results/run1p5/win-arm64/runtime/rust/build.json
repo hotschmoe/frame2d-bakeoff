@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "fn": "build_cli_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 2.133,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d.exe"
+  },
+  "server": {
+    "fn": "build_server_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 1.033,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d-server.exe"
+  },
+  "desktop": {
+    "fn": "build_desktop_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 8.325,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/release/frame2d-app.exe"
+  },
+  "web": {
+    "fn": "build_web_release",
+    "env": {},
+    "rc": 0,
+    "wall_s": 6.148,
+    "last_line": "/c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust/target/web-dist"
+  }
+}

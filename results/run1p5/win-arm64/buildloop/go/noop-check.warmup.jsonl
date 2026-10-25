@@ -1,0 +1,1 @@
+{"wall_s": 0.6242501999950036, "cpu_s": 0.90625, "parallelism": 1.451741625404771, "mem_peak_mb": 124.1640625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 6, "exit_code": 0, "method": "psutil", "stack": "go", "label": "noop-check"}

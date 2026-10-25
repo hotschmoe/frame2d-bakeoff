@@ -1,0 +1,274 @@
+{
+  "stack": "rust",
+  "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\rust\\target\\release\\frame2d-app.exe",
+  "runs_per_mode": 3,
+  "host_arch": "ARM64",
+  "emulation_note": null,
+  "modes": {
+    "startup": {
+      "ok_runs": 3,
+      "median": {
+        "first_frame_ms": 141.995,
+        "peak_rss_mb_tree_sampled": 119.566
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 137.16
+          },
+          "rc": 0,
+          "wall_s": 0.322,
+          "peak_rss_mb_tree": 119.641,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 141.995
+          },
+          "rc": 0,
+          "wall_s": 0.319,
+          "peak_rss_mb_tree": 119.434,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "startup",
+            "first_frame_ms": 147.447
+          },
+          "rc": 0,
+          "wall_s": 0.321,
+          "peak_rss_mb_tree": 119.566,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "drag": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 10.157,
+        "p95": 12.363,
+        "p99": 15.036,
+        "max": 40.319,
+        "solve_p50": 8.605,
+        "lag_max": 0,
+        "rss_mb": 122.9,
+        "peak_rss_mb_tree_sampled": 122.934
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 10.157,
+            "p95": 12.363,
+            "p99": 14.018,
+            "max": 38.466,
+            "solve_p50": 8.605,
+            "lag_max": 0,
+            "rss_mb": 122.9
+          },
+          "rc": 0,
+          "wall_s": 6.491,
+          "peak_rss_mb_tree": 122.945,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 10.872,
+            "p95": 12.479,
+            "p99": 15.036,
+            "max": 40.319,
+            "solve_p50": 9.552,
+            "lag_max": 0,
+            "rss_mb": 122.9
+          },
+          "rc": 0,
+          "wall_s": 6.764,
+          "peak_rss_mb_tree": 122.863,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "drag",
+            "p50": 10.044,
+            "p95": 12.119,
+            "p99": 15.172,
+            "max": 42.113,
+            "solve_p50": 8.561,
+            "lag_max": 0,
+            "rss_mb": 122.9
+          },
+          "rc": 0,
+          "wall_s": 6.481,
+          "peak_rss_mb_tree": 122.934,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "render": {
+      "ok_runs": 3,
+      "median": {
+        "p50": 8.341,
+        "p95": 10.058,
+        "p99": 16.478,
+        "max": 31.259,
+        "solve_p50": 1685.038,
+        "lag_max": 0,
+        "rss_mb": 572.1,
+        "peak_rss_mb_tree_sampled": 572.133
+      },
+      "mechanism": null,
+      "runs": [
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 8.32,
+            "p95": 9.065,
+            "p99": 16.459,
+            "max": 34.679,
+            "solve_p50": 1663.936,
+            "lag_max": 0,
+            "rss_mb": 572.1
+          },
+          "rc": 0,
+          "wall_s": 7.107,
+          "peak_rss_mb_tree": 572.133,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 8.361,
+            "p95": 10.11,
+            "p99": 16.478,
+            "max": 31.259,
+            "solve_p50": 1685.038,
+            "lag_max": 0,
+            "rss_mb": 572.1
+          },
+          "rc": 0,
+          "wall_s": 7.102,
+          "peak_rss_mb_tree": 572.066,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "render",
+            "p50": 8.341,
+            "p95": 10.058,
+            "p99": 16.507,
+            "max": 28.418,
+            "solve_p50": 1735.612,
+            "lag_max": 0,
+            "rss_mb": 572.6
+          },
+          "rc": 0,
+          "wall_s": 7.219,
+          "peak_rss_mb_tree": 572.602,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    },
+    "boundary": {
+      "ok_runs": 3,
+      "median": {
+        "noop_ns": 0.28,
+        "transfer_us": 74.61,
+        "peak_rss_mb_tree_sampled": 10.668
+      },
+      "mechanism": "none (same-language call; result is an owned Vec, no marshalling)",
+      "runs": [
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 0.28,
+            "transfer_us": 74.61,
+            "mechanism": "none (same-language call; result is an owned Vec, no marshalling)"
+          },
+          "rc": 0,
+          "wall_s": 0.247,
+          "peak_rss_mb_tree": 10.672,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 0.28,
+            "transfer_us": 75.17,
+            "mechanism": "none (same-language call; result is an owned Vec, no marshalling)"
+          },
+          "rc": 0,
+          "wall_s": 0.231,
+          "peak_rss_mb_tree": 10.664,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        },
+        {
+          "bench": {
+            "mode": "boundary",
+            "noop_ns": 0.21,
+            "transfer_us": 73.38,
+            "mechanism": "none (same-language call; result is an owned Vec, no marshalling)"
+          },
+          "rc": 0,
+          "wall_s": 0.23,
+          "peak_rss_mb_tree": 10.668,
+          "peak_procs": 1,
+          "renderer_lines": [],
+          "stdout_other_head": [],
+          "stderr_tail": "",
+          "timed_out": false
+        }
+      ]
+    }
+  },
+  "renderer_lines": [],
+  "renderer_note": "renderer lines are whatever the app printed matching impeller/opengl/d3d/vulkan/software/...; empty means the app does not report its renderer (see AGENT_LOG.md / env.md for GPU)"
+}

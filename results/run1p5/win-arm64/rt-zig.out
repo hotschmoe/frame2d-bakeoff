@@ -1,0 +1,47 @@
+[zig] sections: build meta loc cli desktop web binsize server  quick=0  out=C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\zig
+[zig] build_cli_release ...
+[zig]   rc=0 0.3s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig/zig-out/bin/frame2d.exe
+[zig] build_server_release ...
+[zig]   rc=0 0.2s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig/zig-out/bin/frame2d-server.exe
+[zig] build_desktop_release ...
+[zig]   rc=0 41.1s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig/zig-out/bin/frame2d-app.exe
+[zig] build_web_release ...
+[zig]   rc=0 14.4s -> /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig/zig-out/web
+[zig] loc: engine=1420, ui=1033, server=372, glue=308, tests=0, other=110, total_excluding_generated=3243, generated=0
+[zig] cli bench 10x10: assemble_ms=0.04, factor_ms=0.031, solve_ms=0.036, peak_rss_mb=5.465
+[zig] cli bench 50x50: assemble_ms=1.295, factor_ms=6.119, solve_ms=1.905, peak_rss_mb=13.746
+[zig] cli bench 100x100: assemble_ms=6.381, factor_ms=92.703, solve_ms=21.424, peak_rss_mb=61.527
+[zig] cli bench 200x200: assemble_ms=36.19, factor_ms=1348.806, solve_ms=153.435, peak_rss_mb=412.715
+[zig] desktop startup run 1/3: mode=startup, first_frame_ms=140.7
+[zig] desktop startup run 2/3: mode=startup, first_frame_ms=62.3
+[zig] desktop startup run 3/3: mode=startup, first_frame_ms=64.4
+[zig] desktop drag run 1/3: mode=drag, p50=9.096, p95=12.52, p99=19.55, max=20.34, solve_p50=8.04, lag_max=0, rss_mb=71.3
+[zig] desktop drag run 2/3: mode=drag, p50=9.011, p95=11.93, p99=19.675, max=20.411, solve_p50=8.013, lag_max=0, rss_mb=71.5
+[zig] desktop drag run 3/3: mode=drag, p50=9.097, p95=11.339, p99=19.003, max=20.78, solve_p50=8.068, lag_max=0, rss_mb=71.2
+[zig] desktop render run 1/3: mode=render, p50=1.341, p95=3.427, p99=5.04, max=7.07, solve_p50=0.0, lag_max=0, rss_mb=388.3
+[zig] desktop render run 2/3: mode=render, p50=1.404, p95=3.388, p99=4.805, max=10.372, solve_p50=0.0, lag_max=0, rss_mb=388.4
+[zig] desktop render run 3/3: mode=render, p50=1.452, p95=3.589, p99=5.368, max=10.51, solve_p50=0.0, lag_max=0, rss_mb=388.6
+[zig] desktop boundary run 1/3: mode=boundary, noop_ns=1.618, transfer_us=4.323
+[zig] desktop boundary run 2/3: mode=boundary, noop_ns=1.878, transfer_us=4.449
+[zig] desktop boundary run 3/3: mode=boundary, noop_ns=1.863, transfer_us=4.421
+[zig] web bench (default): C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\harness\runtime\.work\zig\webdist\default
+[zig/default] web ready run 1/3: {"mode":"ready","tti_ms":174} | body 610521 B br / 2570366 B raw
+[zig/default] web ready run 2/3: {"mode":"ready","tti_ms":171.9} | body 610521 B br / 2570366 B raw
+[zig/default] web ready run 3/3: {"mode":"ready","tti_ms":193.9} | body 610521 B br / 2570366 B raw
+[zig/default] web startup run 1/3: {"mode":"startup","first_frame_ms":297.7} | body 610521 B br / 2570366 B raw
+[zig/default] web startup run 2/3: {"mode":"startup","first_frame_ms":294} | body 610521 B br / 2570366 B raw
+[zig/default] web startup run 3/3: {"mode":"startup","first_frame_ms":303.2} | body 610521 B br / 2570366 B raw
+[zig/default] web drag run 1/3: {"mode":"drag","p50":40.74,"p95":85.52,"p99":101.37,"max":179.095,"solve_p50":17.26,"lag_max":0,"rss_mb":51.9} | body 610521 B br / 2570366 B raw
+[zig/default] web drag run 2/3: {"mode":"drag","p50":39.815,"p95":80.64,"p99":101.86,"max":180.36,"solve_p50":16.425,"lag_max":0,"rss_mb":51.9} | body 610521 B br / 2570366 B raw
+[zig/default] web drag run 3/3: {"mode":"drag","p50":38.235,"p95":71.285,"p99":95.095,"max":134.545,"solve_p50":16.08,"lag_max":0,"rss_mb":51.9} | body 610521 B br / 2570366 B raw
+[zig/default] web render run 1/3: {"mode":"render","p50":18.87,"p95":44.44,"p99":72.755,"max":93.025,"solve_p50":0,"lag_max":0,"rss_mb":602.3} | body 610521 B br / 2570366 B raw
+[zig/default] web render run 2/3: {"mode":"render","p50":19.1,"p95":45.695,"p99":71.695,"max":92.265,"solve_p50":0,"lag_max":0,"rss_mb":602.3} | body 610521 B br / 2570366 B raw
+[zig/default] web render run 3/3: {"mode":"render","p50":18.925,"p95":45.165,"p99":69.835,"max":90.415,"solve_p50":0,"lag_max":0,"rss_mb":602.3} | body 610521 B br / 2570366 B raw
+[zig/default] web boundary run 1/3: {"mode":"boundary","noop_ns":12.064999997615814,"transfer_us":11.075000017881393,"mechanism":"zero-copy view","sink":38102000} | body 610521 B br / 2570366 B raw
+[zig/default] web boundary run 2/3: {"mode":"boundary","noop_ns":12.0450000166893,"transfer_us":10.919999986886978,"mechanism":"zero-copy view","sink":38102000} | body 610521 B br / 2570366 B raw
+[zig/default] web boundary run 3/3: {"mode":"boundary","noop_ns":12,"transfer_us":11.11999997496605,"mechanism":"zero-copy view","sink":38102000} | body 610521 B br / 2570366 B raw
+[zig] sizes MB: cli=0.65 server=1.72 desktop_bundle=6.92 engine_lib=None web_br=0.58 web_engine_br=0.57
+[zig] oha: rps=316.06762538582745 p50=164.531ms p99=503.734ms rss=697.398MB cpu_s=403.594 threads=66 util=0.7445
+[zig] sweep_1000_gen10x10: ok=True wall=0.03s cpu_s=0.078 util=0.1449 (cores busy 2.61/18) rss=21.16MB threads=2
+[zig] sweep_200_gen50x50: ok=True wall=0.205s cpu_s=3.172 util=0.8578 (cores busy 15.44/18) rss=146.602MB threads=20
+[zig] done rc=0  records in C:\Users\hotschmoe\Documents\GitHub\frame2d-bakeoff\results\run1p5\win-arm64\runtime\zig

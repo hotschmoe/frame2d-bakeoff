@@ -1,0 +1,1 @@
+{"wall_s": 15.461834499961697, "cpu_s": 4.546875, "parallelism": 0.29407086203200944, "mem_peak_mb": 566.140625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 15, "exit_code": 0, "method": "psutil", "stack": "rust-flutter", "label": "engine-prime"}

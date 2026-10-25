@@ -1,0 +1,19 @@
+{
+  "stack": "rust-flutter",
+  "cli": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/target/release/frame2d.exe",
+  "server": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/target/release/frame2d-server.exe",
+  "desktop_exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\rust-flutter\\app\\build\\windows\\x64\\runner\\Release\\frame2d_app.exe",
+  "desktop_bundle_dir": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\rust-flutter\\app\\build\\windows\\x64\\runner\\Release",
+  "web": {
+    "label": "default",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/app/build/web_js",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\rust-flutter\\webdist\\default",
+    "what": "build_web_release (stack default)"
+  },
+  "web_alt": {
+    "label": "wasm",
+    "src": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter/app/build/web_wasm",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\rust-flutter\\webdist\\alt-wasm",
+    "what": "extra web build"
+  }
+}

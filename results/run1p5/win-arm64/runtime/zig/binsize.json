@@ -1,0 +1,77 @@
+{
+  "stack": "zig",
+  "flags": {
+    "cli": "zig build cli -Doptimize=ReleaseFast (strip=true unless debug, build.zig)",
+    "server": "zig build server -Doptimize=ReleaseFast",
+    "desktop": "zig build desktop -Doptimize=ReleaseFast",
+    "web": "zig build web -Doptimize=ReleaseFast (wasm32-freestanding)"
+  },
+  "stripped": {
+    "cli": true,
+    "server": true,
+    "desktop": true,
+    "web": true
+  },
+  "release_profile": null,
+  "unit": "bytes",
+  "cli": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig/zig-out/bin/frame2d.exe",
+    "bytes": 679936
+  },
+  "server": {
+    "path": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig/zig-out/bin/frame2d-server.exe",
+    "bytes": 1801728
+  },
+  "desktop": {
+    "exe": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\stacks\\zig\\zig-out\\bin\\frame2d-app.exe",
+    "exe_bytes": 7258624,
+    "bundle_bytes": 7258624,
+    "engine_lib": null,
+    "engine_lib_bytes": null,
+    "engine_lib_note": "engine is compiled into the app; the CLI binary is the engine-alone proxy",
+    "engine_alone_proxy": {
+      "what": "frame2d CLI binary (engine, no UI/server)",
+      "bytes": 679936
+    }
+  },
+  "web": {
+    "label": "default",
+    "dist": "C:\\Users\\hotschmoe\\Documents\\GitHub\\frame2d-bakeoff\\harness\\runtime\\.work\\zig\\webdist\\default",
+    "files": 3,
+    "total_br_bytes": 610521,
+    "total_raw_bytes": 2570366,
+    "engine_wasm": [
+      {
+        "path": "web.wasm",
+        "raw": 2508443,
+        "br": 600764
+      }
+    ],
+    "engine_wasm_br_bytes": 600764,
+    "engine_wasm_raw_bytes": 2508443,
+    "engine_note": "the whole dvui app is the wasm module (engine not separable)",
+    "flutter_app_code": null,
+    "largest_by_br": [
+      {
+        "path": "web.wasm",
+        "raw": 2508443,
+        "br": 600764
+      },
+      {
+        "path": "web.js",
+        "raw": 60367,
+        "br": 9083
+      },
+      {
+        "path": "index.html",
+        "raw": 1556,
+        "br": 674
+      }
+    ],
+    "brotli": {
+      "quality": 11,
+      "lgwin": 24
+    },
+    "note": "total = every file in the static dir (what a deploy ships), including files a given load never fetches"
+  }
+}

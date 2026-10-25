@@ -1,0 +1,7 @@
+{
+ "stack": "go",
+ "phase": "P2",
+ "build_check_commands": 1,
+ "n_failures": 0,
+ "failures": []
+}

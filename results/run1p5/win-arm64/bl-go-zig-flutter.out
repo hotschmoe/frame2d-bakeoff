@@ -1,0 +1,92 @@
+[buildloop 21:33:11] === go-zig-flutter: section cold (quick=0) ===
+[buildloop 21:33:12] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   52.233 s   ±   1.468 s     51.195 s   …  53.271 s
+ 
+[buildloop 21:35:03] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   53.881 s   ±   1.093 s     53.108 s   …  54.654 s
+ 
+[buildloop 21:36:59] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   44.287 s   ±   1.049 s     43.545 s   …  45.028 s
+ 
+[buildloop 21:38:34] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   49.329 s   ±   0.466 s     48.999 s   …  49.659 s
+ 
+[buildloop 21:40:19] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   38.822 s   ±   1.201 s     37.973 s   …  39.671 s
+ 
+[buildloop 21:41:43] section cold: ok in 512 s
+[buildloop 21:41:43] === go-zig-flutter: section edits (quick=0) ===
+[buildloop 21:41:43] edits: priming build_check and build_dev
+[buildloop 21:41:53] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.651 s   ±   0.038 s      1.607 s   …   1.677 s
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.426 s   ±   0.031 s      2.398 s   …   2.460 s            +47.0%  (1.5x slower)
+ 
+[buildloop 21:42:11] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.677 s   ±   0.086 s      1.602 s   …   1.771 s
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    7.099 s   ±   0.064 s      7.030 s   …   7.156 s           +323.2%  (4.2x slower)
+ 
+[buildloop 21:42:56] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.736 s   ±   0.110 s      1.623 s   …   1.842 s
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    7.198 s   ±   0.116 s      7.115 s   …   7.330 s           +314.6%  (4.1x slower)
+ 
+[buildloop 21:43:42] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.712 s   ±   0.073 s      1.669 s   …   1.796 s
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (1.796 s). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    3.658 s   ±   0.139 s      3.531 s   …   3.807 s           +113.7%  (2.1x slower)
+ 
+[buildloop 21:44:14] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    5.819 s   ±   0.169 s      5.717 s   …   6.015 s
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (6.015 s). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   13.018 s   ±   0.119 s     12.922 s   …  13.151 s           +123.7%  (2.2x slower)
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+[buildloop 21:45:41] section edits: ok in 238 s
+[buildloop 21:45:41] === go-zig-flutter: section hotreload (quick=0) ===
+[buildloop 21:45:42] hotreload: cd /c/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter/app && flutter run --machine -d windows
+[buildloop 21:46:28] section hotreload: ok in 47 s
+[buildloop 21:46:28] === go-zig-flutter: section engine (quick=0) ===
+[buildloop 21:46:41] engine: rep 1 leaf edit -> build_dev -> app --bench=startup
+[buildloop 21:46:53] engine: rep 2 leaf edit -> build_dev -> app --bench=startup
+[buildloop 21:47:04] engine: rep 3 leaf edit -> build_dev -> app --bench=startup
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+[buildloop 21:47:16] section engine: ok in 48 s

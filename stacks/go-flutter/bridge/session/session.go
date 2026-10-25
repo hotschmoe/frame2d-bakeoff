@@ -5,7 +5,6 @@ package session
 import (
 	"encoding/json"
 	"errors"
-	"math"
 	"runtime"
 	"sync"
 
@@ -74,6 +73,8 @@ func ErrCode(err error) int32 {
 		return -5
 	case engine.ErrNoFreeDOFs:
 		return -6
+	case engine.ErrSupportConflict:
+		return -7
 	}
 	return -1
 }
@@ -216,11 +217,7 @@ func (s *Session) Solve(c int) int32 {
 		row := s.res[nN*3+m*ResMember : nN*3+(m+1)*ResMember]
 		ef := co.EF[m*6 : m*6+6]
 		copy(row, ef)
-		maxM := 0.0
-		for k, st := range s.p.Stations(c, m, ef, s.p.MemberLength(m)) {
-			row[7+k] = st.M
-			maxM = math.Max(maxM, math.Abs(st.M))
-		}
+		maxM := s.p.StationMoments(c, m, ef, s.p.MemberLength(m), row[7:18])
 		row[6] = maxM
 	}
 	st := out.Stats

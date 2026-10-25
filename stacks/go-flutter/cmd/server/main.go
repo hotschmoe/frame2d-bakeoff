@@ -163,7 +163,7 @@ type sweepReq struct {
 	Model     *engine.Model `json:"model"`
 	ModelID   string        `json:"model_id"`
 	Variants  int           `json:"variants"`
-	BeamIScle [2]float64    `json:"beam_I_scale"`
+	BeamIScale [2]float64    `json:"beam_I_scale"`
 }
 
 func (s *server) sweep(w http.ResponseWriter, r *http.Request) {
@@ -190,7 +190,7 @@ func (s *server) sweep(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	res, err := engine.Sweep(m, req.Variants, req.BeamIScle[0], req.BeamIScle[1])
+	res, err := engine.Sweep(m, req.Variants, req.BeamIScale[0], req.BeamIScale[1])
 	if err != nil {
 		replyErr(w, err)
 		return

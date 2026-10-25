@@ -284,13 +284,22 @@ func (p *Prepared) SolveCase(only int) (*Out, error) {
 
 func ms(d time.Duration) float64 { return float64(d.Nanoseconds()) / 1e6 }
 
+// dot is the inner product of a and b[:len(a)]. Four independent accumulators break the floating-point
+// add dependency chain, which is the bottleneck of the skyline factorization.
 func dot(a, b []float64) float64 {
 	b = b[:len(a)]
-	var s float64
-	for i, v := range a {
-		s += v * b[i]
+	var s0, s1, s2, s3 float64
+	i := 0
+	for ; i+4 <= len(a); i += 4 {
+		s0 += a[i] * b[i]
+		s1 += a[i+1] * b[i+1]
+		s2 += a[i+2] * b[i+2]
+		s3 += a[i+3] * b[i+3]
 	}
-	return s
+	for ; i < len(a); i++ {
+		s0 += a[i] * b[i]
+	}
+	return (s0 + s1) + (s2 + s3)
 }
 
 // factor performs the in-place skyline LDL^T factorization. After it, off-diagonal entries of column j
@@ -352,6 +361,21 @@ func (p *Prepared) solveInPlace(b []float64) {
 			dst[i] -= u * bj
 		}
 	}
+}
+
+// StationMoments fills dst[0..10] with the bending moment M at the 11 stations of member m (the allocation-free
+// counterpart of Stations, for hot paths that only need M) and returns max |M|.
+func (p *Prepared) StationMoments(c, m int, ef []float64, l float64, dst []float64) float64 {
+	w := p.cases[c].w[m]
+	vi, mi := ef[1], ef[2]
+	maxM := 0.0
+	for k := 0; k < 11; k++ {
+		x := l * float64(k) / 10
+		v := -mi + vi*x + w*x*x/2
+		dst[k] = v
+		maxM = math.Max(maxM, math.Abs(v))
+	}
+	return maxM
 }
 
 // Stations returns N, V, M at 11 equally spaced points of member m for case c (SPEC 4.5).

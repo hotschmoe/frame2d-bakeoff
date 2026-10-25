@@ -75,3 +75,56 @@ Started: Sat Oct 24 01:17:00 2026 (local `date`). Done within ~10 minutes; no pr
 - Releases: `Member.Release`; `condense` does static condensation of the local k and fixed-end forces (`fixedEndM`). Skyline stays structural.
 - Auto-restraint: in `Prepare`, a free rz with no kr spring whose attached members all release mz there is restrained and a `auto_restrained` warning is emitted. Such DOFs are hidden from `Restrained()` and the reactions list.
 - Result: conformance p2 7/7, p1 17/17, `test_all` green.
+
+## P5 optimization pass
+
+Machine: win-arm64, noisy (other agents running). Numbers are single runs; the real measurement happens later on a quiet machine.
+
+### Changes
+- `engine/solve.go` `dot`: 4 independent accumulators (breaks the FP add dependency chain in the skyline factor/solve inner loop). Profile showed `factor` was ~98% of CLI 200x200 time. Targets CLI/server/web solve time. Result summation order changes slightly; all fixtures and goldens still pass.
+- `engine/solve.go` + `bridge/session` + `engine/sweep.go`: new allocation-free `StationMoments` replaces per-member `Stations()` slice allocation in the drag path (`Session.Solve`) and the sweep (5000 allocs per 50x50 frame removed). Targets drag frame time and server sweep GC.
+- `stack.sh` make-style incrementality (`_stale`: skip a step when no input is newer than its output/stamp):
+  - Go CLI/server/c-shared lib/wasm are rebuilt only when `engine/ bridge/ cmd/ go.mod go.sum stack.sh` changed.
+  - `build_check`: the `-buildmode=c-shared` link (7.7 s) is replaced by `go vet` of `./bridge/native` for the x64 cgo target (type-checks cgo without linking); wasm vet, native vet and `dart analyze` are stamp-skipped when their inputs are unchanged. Still catches an edit to any Go or Dart file.
+  - `build_dev`: the four Go builds run concurrently; `flutter pub get` only when pubspec changed; `flutter build windows --debug` only when Dart/runner inputs changed (a Go-only edit just rebuilds and re-copies the DLL, `cmp`-guarded); ffigen only when the header changed (unchanged).
+  - Dev Go artifacts now go to `build/dev/` so they no longer share paths with release artifacts.
+  - `run_server` now runs the incrementally built release server (`build_server_release`) instead of rebuilding a dev binary over the release path (fixes the clobbering noted in report.py).
+  - Release desktop/web builds are stamp-skipped when unchanged; `--split-debug-info` added to the desktop release (app.so smaller; bundle 30.90 -> 29.85 MB).
+- Defect fixes: `session.ErrCode` now maps `support_conflict` to -7; the misspelled `BeamIScle` field is `BeamIScale` (JSON tag `beam_I_scale` was already right, so it was cosmetic).
+- Tests added (`engine/engine_test.go`): spring stiffness closed form, `support_conflict`, hinge release (fixed-pinned UDL beam: 5wL/8 and wL^2/8).
+
+### Before / after (same machine, single runs)
+| metric | before (run1) | after |
+|---|---|---|
+| CLI 200x200 factor (bench, 1 rep) | 6375 ms (6366 total in run1) | 2814 ms (solve 262 -> 202 ms) |
+| CLI 50x50 factor (quick smoke) | 17.5 ms (c50_factor) | 14.9 ms |
+| noop build_check | 6.6 s | 0.9-1.3 s |
+| noop build_dev | 13.1 s | 0.6-0.9 s |
+| leaf edit build_check / build_dev | 7.7 / 14.6 s | 1.9 / 5.5 s |
+| struct edit check / dev | 7.8 / 14.6 s | 4.0 / 6.3 s |
+| server edit check / dev | 6.6 / 13.5 s | 1.3 / 3.4 s |
+| ui edit check / dev | 6.7 / 14.8 s | 6.4 / 11.3 s (dart analyze / flutter build dominate) |
+| desktop release bundle | 30.90 MB | 29.85 MB |
+| desktop drag p50 / solve_p50 (quick) | 46.4 / ~24 ms | 44.3 / 22.4 ms (x64 emulation, little gain from the unroll) |
+| web (wasm) drag solve_p50 (quick) | 112.6 ms | 62.5 ms |
+| server oha p50 (quick, 5 s) | 313 ms | 220 ms (rps ~150 both; peak RSS ~2.9 GB under load, unchanged) |
+| sweep 200 gen50x50 / 1000 gen10x10 (quick) | n/a | 0.059 s / 0.035 s |
+
+Cold builds were not re-measured (clean_all unchanged; the new stamps live under `build/` and `app/build/`, which it removes).
+
+### Review defects
+- Missing `support_conflict` code in `ErrCode`: confirmed, fixed. Server/CLI already returned the string code correctly (the defect was only the FFI integer).
+- `BeamIScle`: confirmed, renamed.
+- Sweep bad parameters reported as `invalid_ref`: rejected for now. SPEC 4.6 has no better code for "variants < 1" or "no case W"; `invalid_ref` is the closest defined one.
+- Unsynchronized `Session`/`lastErr` and Free-while-viewed: not changed (the Dart side is single-threaded on the UI isolate and tests pass); noted as a risk only.
+- `Session.Solve` coercing a bad case index to 0 and silent `SetNode` bad index: not changed (callers always pass valid indices).
+- Missing server/CLI tests: not added (time).
+
+### Ideas not done
+- Blocked/tiled skyline factorization (cache blocking) could give another ~2x on the 200x200 case.
+- Reduce per-request garbage in the server (reuse `Prepared`/result buffers) to cut the ~3 GB peak RSS under 25 concurrent requests; a GC memory limit would also do it.
+- Move the desktop solve off the UI isolate; try `GOAMD64=v3` for the emulated x64 DLL (risky on older CPUs).
+- UI edit loop is dominated by `dart analyze` (4 s) and `flutter build windows --debug` (7 s); nothing safe left in stack.sh.
+
+### Final conformance
+`harness/conformance.py go-flutter p1` 17/17; `p2` 7/7; `harness/server_conformance.sh go-flutter` all passed (port 18391); `go test ./...` green; runtime smoke (`F2D_RUN=run1p5 ... build cli desktop web server --quick`) completed rc=0 for desktop, web (wasm and dart2js) and server including bench modes. BENCH-EDIT markers untouched; all four edits (leaf/struct/server/ui) applied, built and restored cleanly. Not run: `flutter test` via `test_all` (Dart code untouched). Nothing committed.

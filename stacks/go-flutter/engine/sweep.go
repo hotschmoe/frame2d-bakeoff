@@ -80,13 +80,12 @@ func Sweep(base *Model, n int, lo, hi float64) (*SweepResult, error) {
 					errs[k] = err
 					continue
 				}
+				var mbuf [11]float64
 				maxM := 0.0
 				for c := range out.Cases {
 					for mi := range p.MemIDs {
 						ef := out.Cases[c].EF[mi*6 : mi*6+6]
-						for _, st := range p.Stations(c, mi, ef, p.MemberLength(mi)) {
-							maxM = math.Max(maxM, math.Abs(st.M))
-						}
+						maxM = math.Max(maxM, p.StationMoments(c, mi, ef, p.MemberLength(mi), mbuf[:]))
 					}
 				}
 				res.Variants[k] = SweepVariant{scale, out.Cases[wCase].U[roof*3], maxM}

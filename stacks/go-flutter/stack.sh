@@ -34,9 +34,23 @@ case "$(uname -s)" in
       echo "$APP/build/linux/$a/$(echo "$1" | tr A-Z a-z)/bundle"
     } ;;
 esac
-HOST_LIB="$OUT/$LIB_BASENAME.$LIB_EXT"
+DEV="$OUT/dev"                       # debug-friendly Go artifacts live apart from release ones (never clobber each other)
+HOST_LIB="$OUT/$LIB_BASENAME.$LIB_EXT"       # release c-shared engine
+DEV_LIB="$DEV/$LIB_BASENAME.$LIB_EXT"        # dev c-shared engine
+GO_SRC=("$STACK_DIR/engine" "$STACK_DIR/bridge" "$STACK_DIR/cmd" "$STACK_DIR/go.mod" "$STACK_DIR/go.sum" "$STACK_DIR/stack.sh")
+DART_SRC=("$APP/lib" "$APP/test" "$APP/pubspec.yaml" "$APP/pubspec.lock" "$APP/analysis_options.yaml" "$APP/ffigen.yaml" "$APP/web" "$APP/windows" "$STACK_DIR/stack.sh")
 
 _jobs_flag=()   # filled by bounded()
+
+# _stale <stamp-or-output> <inputs...>: true when the target is missing or any input file is newer (make-style).
+# Inputs that do not exist are ignored; Flutter's ephemeral/generated dirs are skipped.
+_stale() {
+  local t="$1"; shift
+  [ -e "$t" ] || return 0
+  local ins=() i
+  for i in "$@"; do [ -e "$i" ] && ins+=("$i"); done
+  [ -n "$(find "${ins[@]}" \( -name ephemeral -o -name generated_plugin_registrant.\* -o -name flutter \) -prune -o -type f -newer "$t" -print -quit 2>/dev/null)" ]
+}
 
 # clean_all: remove build outputs and compiled deps; KEEP downloaded sources (SPEC 9.1).
 #   Removes: build/ (Go outputs), the Go build cache (go clean -cache), app/build and app/.dart_tool (flutter clean).
@@ -48,34 +62,49 @@ clean_all() {
   rm -rf "$APP/.dart_tool" "$APP/build"
 }
 
-_go_build() { # <out> <pkg> [extra go build flags...]  (pure Go, no cgo)
+_go_build() { # <out> <pkg> [extra go build flags...]  (pure Go, no cgo); skipped when no Go source changed
   local out="$1" pkg="$2"; shift 2
+  _stale "$out" "${GO_SRC[@]}" || return 0
+  mkdir -p "$(dirname "$out")"
   CGO_ENABLED=0 go build "${_jobs_flag[@]}" "$@" -o "$out" "$pkg" >&2
 }
 
-_build_native_lib() { # [go build flags...]; builds the c-shared engine for dart:ffi
-  mkdir -p "$OUT"
+_build_native_lib() { # <out> [go build flags...]; builds the c-shared engine for dart:ffi (skipped when fresh)
+  local out="$1"; shift
+  _stale "$out" "${GO_SRC[@]}" || return 0
+  mkdir -p "$(dirname "$out")"
   if [ -n "$NATIVE_CC" ]; then
     GOOS=windows GOARCH=$NATIVE_GOARCH CGO_ENABLED=1 CC="$NATIVE_CC" \
-      go build "${_jobs_flag[@]}" -buildmode=c-shared "$@" -o "$HOST_LIB" ./bridge/native >&2
+      go build "${_jobs_flag[@]}" -buildmode=c-shared "$@" -o "$out" ./bridge/native >&2
   else
-    CGO_ENABLED=1 go build "${_jobs_flag[@]}" -buildmode=c-shared "$@" -o "$HOST_LIB" ./bridge/native >&2
+    CGO_ENABLED=1 go build "${_jobs_flag[@]}" -buildmode=c-shared "$@" -o "$out" ./bridge/native >&2
   fi
 }
 
-_build_wasm() { # [go build flags...]; Go js/wasm engine for Flutter web
-  mkdir -p "$OUT"
-  GOOS=js GOARCH=wasm CGO_ENABLED=0 go build "${_jobs_flag[@]}" "$@" -o "$OUT/engine.wasm" ./bridge/wasm >&2
+_build_wasm() { # <out> [go build flags...]; Go js/wasm engine for Flutter web (skipped when fresh)
+  local out="$1"; shift
+  _stale "$out" "${GO_SRC[@]}" || return 0
+  mkdir -p "$(dirname "$out")"
+  GOOS=js GOARCH=wasm CGO_ENABLED=0 go build "${_jobs_flag[@]}" "$@" -o "$out" ./bridge/wasm >&2
 }
 
 # Regenerate dart:ffi bindings (ffigen) only when the exported C header changed.
-_ffigen() {
-  local hdr="$OUT/$LIB_BASENAME.h" dst="$APP/ffigen/$LIB_BASENAME.h"
+_ffigen() { # <dir holding the cgo-generated header>
+  local hdr="$1/$LIB_BASENAME.h" dst="$APP/ffigen/$LIB_BASENAME.h"
   if ! cmp -s "$hdr" "$dst"; then
     mkdir -p "$APP/ffigen"; cp "$hdr" "$dst"
     ( cd "$APP" && flutter pub get >&2 && dart run ffigen --config ffigen.yaml >&2 ) || return 1
   fi
 }
+
+# flutter pub get only when pubspec.* is newer than the resolved package config.
+_pub_get() {
+  _stale "$APP/.dart_tool/package_config.json" "$APP/pubspec.yaml" "$APP/pubspec.lock" || return 0
+  ( cd "$APP" && flutter pub get >&2 )
+}
+
+# Run background jobs started by the caller and fail if any failed. Usage: _wait pid...
+_wait() { local rc=0 p; for p in "$@"; do wait "$p" || rc=1; done; return $rc; }
 
 # ffigen needs an x64 libclang on win-arm64 (the installed LLVM is ARM64 but Dart runs as x64 under emulation).
 _ensure_libclang() {
@@ -95,24 +124,26 @@ PY
 }
 
 build_cli_release() {
-  mkdir -p "$OUT"
   _go_build "$OUT/frame2d$EXE" ./cmd/frame2d -trimpath -ldflags="-s -w" || return 1
   echo "$OUT/frame2d$EXE"
 }
 
 build_server_release() {
-  mkdir -p "$OUT"
   _go_build "$OUT/frame2d-server$EXE" ./cmd/server -trimpath -ldflags="-s -w" || return 1
   echo "$OUT/frame2d-server$EXE"
 }
 
 # Release desktop app: Go engine as a stripped c-shared library next to the Flutter release bundle.
+# --split-debug-info moves Dart symbol tables out of the AOT snapshot (smaller app.so).
 build_desktop_release() {
-  _build_native_lib -trimpath -ldflags="-s -w" || return 1
-  _ensure_libclang && _ffigen || return 1
-  ( cd "$APP" && flutter pub get >&2 && flutter build "$HOST" --release >&2 ) || return 1
+  _build_native_lib "$HOST_LIB" -trimpath -ldflags="-s -w" || return 1
+  _ensure_libclang && _ffigen "$OUT" || return 1
   local dir; dir="$(flutter_out_dir Release)"
-  cp "$HOST_LIB" "$dir/" || return 1
+  if _stale "$APP/build/.release-stamp" "${DART_SRC[@]}" || [ ! -e "$dir/$APP_EXE" ]; then
+    _pub_get && ( cd "$APP" && flutter build "$HOST" --release --split-debug-info="$APP/build/symbols" >&2 ) || return 1
+    touch "$APP/build/.release-stamp"
+  fi
+  cmp -s "$HOST_LIB" "$dir/$LIB_BASENAME.$LIB_EXT" || cp "$HOST_LIB" "$dir/" || return 1
   echo "$dir/$APP_EXE"
 }
 
@@ -120,42 +151,67 @@ build_desktop_release() {
 # build into app/build/web; F2D_WEB_MODE=wasm (the default here) builds with --wasm into the same place.
 # Both get the Go engine.wasm and wasm_exec.js copied in afterwards.
 build_web_release() {
-  _build_wasm -trimpath -ldflags="-s -w" || return 1
+  _build_wasm "$OUT/engine.wasm" -trimpath -ldflags="-s -w" || return 1
   local mode="${F2D_WEB_MODE:-wasm}" flags=() dest="$APP/build/web"
   [ "$mode" = wasm ] && flags=(--wasm)
-  ( cd "$APP" && flutter pub get >&2 && flutter build web --release "${flags[@]}" >&2 ) || return 1
-  cp "$OUT/engine.wasm" "$dest/engine.wasm" || return 1
-  cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" "$dest/wasm_exec.js" || return 1
+  # the stamp records the mode so switching F2D_WEB_MODE rebuilds
+  local stamp="$APP/build/.web-release-$mode-stamp"
+  if _stale "$stamp" "${DART_SRC[@]}" || [ ! -e "$dest/index.html" ]; then
+    _pub_get && ( cd "$APP" && flutter build web --release "${flags[@]}" >&2 ) || return 1
+    rm -f "$APP"/build/.web-release-*-stamp; touch "$stamp"
+  fi
+  cmp -s "$OUT/engine.wasm" "$dest/engine.wasm" || cp "$OUT/engine.wasm" "$dest/engine.wasm" || return 1
+  cmp -s "$(go env GOROOT)/lib/wasm/wasm_exec.js" "$dest/wasm_exec.js" || cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" "$dest/wasm_exec.js" || return 1
   echo "$dest"
 }
 
-# build_check: fastest "does it compile": go vet (host + js/wasm), native c-shared lib compile, dart analyze.
+# build_check: fastest "does it compile": go vet (host, js/wasm and the cgo bridge for the x64 desktop target;
+# vet type-checks without linking a DLL) and dart analyze. Steps are skipped when their inputs did not change.
 build_check() {
   go vet "${_jobs_flag[@]}" ./... >&2 || return 1
-  GOOS=js GOARCH=wasm go vet "${_jobs_flag[@]}" ./bridge/wasm >&2 || return 1
-  _build_native_lib || return 1
-  ( cd "$APP" && dart analyze . >&2 ) || return 1
+  if _stale "$OUT/.vet-wasm-stamp" "${GO_SRC[@]}"; then
+    GOOS=js GOARCH=wasm go vet "${_jobs_flag[@]}" ./bridge/wasm >&2 || return 1
+    mkdir -p "$OUT"; touch "$OUT/.vet-wasm-stamp"
+  fi
+  if _stale "$OUT/.vet-native-stamp" "${GO_SRC[@]}"; then
+    if [ -n "$NATIVE_CC" ]; then
+      GOOS=windows GOARCH=$NATIVE_GOARCH CGO_ENABLED=1 CC="$NATIVE_CC" go vet "${_jobs_flag[@]}" ./bridge/native >&2 || return 1
+    else
+      CGO_ENABLED=1 go vet "${_jobs_flag[@]}" ./bridge/native >&2 || return 1
+    fi
+    mkdir -p "$OUT"; touch "$OUT/.vet-native-stamp"
+  fi
+  if _stale "$OUT/.analyze-stamp" "${DART_SRC[@]}"; then
+    _pub_get && ( cd "$APP" && dart analyze . >&2 ) || return 1
+    mkdir -p "$OUT"; touch "$OUT/.analyze-stamp"
+  fi
 }
 
-# build_dev: Go CLI + server + c-shared lib + js/wasm engine (debug-friendly, no -s -w), bindings if the
-# header changed, then the Flutter desktop debug build with the library copied next to the executable.
+# build_dev: Go CLI + server + c-shared lib + js/wasm engine (debug-friendly, no -s -w; kept in build/dev so the
+# release artifacts are never overwritten), bindings if the header changed, then the Flutter desktop debug build
+# with the library copied next to the executable. The four Go builds run concurrently.
 build_dev() {
-  mkdir -p "$OUT"
-  _go_build "$OUT/frame2d$EXE" ./cmd/frame2d || return 1
-  _go_build "$OUT/frame2d-server$EXE" ./cmd/server || return 1
-  _build_native_lib || return 1
-  _build_wasm || return 1
-  _ensure_libclang && _ffigen || return 1
-  ( cd "$APP" && flutter pub get >&2 && flutter build "$HOST" --debug >&2 ) || return 1
+  local pids=()
+  _go_build "$DEV/frame2d$EXE" ./cmd/frame2d & pids+=($!)
+  _go_build "$DEV/frame2d-server$EXE" ./cmd/server & pids+=($!)
+  _build_native_lib "$DEV_LIB" & pids+=($!)
+  _build_wasm "$DEV/engine.wasm" & pids+=($!)
+  _wait "${pids[@]}" || return 1
+  _ensure_libclang && _ffigen "$DEV" || return 1
   local dir; dir="$(flutter_out_dir Debug)"
-  cp "$HOST_LIB" "$dir/" || return 1
+  if _stale "$APP/build/.debug-stamp" "${DART_SRC[@]}" || [ ! -e "$dir/$APP_EXE" ]; then
+    _pub_get && ( cd "$APP" && flutter build "$HOST" --debug >&2 ) || return 1
+    touch "$APP/build/.debug-stamp"
+  fi
+  cmp -s "$DEV_LIB" "$dir/$LIB_BASENAME.$LIB_EXT" || cp "$DEV_LIB" "$dir/" || return 1
   echo "$dir/$APP_EXE"
 }
 
-run_server() { # foreground; honors FRAME2D_ADDR
-  mkdir -p "$OUT"
-  _go_build "$OUT/frame2d-server$EXE" ./cmd/server || return 1
-  FRAME2D_DB="${FRAME2D_DB:-$OUT/frame2d.db}" exec "$OUT/frame2d-server$EXE"
+# run_server: foreground, honors FRAME2D_ADDR. Runs the (incrementally built) release server binary, so it never
+# replaces the release artifact with a differently-flagged build.
+run_server() {
+  local bin; bin="$(build_server_release)" || return 1
+  FRAME2D_DB="${FRAME2D_DB:-$OUT/frame2d.db}" exec "$bin"
 }
 
 test_all() {

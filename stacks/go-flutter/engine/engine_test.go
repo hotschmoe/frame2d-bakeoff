@@ -100,3 +100,49 @@ func TestSweepEndpoints(t *testing.T) {
 		t.Fatal("stiffer beams must reduce drift")
 	}
 }
+
+func TestSpringStiffness(t *testing.T) {
+	// Tip on a ky spring: u = P / (k + 3EI/L^3).
+	m := cantilever(-10000)
+	m.Springs = []Spring{{Node: 2, KY: 5000}}
+	res, err := SolveModel(m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	kc := 3 * 200e9 * 8e-5 / (5 * 5 * 5)
+	want := -10000 / (5000 + kc)
+	if got := res.LoadCases[0].Displacements[1].UY; math.Abs(got-want) > 1e-12 {
+		t.Fatalf("uy = %g, want %g", got, want)
+	}
+}
+
+func TestSupportConflict(t *testing.T) {
+	m := cantilever(-1)
+	m.Supports = append(m.Supports, Support{Node: 2, UY: true})
+	m.Springs = []Spring{{Node: 2, KY: 100}}
+	if _, err := SolveModel(m); code(err) != ErrSupportConflict {
+		t.Fatalf("want support_conflict, got %v", err)
+	}
+}
+
+func TestReleaseHinge(t *testing.T) {
+	// Fixed-pinned beam (mz released at the far end) with a tip-end load applied as a UDL:
+	// wL^2/8 fixed-end moment, reaction 5wL/8 at the fixed end.
+	m := cantilever(0)
+	m.Supports = append(m.Supports, Support{Node: 2, UY: true})
+	m.Members[0].Release = &Release{J: []string{"mz"}}
+	m.LoadCases = []LoadCase{{ID: "U", MemberUDL: []MemberUDL{{Member: 1, W: -1000}}}}
+	res, err := SolveModel(m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fixed Reaction
+	for _, r := range res.LoadCases[0].Reactions {
+		if r.Node == 1 {
+			fixed = r
+		}
+	}
+	if math.Abs(fixed.FY-5*1000*5/8.0) > 1e-6 || math.Abs(math.Abs(fixed.MZ)-1000*25/8.0) > 1e-6 {
+		t.Fatalf("fixed reaction = %+v", fixed)
+	}
+}

@@ -1,0 +1,151 @@
+# P5 baseline: `zig-flutter` (run1 / win-arm64, as written by the P1-P3 agents)
+
+Your stack's own measured numbers from `results/run1/win-arm64/summary.json` (null = not measured). Sizes in bytes, times in seconds unless the key says ms.
+
+| metric | value |
+|---|---|
+| `bin_cli` | 1042944 |
+| `bin_server` | 2090496 |
+| `bin_desktop_bundle` | 28452224 |
+| `bin_engine_lib` | 497152 |
+| `bin_web_dir_br` | 11144993 |
+| `bin_web_wasm_br` | 421750 |
+| `web_transferred_br` | 2645918 |
+| `web_uncompressed` | 9962123 |
+| `w_tti` | 645.85 |
+| `w_drag_p50` | 65.52 |
+| `w_drag_p99` | 139.081 |
+| `w_render_p50` | 47.199 |
+| `w_solve_p50` | 14.845 |
+| `w_runs` | 3 |
+| `w_tti_runs` | [645.85, 641.535, 662.395] |
+| `w_gpu_software` | true |
+| `web_flavor` | "Flutter dart2js (CanvasKit)" |
+| `d_runs` | 5 |
+| `d_startup` | 937.555 |
+| `d_drag_p50` | 27.16 |
+| `d_drag_p99` | 41.547 |
+| `d_render_p50` | 35.689 |
+| `d_drag_rss` | 381.195 |
+| `d_render_rss` | 1019.727 |
+| `d_renderer` | "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (O" |
+| `c_reps` | 5 |
+| `c10_fs` | 0.08 |
+| `c10_factor` | 0.031 |
+| `c10_solve` | 0.049 |
+| `c10_rss` | 7.066 |
+| `c50_fs` | 8.068 |
+| `c50_factor` | 6.175 |
+| `c50_solve` | 1.893 |
+| `c50_rss` | 16.469 |
+| `c100_fs` | 112.417 |
+| `c100_factor` | 91.455 |
+| `c100_solve` | 20.962 |
+| `c100_rss` | 66.609 |
+| `c200_fs` | 1449.04 |
+| `c200_factor` | 1295.355 |
+| `c200_solve` | 153.685 |
+| `c200_rss` | 428.93 |
+| `s_rps` | 249.4301 |
+| `s_p50` | 226.981 |
+| `s_p99` | 682.786 |
+| `s_cpu1000` | 65.8271 |
+| `s_peak_rss` | 1611.301 |
+| `s_threads` | 66 |
+| `s_idle_rss` | 6.461 |
+| `s_sweep200_wall` | 0.19 |
+| `s_sweep1000_wall` | 0.025 |
+| `s_sweep200_cores` | 14.84 |
+| `s_success` | 1.0 |
+| `l_engine` | 1685 |
+| `l_ui` | 1192 |
+| `l_server` | 250 |
+| `l_glue` | 932 |
+| `l_tests` | 99 |
+| `l_total` | 4158 |
+| `l_generated` | 289 |
+| `cold_cli` | 58.9284 |
+| `cold_cli_cpu` | 119.8281 |
+| `cold_cli_n` | 2 |
+| `cold_server` | 57.4632 |
+| `cold_server_cpu` | 123.4688 |
+| `cold_server_n` | 2 |
+| `cold_desktop` | 96.4532 |
+| `cold_desktop_cpu` | 122.0 |
+| `cold_desktop_n` | 2 |
+| `cold_web` | 86.5364 |
+| `cold_web_cpu` | 120.2344 |
+| `cold_web_n` | 2 |
+| `cold_dev` | 101.3851 |
+| `cold_dev_cpu` | 87.7109 |
+| `cold_dev_n` | 2 |
+| `leaf_check` | 6.7441 |
+| `leaf_check_cpu` | 9.5156 |
+| `leaf_check_mem` | 1295.3594 |
+| `leaf_dev` | 35.3551 |
+| `leaf_dev_cpu` | 7.3906 |
+| `leaf_dev_mem` | 1084.7695 |
+| `struct_check` | 6.6393 |
+| `struct_check_cpu` | 9.375 |
+| `struct_check_mem` | 1303.5078 |
+| `struct_dev` | 36.225 |
+| `struct_dev_cpu` | 7.25 |
+| `struct_dev_mem` | 1090.8867 |
+| `server_check` | 5.8923 |
+| `server_check_cpu` | 2.2031 |
+| `server_check_mem` | 462.3516 |
+| `server_dev` | 35.1151 |
+| `server_dev_cpu` | 2.375 |
+| `server_dev_mem` | 462.8203 |
+| `ui_check` | 4.0037 |
+| `ui_check_cpu` | 0.2344 |
+| `ui_check_mem` | 86.4492 |
+| `ui_dev` | 37.817 |
+| `ui_dev_cpu` | 0.25 |
+| `ui_dev_mem` | 84.25 |
+| `noop_check` | 4.4148 |
+| `mean_check` | 5.8198 |
+| `noop_dev` | 33.2467 |
+| `mean_dev` | 36.1281 |
+| `hot_reload` | null |
+| `hot_reload_reps` | [] |
+| `engine_e2e` | 37.8955 |
+| `engine_build` | 35.3003 |
+| `engine_launch` | 2.5003 |
+| `sections` | {"cold": "ok", "edits": "ok", "hotreload": "not-implemented", "engine": "ok"} |
+| `bl_failures` | 0 |
+| `a_phases` | {"P1": {"wall_corrected_s": 3781.592, "wall_raw_s": 3781.592, "stall_s": 0, "turns": 112, "tool_calls": 122, "build_invocations": 11, "failed_builds": 2, "pure_build_wait_s": 82.44500000000001, "pure_build_wait_fraction_of_corrected_wall": 0.021801664484164342, "test_runs": 2, "failed_test_runs": 2, "failures_total": 7, "interventions": 1, "est_cost_usd": 13.174325099999999}, "P2": {"wall_corrected_s": 181.639, "wall_raw_s": 181.639, "stall_s": 0, "turns": 19, "tool_calls": 20, "build_invocations": 3, "failed_builds": 1, "pure_build_wait_s": 12.416, "pure_build_wait_fraction_of_corrected_wall": 0.06835536421143036, "test_runs": 1, "failed_test_runs": 0, "failures_total": 1, "interventions": 0, "est_cost_usd": 0.9840477}} |
+| `a_p1_wall` | 3781.592 |
+| `a_p2_wall` | 181.639 |
+| `a_ttg` | 3963.231 |
+| `a_turns` | 131 |
+| `a_failed_builds` | 3 |
+| `a_cost` | 14.1584 |
+| `a_interventions` | 1 |
+| `a_buildwait_frac` | 0.0218 |
+| `a_builds` | 14 |
+| `a_tax_count` | {"type": 0, "ownership": 0, "concurrency_types": 0, "comptime_sema": 1, "strictness": 0, "stale_api": 0, "ffi": 0, "link": 0, "build_config": 7, "runtime_crash": 0, "wrong_result": 0} |
+| `a_tax_minutes` | {"type": 0.0, "ownership": 0.0, "concurrency_types": 0.0, "comptime_sema": 0.2, "strictness": 0.0, "stale_api": 0.0, "ffi": 0.0, "link": 0.0, "build_config": 4.3, "runtime_crash": 0.0, "wrong_result": 0.0} |
+| `a_failures_classified` | 8 |
+| `a_false_positive` | 0 |
+| `a_tax_builds` | 14 |
+| `a_stale100` | 0.0 |
+| `a_caught_share` | {"compile": 0.875, "own_tests": 0.0, "harness": 0.125, "runtime_manual": 0.0} |
+| `a_late_share` | 0.125 |
+| `a_tax_total_minutes` | 4.5 |
+| `p2_phase` | "P2" |
+| `p2_added` | 195 |
+| `p2_removed` | 14 |
+| `p2_files` | 4 |
+| `p2_lines` | 209 |
+| `p2_ttg` | 181.639 |
+| `p2_failed_builds` | 1 |
+| `p2_builds` | 3 |
+| `rev_structure` | 4 |
+| `rev_naming` | 4 |
+| `rev_errors` | 3 |
+| `rev_boundary` | 3 |
+| `rev_tests` | 2 |
+| `rev_change_resilience` | 3 |
+| `rev_mean` | 3.1667 |
+| `rev_notable` | ["Strength: solver keeps a reusable Plan (RCM+skyline layout) separate from numeric factorization, so node drags re-solve without renumbering; factor once, solve all cases.", "Strength: sweep.zig is a clean atomic work-queue over per-thread Solvers with duplicated section arrays and first-error capture; model is shared read-only.", "Risk: exports.zig global state is not thread-safe and exported getters unwrap session.? with no null guard; set_node_xy is unchecked; adopt() leaks on partial OOM.", "Risk: server spawns an unbounded detached thread per connection and maps all non-model failures to a generic 500; sweep bad requests return 400 not 422.", "Gap: tests are thin (4 Zig tests); P2 features (springs, releases, auto-restraint) and every error code except unstable have no unit tests; Dart UI for springs/releases not extended per the log."] |

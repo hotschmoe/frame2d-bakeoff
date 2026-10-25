@@ -1,0 +1,151 @@
+# P5 baseline: `rust-flutter` (run1 / win-arm64, as written by the P1-P3 agents)
+
+Your stack's own measured numbers from `results/run1/win-arm64/summary.json` (null = not measured). Sizes in bytes, times in seconds unless the key says ms.
+
+| metric | value |
+|---|---|
+| `bin_cli` | 484864 |
+| `bin_server` | 2765824 |
+| `bin_desktop_bundle` | 29181259 |
+| `bin_engine_lib` | 743936 |
+| `bin_web_dir_br` | 10823152 |
+| `bin_web_wasm_br` | 83260 |
+| `web_transferred_br` | 2320150 |
+| `web_uncompressed` | 8553350 |
+| `w_tti` | 681.64 |
+| `w_drag_p50` | 47.265 |
+| `w_drag_p99` | 97.989 |
+| `w_render_p50` | 71.149 |
+| `w_solve_p50` | 12.7 |
+| `w_runs` | 3 |
+| `w_tti_runs` | [683.65, 668.425, 681.64] |
+| `w_gpu_software` | true |
+| `web_flavor` | "Flutter dart2js (CanvasKit)" |
+| `d_runs` | 3 |
+| `d_startup` | 974.113 |
+| `d_drag_p50` | 32.994 |
+| `d_drag_p99` | 55.764 |
+| `d_render_p50` | 15.904 |
+| `d_drag_rss` | 604.781 |
+| `d_render_rss` | 803.34 |
+| `d_renderer` | "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (O" |
+| `c_reps` | 3 |
+| `c10_fs` | 0.0827 |
+| `c10_factor` | 0.039 |
+| `c10_solve` | 0.0437 |
+| `c10_rss` | 6.527 |
+| `c50_fs` | 10.5721 |
+| `c50_factor` | 8.9641 |
+| `c50_solve` | 1.608 |
+| `c50_rss` | 15.652 |
+| `c100_fs` | 151.5071 |
+| `c100_factor` | 131.233 |
+| `c100_solve` | 20.2741 |
+| `c100_rss` | 66.91 |
+| `c200_fs` | 2106.3468 |
+| `c200_factor` | 1975.1991 |
+| `c200_solve` | 131.1477 |
+| `c200_rss` | 426.059 |
+| `s_rps` | 299.5724 |
+| `s_p50` | 160.949 |
+| `s_p99` | 716.182 |
+| `s_cpu1000` | 55.1692 |
+| `s_peak_rss` | 1015.922 |
+| `s_threads` | 534 |
+| `s_idle_rss` | 8.555 |
+| `s_sweep200_wall` | 0.237 |
+| `s_sweep1000_wall` | 0.026 |
+| `s_sweep200_cores` | 15.62 |
+| `s_success` | 1.0 |
+| `l_engine` | 1370 |
+| `l_ui` | 1493 |
+| `l_server` | 284 |
+| `l_glue` | 922 |
+| `l_tests` | 261 |
+| `l_total` | 4330 |
+| `l_generated` | 1634 |
+| `cold_cli` | 8.6218 |
+| `cold_cli_cpu` | 11.5312 |
+| `cold_cli_n` | 2 |
+| `cold_server` | 18.2225 |
+| `cold_server_cpu` | 57.1562 |
+| `cold_server_n` | 2 |
+| `cold_desktop` | 43.2771 |
+| `cold_desktop_cpu` | 26.5938 |
+| `cold_desktop_n` | 2 |
+| `cold_web` | 73.8679 |
+| `cold_web_cpu` | 24.5 |
+| `cold_web_n` | 2 |
+| `cold_dev` | 50.3164 |
+| `cold_dev_cpu` | 77.9844 |
+| `cold_dev_n` | 2 |
+| `leaf_check` | 6.5023 |
+| `leaf_check_cpu` | 0.9219 |
+| `leaf_check_mem` | 185.8594 |
+| `leaf_dev` | 12.2982 |
+| `leaf_dev_cpu` | 3.75 |
+| `leaf_dev_mem` | 484.8672 |
+| `struct_check` | 6.664 |
+| `struct_check_cpu` | 0.8594 |
+| `struct_check_mem` | 197.7227 |
+| `struct_dev` | 13.5013 |
+| `struct_dev_cpu` | 6.3438 |
+| `struct_dev_mem` | 554.5195 |
+| `server_check` | 5.6312 |
+| `server_check_cpu` | 0.4688 |
+| `server_check_mem` | 164.5078 |
+| `server_dev` | 9.8143 |
+| `server_dev_cpu` | 1.5156 |
+| `server_dev_mem` | 499.8086 |
+| `ui_check` | 5.5384 |
+| `ui_check_cpu` | 0.4062 |
+| `ui_check_mem` | 101.3633 |
+| `ui_dev` | 11.4392 |
+| `ui_dev_cpu` | 0.6562 |
+| `ui_dev_mem` | 124.0195 |
+| `noop_check` | 6.3149 |
+| `mean_check` | 6.084 |
+| `noop_dev` | 8.8617 |
+| `mean_dev` | 11.7632 |
+| `hot_reload` | null |
+| `hot_reload_reps` | [] |
+| `engine_e2e` | 16.1513 |
+| `engine_build` | 12.4324 |
+| `engine_launch` | 3.6364 |
+| `sections` | {"cold": "ok", "edits": "ok", "hotreload": "not-implemented", "engine": "ok"} |
+| `bl_failures` | 0 |
+| `a_phases` | {"P1": {"wall_corrected_s": 4694.126, "wall_raw_s": 4694.126, "stall_s": 0, "turns": 216, "tool_calls": 232, "build_invocations": 63, "failed_builds": 7, "pure_build_wait_s": 1439.023, "pure_build_wait_fraction_of_corrected_wall": 0.3065582389565171, "test_runs": 9, "failed_test_runs": 1, "failures_total": 15, "interventions": 0, "est_cost_usd": 24.8862006}, "P2": {"wall_corrected_s": 123.044, "wall_raw_s": 123.044, "stall_s": 0, "turns": 13, "tool_calls": 13, "build_invocations": 2, "failed_builds": 1, "pure_build_wait_s": 13.307, "pure_build_wait_fraction_of_corrected_wall": 0.10814830467149963, "test_runs": 1, "failed_test_runs": 0, "failures_total": 1, "interventions": 0, "est_cost_usd": 0.5370267}} |
+| `a_p1_wall` | 4694.126 |
+| `a_p2_wall` | 123.044 |
+| `a_ttg` | 4817.17 |
+| `a_turns` | 229 |
+| `a_failed_builds` | 8 |
+| `a_cost` | 25.4232 |
+| `a_interventions` | 0 |
+| `a_buildwait_frac` | 0.3066 |
+| `a_builds` | 65 |
+| `a_tax_count` | {"type": 2, "ownership": 0, "concurrency_types": 0, "comptime_sema": 0, "strictness": 0, "stale_api": 0, "ffi": 0, "link": 0, "build_config": 6, "runtime_crash": 7, "wrong_result": 0} |
+| `a_tax_minutes` | {"type": 0.4, "ownership": 0.0, "concurrency_types": 0.0, "comptime_sema": 0.0, "strictness": 0.0, "stale_api": 0.0, "ffi": 0.0, "link": 0.0, "build_config": 12.1, "runtime_crash": 55.0, "wrong_result": 0.0} |
+| `a_failures_classified` | 15 |
+| `a_false_positive` | 1 |
+| `a_tax_builds` | 65 |
+| `a_stale100` | 0.0 |
+| `a_caught_share` | {"compile": 0.4666666666666667, "own_tests": 0.06666666666666667, "harness": 0.0, "runtime_manual": 0.4666666666666667} |
+| `a_late_share` | 0.4667 |
+| `a_tax_total_minutes` | 67.5 |
+| `p2_phase` | "P2" |
+| `p2_added` | 158 |
+| `p2_removed` | 6 |
+| `p2_files` | 5 |
+| `p2_lines` | 164 |
+| `p2_ttg` | 123.044 |
+| `p2_failed_builds` | 1 |
+| `p2_builds` | 2 |
+| `rev_structure` | 5 |
+| `rev_naming` | 4 |
+| `rev_errors` | 4 |
+| `rev_boundary` | 4 |
+| `rev_tests` | 3 |
+| `rev_change_resilience` | 2 |
+| `rev_mean` | 3.6667 |
+| `rev_notable` | ["Strength: engine is dependency-light and pure; Topology is separated from coordinates/loads so drag re-solves reuse it and only reassemble/refactor.", "Strength: output.rs streams stations from end forces, and CLI/server/bridge share one ModelError type.", "Risk: api.rs engine_move_and_solve mutates the session node before solving; a zero_length or unstable result leaves the bad position in the session (no rollback).", "Risk: bridge casts node/member ids i64->i32 and profile u64->u32 with no check; session is a process-global Mutex singleton.", "Risk: server store.rs uses Mutex::unwrap on SQLite connection (poison panics) and engine tests do not cover releases/springs/condense numerics."] |

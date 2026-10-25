@@ -1,0 +1,151 @@
+# P5 baseline: `zig` (run1 / win-arm64, as written by the P1-P3 agents)
+
+Your stack's own measured numbers from `results/run1/win-arm64/summary.json` (null = not measured). Sizes in bytes, times in seconds unless the key says ms.
+
+| metric | value |
+|---|---|
+| `bin_cli` | 701440 |
+| `bin_server` | 1793536 |
+| `bin_desktop_bundle` | 7258624 |
+| `bin_engine_lib` | 701440 |
+| `bin_web_dir_br` | 610521 |
+| `bin_web_wasm_br` | 600764 |
+| `web_transferred_br` | 610521 |
+| `web_uncompressed` | 2570366 |
+| `w_tti` | 176.5 |
+| `w_drag_p50` | 39.03 |
+| `w_drag_p99` | 93.025 |
+| `w_render_p50` | 19.01 |
+| `w_solve_p50` | 16.23 |
+| `w_runs` | 3 |
+| `w_tti_runs` | [176.5, 175, 204.7] |
+| `w_gpu_software` | true |
+| `web_flavor` | "native wasm app" |
+| `d_runs` | 3 |
+| `d_startup` | 63.8 |
+| `d_drag_p50` | 8.736 |
+| `d_drag_p99` | 10.395 |
+| `d_render_p50` | 1.365 |
+| `d_drag_rss` | 78.824 |
+| `d_render_rss` | 444.422 |
+| `d_renderer` | "info(SDL_RENDER): Created renderer: direct3d11" |
+| `c_reps` | 3 |
+| `c10_fs` | 0.112 |
+| `c10_factor` | 0.03 |
+| `c10_solve` | 0.082 |
+| `c10_rss` | 6.855 |
+| `c50_fs` | 7.966 |
+| `c50_factor` | 6.052 |
+| `c50_solve` | 1.914 |
+| `c50_rss` | 15.219 |
+| `c100_fs` | 118.252 |
+| `c100_factor` | 95.253 |
+| `c100_solve` | 22.999 |
+| `c100_rss` | 62.676 |
+| `c200_fs` | 1513.573 |
+| `c200_factor` | 1359.67 |
+| `c200_solve` | 153.903 |
+| `c200_rss` | 413.621 |
+| `s_rps` | 250.5135 |
+| `s_p50` | 223.531 |
+| `s_p99` | 640.547 |
+| `s_cpu1000` | 66.387 |
+| `s_peak_rss` | 1162.59 |
+| `s_threads` | 66 |
+| `s_idle_rss` | 6.438 |
+| `s_sweep200_wall` | 0.223 |
+| `s_sweep1000_wall` | 0.03 |
+| `s_sweep200_cores` | 14.36 |
+| `s_success` | 1.0 |
+| `l_engine` | 1396 |
+| `l_ui` | 1033 |
+| `l_server` | 356 |
+| `l_glue` | 298 |
+| `l_tests` | 0 |
+| `l_total` | 3083 |
+| `l_generated` | 0 |
+| `cold_cli` | 43.3644 |
+| `cold_cli_cpu` | 43.4688 |
+| `cold_cli_n` | 2 |
+| `cold_server` | 54.7789 |
+| `cold_server_cpu` | 86.5859 |
+| `cold_server_n` | 2 |
+| `cold_desktop` | 89.0453 |
+| `cold_desktop_cpu` | 207.9766 |
+| `cold_desktop_n` | 2 |
+| `cold_web` | 60.6743 |
+| `cold_web_cpu` | 64.6641 |
+| `cold_web_n` | 2 |
+| `cold_dev` | 68.1771 |
+| `cold_dev_cpu` | 225.8984 |
+| `cold_dev_n` | 2 |
+| `leaf_check` | 1.1969 |
+| `leaf_check_cpu` | 2.4844 |
+| `leaf_check_mem` | 465.5703 |
+| `leaf_dev` | 6.2504 |
+| `leaf_dev_cpu` | 14.1406 |
+| `leaf_dev_mem` | 1580.6055 |
+| `struct_check` | 1.1914 |
+| `struct_check_cpu` | 2.4844 |
+| `struct_check_mem` | 450.4453 |
+| `struct_dev` | 6.3482 |
+| `struct_dev_cpu` | 14.4375 |
+| `struct_dev_mem` | 1655.3477 |
+| `server_check` | 0.6774 |
+| `server_check_cpu` | 0.5938 |
+| `server_check_mem` | 177.4648 |
+| `server_dev` | 2.252 |
+| `server_dev_cpu` | 2.3125 |
+| `server_dev_mem` | 464.1875 |
+| `ui_check` | 1.1383 |
+| `ui_check_cpu` | 1.6719 |
+| `ui_check_mem` | 323.7344 |
+| `ui_dev` | 6.1841 |
+| `ui_dev_cpu` | 10.3438 |
+| `ui_dev_mem` | 1572.9766 |
+| `noop_check` | 0.5108 |
+| `mean_check` | 1.051 |
+| `noop_dev` | 0.564 |
+| `mean_dev` | 5.2587 |
+| `hot_reload` | null |
+| `hot_reload_reps` | [] |
+| `engine_e2e` | null |
+| `engine_build` | null |
+| `engine_launch` | null |
+| `sections` | {"cold": "ok", "edits": "ok", "hotreload": "skipped", "engine": "skipped"} |
+| `bl_failures` | 0 |
+| `a_phases` | {"P1": {"wall_corrected_s": 2242.301, "wall_raw_s": 2242.301, "stall_s": 0, "turns": 133, "tool_calls": 144, "build_invocations": 24, "failed_builds": 13, "pure_build_wait_s": 240.17600000000002, "pure_build_wait_fraction_of_corrected_wall": 0.10711140029817585, "test_runs": 4, "failed_test_runs": 3, "failures_total": 19, "interventions": 1, "est_cost_usd": 13.92288525}, "P2": {"wall_corrected_s": 103.981, "wall_raw_s": 103.981, "stall_s": 0, "turns": 15, "tool_calls": 15, "build_invocations": 3, "failed_builds": 1, "pure_build_wait_s": 3.364, "pure_build_wait_fraction_of_corrected_wall": 0.03235206431944298, "test_runs": 1, "failed_test_runs": 0, "failures_total": 1, "interventions": 0, "est_cost_usd": 0.6562581}} |
+| `a_p1_wall` | 2242.301 |
+| `a_p2_wall` | 103.981 |
+| `a_ttg` | 2346.282 |
+| `a_turns` | 148 |
+| `a_failed_builds` | 14 |
+| `a_cost` | 14.5791 |
+| `a_interventions` | 1 |
+| `a_buildwait_frac` | 0.1071 |
+| `a_builds` | 27 |
+| `a_tax_count` | {"type": 1, "ownership": 0, "concurrency_types": 0, "comptime_sema": 0, "strictness": 3, "stale_api": 4, "ffi": 0, "link": 0, "build_config": 10, "runtime_crash": 0, "wrong_result": 0} |
+| `a_tax_minutes` | {"type": 0.3, "ownership": 0.0, "concurrency_types": 0.0, "comptime_sema": 0.0, "strictness": 0.8, "stale_api": 1.5, "ffi": 0.0, "link": 0.0, "build_config": 5.6, "runtime_crash": 0.0, "wrong_result": 0.0} |
+| `a_failures_classified` | 18 |
+| `a_false_positive` | 2 |
+| `a_tax_builds` | 27 |
+| `a_stale100` | 14.8148 |
+| `a_caught_share` | {"compile": 0.8333333333333334, "own_tests": 0.0, "harness": 0.16666666666666666, "runtime_manual": 0.0} |
+| `a_late_share` | 0.1667 |
+| `a_tax_total_minutes` | 8.2 |
+| `p2_phase` | "P2" |
+| `p2_added` | 162 |
+| `p2_removed` | 12 |
+| `p2_files` | 3 |
+| `p2_lines` | 174 |
+| `p2_ttg` | 103.981 |
+| `p2_failed_builds` | 1 |
+| `p2_builds` | 3 |
+| `rev_structure` | 4 |
+| `rev_naming` | 3 |
+| `rev_errors` | 4 |
+| `rev_boundary` | 4 |
+| `rev_tests` | 2 |
+| `rev_change_resilience` | 3 |
+| `rev_mean` | 3.3333 |
+| `rev_notable` | ["Strength: solver is pure Zig with no OS deps and an injectable clock hook (solver.clock_ns), so the same engine serves CLI, server and wasm.", "Strength: single ErrorInfo/Code type maps cleanly to exit code 2, HTTP 422 and UI text; allocation counting wrapper (counting.zig) for stats.", "Risk: solve() in solver.zig is one ~230-line function; nodal/UDL loop logic is duplicated for rhs, reactions and residual.", "Risk: only three unit tests; solver internals (RCM, skyline LDL, condense) are untested beyond end-to-end harness fixtures.", "Minor: server.respondError interpolates detail into JSON unescaped (currently only static strings); /solve returns 400 for malformed JSON while model errors return 422."] |

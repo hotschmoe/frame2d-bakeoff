@@ -33,16 +33,21 @@ build_desktop_release() {
 }
 
 # Web: cargo -> wasm32-unknown-unknown -> wasm-bindgen (no Emscripten, no trunk) -> static dir.
-# wasm-opt is run when available (size only; failure is not fatal).
+# wasm-opt is run when available (size and speed; failure is not fatal). The bindgen + wasm-opt step
+# is skipped when cargo produced the same .wasm as last time (a no-op rebuild costs only cargo's check).
 build_web_release() {
   cargo build --release --bin frame2d-app --features ui --target "$WASM_TARGET" >&2 || return 1
   local out="$STACK_DIR/target/web-dist"
-  rm -rf "$out" && mkdir -p "$out"
-  wasm-bindgen --target web --no-typescript --out-dir "$out" --out-name frame2d \
-    "$STACK_DIR/target/$WASM_TARGET/release/frame2d-app.wasm" >&2 || return 1
-  if command -v wasm-opt >/dev/null 2>&1; then
-    wasm-opt -O3 --enable-bulk-memory --enable-nontrapping-float-to-int --enable-sign-ext --enable-mutable-globals --enable-multivalue --enable-reference-types \
-      -o "$out/frame2d_bg.opt.wasm" "$out/frame2d_bg.wasm" >&2 && mv "$out/frame2d_bg.opt.wasm" "$out/frame2d_bg.wasm"
+  local wasm="$STACK_DIR/target/$WASM_TARGET/release/frame2d-app.wasm"
+  local stamp="$STACK_DIR/target/web-dist.input.sha256"
+  local sum; sum="$(sha256sum "$wasm" | cut -d' ' -f1)"
+  if [ ! -f "$out/frame2d_bg.wasm" ] || [ ! -f "$out/frame2d.js" ] || [ "$(cat "$stamp" 2>/dev/null)" != "$sum" ]; then
+    rm -rf "$out" && mkdir -p "$out"
+    wasm-bindgen --target web --no-typescript --remove-name-section --remove-producers-section       --out-dir "$out" --out-name frame2d "$wasm" >&2 || return 1
+    if command -v wasm-opt >/dev/null 2>&1; then
+      wasm-opt -O3 --enable-simd --enable-bulk-memory --enable-nontrapping-float-to-int --enable-sign-ext --enable-mutable-globals --enable-multivalue --enable-reference-types         -o "$out/frame2d_bg.opt.wasm" "$out/frame2d_bg.wasm" >&2 && mv "$out/frame2d_bg.opt.wasm" "$out/frame2d_bg.wasm"
+    fi
+    echo "$sum" > "$stamp"
   fi
   cp "$STACK_DIR/web/index.html" "$out/index.html"
   echo "$out"

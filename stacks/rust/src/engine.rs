@@ -111,6 +111,11 @@ fn prepare<'a>(model: &'a Model, only: Option<&str>) -> Result<Prepared<'a>, Mod
         }
     }
 
+    if let Some(o) = only {
+        if !model.load_cases.iter().any(|lc| lc.id == o) {
+            return Err(ModelError::new("invalid_ref", format!("unknown load case {o}")));
+        }
+    }
     let mut cases = Vec::with_capacity(model.load_cases.len());
     for lc in &model.load_cases {
         if only.is_some_and(|o| o != lc.id) {
@@ -410,23 +415,38 @@ impl Skyline {
     }
 }
 
+/// `a * b + c`, fused where the target has a hardware FMA (always on aarch64; elsewhere only when
+/// compiled with the `fma` feature, since the software fallback is far slower than mul + add).
+#[inline(always)]
+fn madd(a: f64, b: f64, c: f64) -> f64 {
+    #[cfg(any(target_arch = "aarch64", target_feature = "fma"))]
+    {
+        a.mul_add(b, c)
+    }
+    #[cfg(not(any(target_arch = "aarch64", target_feature = "fma")))]
+    {
+        a * b + c
+    }
+}
+
+/// Dot product with independent accumulator lanes so the FMA / SIMD pipelines stay full.
 #[inline]
 fn dot(a: &[f64], b: &[f64]) -> f64 {
+    const L: usize = 8;
     let n = a.len().min(b.len());
     let (a, b) = (&a[..n], &b[..n]);
-    let mut s = [0.0f64; 4];
-    let ca = a.chunks_exact(4);
-    let cb = b.chunks_exact(4);
+    let mut s = [0.0f64; L];
+    let ca = a.chunks_exact(L);
+    let cb = b.chunks_exact(L);
     let (ra, rb) = (ca.remainder(), cb.remainder());
     for (x, y) in ca.zip(cb) {
-        s[0] += x[0] * y[0];
-        s[1] += x[1] * y[1];
-        s[2] += x[2] * y[2];
-        s[3] += x[3] * y[3];
+        for k in 0..L {
+            s[k] = madd(x[k], y[k], s[k]);
+        }
     }
-    let mut t = (s[0] + s[1]) + (s[2] + s[3]);
+    let mut t = ((s[0] + s[4]) + (s[1] + s[5])) + ((s[2] + s[6]) + (s[3] + s[7]));
     for (x, y) in ra.iter().zip(rb) {
-        t += x * y;
+        t = madd(*x, *y, t);
     }
     t
 }
@@ -802,6 +822,101 @@ mod tests {
         let mut m = beam(vec![fixed(1)], lc, 1);
         m.members[0].j = 99;
         assert_eq!(solve(&m).unwrap_err().error, "invalid_ref");
+    }
+
+    fn tip_load() -> LoadCase {
+        LoadCase { id: "P".into(), nodal: vec![NodalLoad { node: 2, fy: -10000.0, ..Default::default() }], member_udl: vec![] }
+    }
+
+    #[test]
+    fn spring_in_parallel_with_cantilever() {
+        // Cantilever tip stiffness 3EI/L^3 = 384 kN/m plus a 616 kN/m vertical spring: 1000 kN/m total.
+        let mut m = beam(vec![fixed(1)], tip_load(), 1);
+        m.springs = vec![Spring { node: 2, kx: None, ky: Some(616_000.0), kr: None }];
+        let r = solve(&m).unwrap();
+        let c = &r.load_cases[0];
+        assert!(close(c.displacements[1].uy, -0.01));
+        assert!(c.equilibrium_residual < 1e-9);
+    }
+
+    #[test]
+    fn spring_on_restrained_dof_conflicts() {
+        let mut m = beam(vec![fixed(1)], tip_load(), 1);
+        m.springs = vec![Spring { node: 1, kx: Some(1.0), ky: None, kr: None }];
+        assert_eq!(solve(&m).unwrap_err().error, "support_conflict");
+    }
+
+    #[test]
+    fn released_tip_still_acts_as_cantilever_and_warns() {
+        let mut m = beam(vec![fixed(1)], tip_load(), 1);
+        m.members[0].release.j = vec!["mz".into()];
+        let r = solve(&m).unwrap();
+        let c = &r.load_cases[0];
+        assert!(close(c.displacements[1].uy, -0.026041666666666668));
+        assert!(c.members[0].end_forces[5].abs() < 1e-6);
+        assert_eq!(r.warnings.len(), 1);
+        assert_eq!(r.warnings[0]["warning"], "auto_restrained");
+    }
+
+    #[test]
+    fn mid_hinge_has_zero_moment_and_equilibrates() {
+        // Two members, fixed at 1, pinned at 3, hinge at the end of member 1 (node 2 is otherwise rigid
+        // with member 2): the moment at the hinge must vanish and the loads must balance.
+        let lc = LoadCase { id: "D".into(), nodal: vec![], member_udl: vec![MemberUdl { member: 1, w: -1000.0 }, MemberUdl { member: 2, w: -1000.0 }] };
+        let pin = Support { node: 3, ux: true, uy: true, rz: false };
+        let mut m = beam(vec![fixed(1), pin], lc, 2);
+        m.members[0].release.j = vec!["mz".into()];
+        let r = solve(&m).unwrap();
+        assert!(r.warnings.is_empty());
+        let c = &r.load_cases[0];
+        assert!(c.members[0].end_forces[5].abs() < 1e-6);
+        assert!(close(c.reactions.iter().map(|x| x.fy).sum::<f64>(), 5000.0));
+        assert!(c.equilibrium_residual < 1e-9);
+    }
+
+    #[test]
+    fn zero_length_member() {
+        let lc = LoadCase { id: "P".into(), ..Default::default() };
+        let mut m = beam(vec![fixed(1)], lc, 1);
+        m.nodes[1].x = m.nodes[0].x;
+        assert_eq!(solve(&m).unwrap_err().error, "zero_length");
+    }
+
+    #[test]
+    fn duplicate_node_id() {
+        let lc = LoadCase { id: "P".into(), ..Default::default() };
+        let mut m = beam(vec![fixed(1)], lc, 1);
+        m.nodes[1].id = 1;
+        assert_eq!(solve(&m).unwrap_err().error, "duplicate_id");
+    }
+
+    #[test]
+    fn everything_restrained() {
+        let lc = LoadCase { id: "P".into(), ..Default::default() };
+        let m = beam(vec![fixed(1), fixed(2)], lc, 1);
+        assert_eq!(solve(&m).unwrap_err().error, "no_free_dofs");
+    }
+
+    #[test]
+    fn filtered_solve_matches_full_and_rejects_unknown_case() {
+        let m = generate(4, 3);
+        let full = solve(&m).unwrap();
+        let one = solve_filtered(&m, Some("W")).unwrap();
+        assert_eq!(one.load_cases.len(), 1);
+        let f = full.load_cases.iter().find(|c| c.id == "W").unwrap();
+        assert_eq!(one.load_cases[0].displacements.len(), f.displacements.len());
+        assert!(one.load_cases[0].displacements.iter().zip(&f.displacements).all(|(a, b)| a.ux == b.ux && a.uy == b.uy));
+        assert_eq!(solve_filtered(&m, Some("nope")).unwrap_err().error, "invalid_ref");
+    }
+
+    #[test]
+    fn dot_matches_naive_for_all_tail_lengths() {
+        for n in 0..40 {
+            let a: Vec<f64> = (0..n).map(|k| 0.5 + k as f64).collect();
+            let b: Vec<f64> = (0..n).map(|k| 2.0 - 0.25 * k as f64).collect();
+            let naive: f64 = a.iter().zip(&b).map(|(x, y)| x * y).sum();
+            assert!((dot(&a, &b) - naive).abs() <= 1e-12 * naive.abs().max(1.0));
+        }
     }
 
     #[test]

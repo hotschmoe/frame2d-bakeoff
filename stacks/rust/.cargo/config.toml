@@ -1,0 +1,10 @@
+# Project-local cargo config (picked up when cargo runs inside stacks/rust).
+
+# rust-lld ships with the toolchain and links the debug egui / axum / sqlite binaries noticeably faster
+# than MSVC link.exe (the dev loop is link-bound: three executables are relinked after every edit).
+[target.'cfg(all(windows, target_env = "msvc"))']
+linker = "rust-lld"
+
+# Web: wasm SIMD lets LLVM vectorize the skyline dot products (supported by every current browser).
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+simd128"]

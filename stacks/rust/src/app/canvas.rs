@@ -2,7 +2,7 @@
 
 use super::{Frame2dApp, View};
 use crate::model::CaseResult;
-use eframe::egui::{self, Color32, Pos2, Rect, Sense, Shape, Stroke, Ui};
+use eframe::egui::{self, Color32, Mesh, Pos2, Rect, Sense, Shape, Stroke, Ui};
 
 /// Moment diagrams are drawn only for members at least this long on screen (pixels).
 const MOMENT_MIN_PX: f32 = 14.0;
@@ -32,6 +32,49 @@ impl Xf {
             self.origin[0] + (s.x - self.center.x) as f64 / self.zoom as f64,
             self.origin[1] - (s.y - self.center.y) as f64 / self.zoom as f64,
         ]
+    }
+}
+
+/// Many same-width line segments drawn as solid quads in a few big meshes. egui's `line_segment` runs
+/// the full anti-aliased path stroker per call, which dominates frame time with ~100k members;
+/// a quad is a handful of vertex writes. Flushes every `CHUNK` segments to keep meshes small.
+struct Segments<'a> {
+    painter: &'a egui::Painter,
+    mesh: Mesh,
+    half_width: f32,
+    count: usize,
+}
+
+impl<'a> Segments<'a> {
+    const CHUNK: usize = 8192;
+
+    fn new(painter: &'a egui::Painter, width: f32) -> Self {
+        Segments { painter, mesh: Mesh::default(), half_width: width * 0.5, count: 0 }
+    }
+
+    #[inline]
+    fn push(&mut self, a: Pos2, b: Pos2, color: Color32) {
+        let d = b - a;
+        let len = d.length();
+        // Perpendicular offset of half the width; degenerate segments get a horizontal one.
+        let n = if len > 1e-6 { egui::vec2(-d.y, d.x) * (self.half_width / len) } else { egui::vec2(0.0, self.half_width) };
+        let base = self.mesh.vertices.len() as u32;
+        let uv = egui::epaint::WHITE_UV;
+        for p in [a + n, a - n, b - n, b + n] {
+            self.mesh.vertices.push(egui::epaint::Vertex { pos: p, uv, color });
+        }
+        self.mesh.indices.extend_from_slice(&[base, base + 1, base + 2, base, base + 2, base + 3]);
+        self.count += 1;
+        if self.count == Self::CHUNK {
+            self.flush();
+        }
+    }
+
+    fn flush(&mut self) {
+        if self.count > 0 {
+            self.painter.add(Shape::mesh(std::mem::take(&mut self.mesh)));
+            self.count = 0;
+        }
     }
 }
 
@@ -158,14 +201,16 @@ fn draw_scene(app: &Frame2dApp, painter: &egui::Painter, rect: Rect) {
 
     // Members, colored by max |M|.
     let color_by_m = app.overlays.color_by_m && case.is_some();
+    let mut segs = Segments::new(painter, width);
     for (k, &(a, b)) in scene.ends.iter().enumerate() {
         let (sa, sb) = (xf.to_screen(scene.pos[a as usize]), xf.to_screen(scene.pos[b as usize]));
         if !cull.intersects(Rect::from_two_pos(sa, sb)) {
             continue;
         }
         let color = if color_by_m { heat(app.derived.max_m[k] / gmax) } else { Color32::from_gray(90) };
-        painter.line_segment([sa, sb], Stroke::new(width, color));
+        segs.push(sa, sb, color);
     }
+    segs.flush();
 
     // Supports and node markers.
     for &(n, flags) in &scene.supports {
@@ -249,6 +294,7 @@ fn draw_deflected(app: &Frame2dApp, painter: &egui::Painter, xf: &Xf, cull: Rect
     let auto = 0.05 * scene.size() / app.derived.max_disp;
     let scale = auto * app.overlays.def_mult as f64;
     let stroke = Stroke::new(1.6, Color32::from_rgb(230, 110, 20));
+    let mut chords = Segments::new(painter, stroke.width);
     for &(a, b) in scene.ends.iter() {
         let (pa, pb) = (scene.pos[a as usize], scene.pos[b as usize]);
         let (da, db) = (&case.displacements[a as usize], &case.displacements[b as usize]);
@@ -259,7 +305,7 @@ fn draw_deflected(app: &Frame2dApp, painter: &egui::Painter, xf: &Xf, cull: Rect
             continue;
         }
         if (sb - sa).length() < CURVE_MIN_PX {
-            painter.line_segment([sa, sb], stroke);
+            chords.push(sa, sb, stroke.color);
             continue;
         }
         // Hermite transverse shape plus linear axial, in member axes, scaled and rotated back.
@@ -282,4 +328,5 @@ fn draw_deflected(app: &Frame2dApp, painter: &egui::Painter, xf: &Xf, cull: Rect
             .collect();
         painter.add(Shape::line(pts, stroke));
     }
+    chords.flush();
 }

@@ -33,11 +33,24 @@ name = "frame2d-app"
 path = "src/bin/frame2d-app.rs"
 required-features = ["ui"]
 
+# Dev loop: only line tables for our own crate, none for dependencies (smaller PDB, faster link).
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = false
+
+# Release: the hot code (engine) is in this crate, so it keeps codegen-units = 1; dependencies (egui,
+# tokio, sqlite, ...) build with many units in parallel, which is what makes cold builds fast. No LTO:
+# nothing hot crosses a crate boundary.
 [profile.release]
 opt-level = 3
-lto = "thin"
+lto = false
 codegen-units = 1
 strip = true
+
+[profile.release.package."*"]
+codegen-units = 16
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.129"

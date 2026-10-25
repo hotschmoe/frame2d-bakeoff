@@ -22,6 +22,13 @@ struct AppState {
     db: Arc<Mutex<Connection>>,
 }
 
+impl AppState {
+    /// The connection stays usable even if another request panicked while holding the lock.
+    fn db(&self) -> std::sync::MutexGuard<'_, Connection> {
+        self.db.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
+    }
+}
+
 /// Everything a handler can fail with, mapped to an HTTP status and a JSON error body.
 enum ApiError {
     Model(ModelError),
@@ -39,7 +46,7 @@ impl From<ModelError> for ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let (status, body) = match self {
-            ApiError::Model(e) => (StatusCode::UNPROCESSABLE_ENTITY, serde_json::to_value(e).unwrap()),
+            ApiError::Model(e) => (StatusCode::UNPROCESSABLE_ENTITY, serde_json::to_value(e).unwrap_or_default()),
             ApiError::BadRequest(d) => (StatusCode::BAD_REQUEST, serde_json::json!({"error": "bad_request", "detail": d})),
             ApiError::NotFound(d) => (StatusCode::NOT_FOUND, serde_json::json!({"error": "not_found", "detail": d})),
             ApiError::Internal(d) => (StatusCode::INTERNAL_SERVER_ERROR, serde_json::json!({"error": "internal", "detail": d})),
@@ -74,10 +81,11 @@ async fn health() -> Json<serde_json::Value> {
 
 async fn solve_handler(body: Bytes) -> ApiResult<Response> {
     let out = blocking(move || solve_to_json(&parse_model(&body)?)).await?;
-    let (name, value) = SERVER_HEADER.split_once(": ").unwrap();
     let mut resp = json_bytes(out);
-    resp.headers_mut()
-        .insert(HeaderName::from_static(name), HeaderValue::from_str(value).unwrap());
+    if let Some((name, value)) = SERVER_HEADER.split_once(": ") {
+        resp.headers_mut()
+            .insert(HeaderName::from_static(name), HeaderValue::from_static(value));
+    }
     Ok(resp)
 }
 
@@ -85,7 +93,7 @@ async fn create_model(State(st): State<AppState>, body: Bytes) -> ApiResult<Json
     parse_model(&body)?;
     let text = String::from_utf8(body.to_vec()).map_err(|e| ApiError::BadRequest(e.to_string()))?;
     let id = blocking(move || {
-        let db = st.db.lock().unwrap();
+        let db = st.db();
         db.execute("INSERT INTO models (body) VALUES (?1)", [&text]).map_err(|e| ApiError::Internal(e.to_string()))?;
         Ok(db.last_insert_rowid().to_string())
     })
@@ -94,7 +102,7 @@ async fn create_model(State(st): State<AppState>, body: Bytes) -> ApiResult<Json
 }
 
 fn load_model_text(st: &AppState, id: &str) -> ApiResult<String> {
-    let db = st.db.lock().unwrap();
+    let db = st.db();
     let rowid: i64 = id.parse().map_err(|_| ApiError::NotFound(format!("no model {id}")))?;
     db.query_row("SELECT body FROM models WHERE id = ?1", [rowid], |r| r.get::<_, String>(0))
         .map_err(|_| ApiError::NotFound(format!("no model {id}")))
@@ -169,14 +177,15 @@ fn run_sweep(model: Model, n: usize, lo: f64, hi: f64) -> ApiResult<serde_json::
                         }
                     }
                     let r = run_variant(&m, roof).map(|(d, mm)| Variant { scale, roof_drift_w: d, max_abs_m: mm });
-                    *slots[k].lock().unwrap() = Some(r);
+                    *slots[k].lock().unwrap_or_else(|p| p.into_inner()) = Some(r);
                 }
             });
         }
     });
     let mut out = Vec::with_capacity(n);
     for s in slots {
-        out.push(s.into_inner().unwrap().expect("variant computed")?);
+        let r = s.into_inner().unwrap_or_else(|p| p.into_inner());
+        out.push(r.ok_or_else(|| ApiError::Internal("sweep worker died before finishing a variant".into()))??);
     }
     let max_drift = out.iter().map(|v| v.roof_drift_w).fold(f64::NEG_INFINITY, f64::max);
     let max_m = out.iter().map(|v| v.max_abs_m).fold(0.0, f64::max);
@@ -204,13 +213,27 @@ async fn sweep(State(st): State<AppState>, body: Bytes) -> ApiResult<Json<serde_
 fn open_db() -> Connection {
     let path = std::env::var("FRAME2D_DB").unwrap_or_else(|_| "frame2d.db".into());
     let db = Connection::open(&path).expect("open sqlite db");
+    // WAL + NORMAL sync: durable across process crashes, and inserts no longer fsync per request.
+    db.execute_batch("PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL;").expect("sqlite pragmas");
     db.execute_batch("CREATE TABLE IF NOT EXISTS models (id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL);")
         .expect("create table");
     db
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
+    // CPU-bound solves run on the blocking pool. Capping it at the core count (tokio's default is 512)
+    // keeps hundreds of concurrent requests from each holding a multi-MB skyline at the same time:
+    // excess requests queue instead, which bounds RSS and cuts tail latency.
+    let cores = std::thread::available_parallelism().map_or(4, |p| p.get());
+    tokio::runtime::Builder::new_multi_thread()
+        .enable_io()
+        .max_blocking_threads(cores)
+        .build()
+        .expect("tokio runtime")
+        .block_on(serve());
+}
+
+async fn serve() {
     let addr = std::env::var("FRAME2D_ADDR").unwrap_or_else(|_| "127.0.0.1:8080".into());
     let state = AppState { db: Arc::new(Mutex::new(open_db())) };
     let app = Router::new()

@@ -114,7 +114,8 @@ impl Frame2dApp {
     /// Re-solve only the selected load case (the interactive drag path).
     pub fn solve_current(&mut self) {
         let id = self.case_id.clone();
-        self.run_solve(Some(&id));
+        let known = self.model.load_cases.iter().any(|c| c.id == id);
+        self.run_solve(known.then_some(id.as_str()));
     }
 
     fn run_solve(&mut self, only: Option<&str>) {

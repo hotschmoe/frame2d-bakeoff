@@ -681,6 +681,78 @@
         }
       },
       "deps_loc": "go"
+    },
+    "zig-teak": {
+      "family": "zig",
+      "port_offset": 7,
+      "ui": "Teak (Win32/Wayland/X11/Cocoa + wgpu-native desktop, zunk WebGPU wasm32-freestanding web)",
+      "server_lang": "zig",
+      "loc_buckets": [
+        [
+          "server",
+          "^src/(server|store|sweep)\\.zig$"
+        ],
+        [
+          "cli",
+          "^src/(cli|counting)\\.zig$"
+        ],
+        [
+          "glue",
+          "^src/platform\\.zig$"
+        ],
+        [
+          "glue",
+          "^build\\.zig"
+        ],
+        [
+          "glue",
+          "^web/"
+        ],
+        [
+          "ui",
+          "^src/(ui|canvas|table|state|bench)\\.zig$"
+        ],
+        [
+          "engine",
+          "^src/(engine|model|solver|report)\\.zig$"
+        ]
+      ],
+      "desktop_bundle": "file",
+      "engine_lib_globs": [],
+      "engine_lib_note": "engine is compiled into the app; the CLI binary is the engine-alone proxy",
+      "web_engine_globs": [
+        "web.wasm"
+      ],
+      "web_engine_note": "the whole Teak app is the wasm module (engine not separable)",
+      "flags": {
+        "cli": "zig build cli -Doptimize=ReleaseFast (strip=true unless debug, build.zig)",
+        "server": "zig build server -Doptimize=ReleaseFast",
+        "desktop": "zig build desktop -Doptimize=ReleaseFast",
+        "web": "zig build web -Doptimize=ReleaseFast (wasm32-freestanding)"
+      },
+      "stripped": {
+        "cli": true,
+        "server": true,
+        "desktop": true,
+        "web": true
+      },
+      "gctrace": {
+        "cli": false,
+        "app": false
+      },
+      "xcompile": {
+        "kind": "zig",
+        "steps": [
+          "cli",
+          "server"
+        ],
+        "extra": [],
+        "bins": [
+          "frame2d",
+          "frame2d-server"
+        ]
+      },
+      "deps_loc": "zig"
     }
   }
 }

@@ -1,0 +1,216 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "hyperfine_version": "2.0.0",
+    "start_time": "2026-10-27T21:20:46Z",
+    "platform": {
+      "os": "Windows_NT",
+      "architecture": "x86_64"
+    }
+  },
+  "primary_metric": "time_wall_clock",
+  "results": [
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go-zig-flutter edit-server-check -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter build_check",
+      "name": "edit-server-check",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 0.7044667,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 1.484375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.71875,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.765625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 0.7069809,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 1.671875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.6875,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.9843750000000001,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 0.7096925000000001,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 1.46875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.6875,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.78125,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.5416666666666667,
+          "stddev": 0.11303403340734744,
+          "median": 1.484375,
+          "min": 1.46875,
+          "max": 1.671875
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.84375,
+          "stddev": 0.12203515118604154,
+          "median": 0.78125,
+          "min": 0.765625,
+          "max": 0.9843750000000001
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.6979166666666666,
+          "stddev": 0.018042195912175808,
+          "median": 0.6875,
+          "min": 0.6875,
+          "max": 0.71875
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.7070466999999999,
+          "stddev": 0.0026135213104163035,
+          "median": 0.7069809,
+          "min": 0.7044667,
+          "max": 0.7096925000000001
+        }
+      }
+    },
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go-zig-flutter edit-server-dev -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter build_dev",
+      "name": "edit-server-dev",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 2.7336334,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 2.421875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 1.09375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.328125,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 2.6788347,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 3.140625,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 1.5,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.640625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 2.6734434,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 2.46875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 1.15625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.3125,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 2.6770833333333335,
+          "stddev": 0.40212246139495034,
+          "median": 2.46875,
+          "min": 2.421875,
+          "max": 3.140625
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.4270833333333333,
+          "stddev": 0.18509745462413396,
+          "median": 1.328125,
+          "min": 1.3125,
+          "max": 1.640625
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.25,
+          "stddev": 0.21875,
+          "median": 1.15625,
+          "min": 1.09375,
+          "max": 1.5
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 2.6953038333333335,
+          "stddev": 0.03330365279610232,
+          "median": 2.6788347,
+          "min": 2.6734434,
+          "max": 2.7336334
+        }
+      }
+    }
+  ]
+}

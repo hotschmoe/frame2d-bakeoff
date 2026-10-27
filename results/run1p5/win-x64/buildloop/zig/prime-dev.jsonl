@@ -1,0 +1,1 @@
+{"wall_s": 0.3450552999856882, "cpu_s": 0.171875, "parallelism": 0.4981085640682199, "mem_peak_mb": 141.0703125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 10, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "prime-dev"}

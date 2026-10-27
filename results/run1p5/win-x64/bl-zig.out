@@ -1,0 +1,79 @@
+[buildloop 13:43:56] === zig: section cold (quick=0) ===
+[buildloop 13:43:56] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.1 min ±     0.0 min      1.1 min …     1.1 min
+ 
+[buildloop 13:46:07] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.3 min ±     0.0 min      1.3 min …     1.3 min
+ 
+[buildloop 13:48:46] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      2.1 min ±     0.0 min      2.1 min …     2.1 min
+ 
+[buildloop 13:53:01] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.6 min ±     0.0 min      1.6 min …     1.6 min
+ 
+[buildloop 13:56:14] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.6 min ±     0.1 min      1.5 min …     1.6 min
+ 
+[buildloop 13:59:22] section cold: ok in 926 s
+[buildloop 13:59:22] === zig: section edits (quick=0) ===
+[buildloop 13:59:22] edits: priming build_check and build_dev
+[buildloop 13:59:26] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    599.0 ms  ±     3.4 ms     596.3 ms  …   602.9 ms
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    605.5 ms  ±     5.0 ms     601.3 ms  …   611.1 ms            +1.1%
+ 
+[buildloop 13:59:52] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.384 s   ±   0.007 s      1.376 s   …   1.389 s
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    5.120 s   ±   0.025 s      5.103 s   …   5.149 s           +269.9%  (3.7x slower)
+ 
+[buildloop 14:00:24] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.367 s   ±   0.025 s      1.338 s   …   1.382 s
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    5.128 s   ±   0.035 s      5.100 s   …   5.167 s           +275.0%  (3.8x slower)
+ 
+[buildloop 14:00:56] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    699.7 ms  ±     5.5 ms     693.3 ms  …   703.4 ms
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   1634.2 ms  ±     8.6 ms    1628.4 ms  …  1644.1 ms          +133.6%  (2.3x slower)
+ 
+[buildloop 14:01:15] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.294 s   ±   0.038 s      1.251 s   …   1.319 s
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.802 s   ±   0.042 s      4.772 s   …   4.850 s           +271.1%  (3.7x slower)
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig
+[buildloop 14:01:48] section edits: ok in 146 s

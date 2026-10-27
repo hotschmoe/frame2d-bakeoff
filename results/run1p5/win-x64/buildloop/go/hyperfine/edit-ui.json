@@ -1,0 +1,216 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "hyperfine_version": "2.0.0",
+    "start_time": "2026-10-27T21:13:57Z",
+    "platform": {
+      "os": "Windows_NT",
+      "architecture": "x86_64"
+    }
+  },
+  "primary_metric": "time_wall_clock",
+  "results": [
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go edit-ui-check -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go build_check",
+      "name": "edit-ui-check",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 0.6573638,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 1.328125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.609375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.71875,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 0.6418292,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 1.78125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.796875,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.9843750000000001,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 0.6419266,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 1.484375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 0.625,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 0.859375,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.53125,
+          "stddev": 0.23017062285400366,
+          "median": 1.484375,
+          "min": 1.328125,
+          "max": 1.78125
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.8541666666666666,
+          "stddev": 0.1328890710643029,
+          "median": 0.859375,
+          "min": 0.71875,
+          "max": 0.9843750000000001
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.6770833333333334,
+          "stddev": 0.10403637685124052,
+          "median": 0.625,
+          "min": 0.609375,
+          "max": 0.796875
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 0.6470398666666667,
+          "stddev": 0.00894092116581585,
+          "median": 0.6419266,
+          "min": 0.6418292,
+          "max": 0.6573638
+        }
+      }
+    },
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go edit-ui-dev -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go build_dev",
+      "name": "edit-ui-dev",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 1.3131236,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 2.84375,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 1.4375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.40625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 1.2165628,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 2.453125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 1.109375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.34375,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 1.2043651,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 2.25,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 1.03125,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.21875,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 2.515625,
+          "stddev": 0.301768873684812,
+          "median": 2.453125,
+          "min": 2.25,
+          "max": 2.84375
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.3229166666666667,
+          "stddev": 0.09547032697824666,
+          "median": 1.34375,
+          "min": 1.21875,
+          "max": 1.40625
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.1927083333333333,
+          "stddev": 0.2155646050684883,
+          "median": 1.109375,
+          "min": 1.03125,
+          "max": 1.4375
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.2446838333333334,
+          "stddev": 0.05958353142742827,
+          "median": 1.2165628,
+          "min": 1.2043651,
+          "max": 1.3131236
+        }
+      }
+    }
+  ]
+}

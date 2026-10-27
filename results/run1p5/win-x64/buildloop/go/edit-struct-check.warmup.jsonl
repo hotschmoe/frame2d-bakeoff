@@ -1,0 +1,1 @@
+{"wall_s": 0.3388233000296168, "cpu_s": 0.65625, "parallelism": 1.9368502695730685, "mem_peak_mb": 83.05859375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 7, "exit_code": 0, "method": "psutil", "stack": "go", "label": "edit-struct-check"}

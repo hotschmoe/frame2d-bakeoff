@@ -1,0 +1,1 @@
+{"wall_s": 0.28079749998869374, "cpu_s": 0.21875, "parallelism": 0.7790311523742481, "mem_peak_mb": 110.03515625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 8, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "edit-server-check"}

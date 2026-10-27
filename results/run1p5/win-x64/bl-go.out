@@ -1,0 +1,82 @@
+[buildloop 14:12:20] === go: section cold (quick=0) ===
+[buildloop 14:12:21] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.948 s   ±   0.097 s      2.880 s   …   3.017 s
+ 
+[buildloop 14:12:27] cold: server (build_server_release) x2, clean_all before each run
+Error: Command 'C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go cold-server -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go build_server_release' terminated with non-zero exit code 1 in the first benchmark run. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+[buildloop 14:12:36] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.754 s   ±   0.033 s      4.730 s   …   4.777 s
+ 
+[buildloop 14:12:46] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.019 s   ±   0.015 s      4.009 s   …   4.030 s
+ 
+[buildloop 14:12:55] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   10.453 s   ±   0.284 s     10.252 s   …  10.654 s
+ 
+[buildloop 14:13:17] section cold: failed (cold targets failed: server  (see logs/)) in 57 s
+[buildloop 14:13:17] === go: section edits (quick=0) ===
+[buildloop 14:13:17] edits: priming build_check and build_dev
+[buildloop 14:13:21] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    623.2 ms  ±    37.4 ms     581.4 ms  …   653.6 ms
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    581.3 ms  ±     2.7 ms     578.2 ms  …   583.6 ms            -6.7%
+ 
+[buildloop 14:13:27] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    656.0 ms  ±    33.6 ms     636.0 ms  …   694.8 ms
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (694.8 ms). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   1466.0 ms  ±    41.7 ms    1418.8 ms  …  1498.1 ms          +123.5%  (2.2x slower)
+ 
+[buildloop 14:13:37] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    636.0 ms  ±    57.6 ms     579.0 ms  …   694.2 ms
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   1459.1 ms  ±    25.8 ms    1429.3 ms  …  1474.6 ms          +129.4%  (2.3x slower)
+ 
+[buildloop 14:13:47] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    637.0 ms  ±     5.3 ms     630.9 ms  …   640.9 ms
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   1425.1 ms  ±    33.2 ms    1405.4 ms  …  1463.3 ms          +123.7%  (2.2x slower)
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (1.463 s). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+[buildloop 14:13:57] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    647.0 ms  ±     8.9 ms     641.8 ms  …   657.4 ms
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (657.4 ms). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   1244.7 ms  ±    59.6 ms    1204.4 ms  …  1313.1 ms           +92.4%  (1.9x slower)
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go
+[buildloop 14:14:07] section edits: ok in 50 s

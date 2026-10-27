@@ -1,0 +1,1 @@
+{"wall_s": 7.730198699980974, "cpu_s": 41.78125, "parallelism": 5.404938685483315, "mem_peak_mb": 2467.14453125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 29, "exit_code": 0, "method": "psutil", "stack": "rust", "label": "prime-check"}

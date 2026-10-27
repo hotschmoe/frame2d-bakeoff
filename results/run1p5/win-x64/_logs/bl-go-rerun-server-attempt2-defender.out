@@ -1,0 +1,4 @@
+[buildloop 14:22:12] === go: section cold (quick=0) ===
+[buildloop 14:22:12] cold: server (build_server_release) x2, clean_all before each run
+Error: Command 'C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go cold-server -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go build_server_release' terminated with non-zero exit code 1 in the first benchmark run. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+[buildloop 14:22:21] section cold: failed (cold targets failed: server  (see logs/)) in 9 s

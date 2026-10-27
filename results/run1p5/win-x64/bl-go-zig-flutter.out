@@ -1,0 +1,79 @@
+[buildloop 14:14:08] === go-zig-flutter: section cold (quick=0) ===
+[buildloop 14:14:08] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   28.732 s   ±   0.263 s     28.546 s   …  28.917 s
+ 
+[buildloop 14:15:09] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   33.256 s   ±   0.423 s     32.957 s   …  33.555 s
+ 
+[buildloop 14:16:19] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   30.131 s   ±   0.272 s     29.938 s   …  30.323 s
+ 
+[buildloop 14:17:22] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   30.108 s   ±   0.329 s     29.875 s   …  30.340 s
+ 
+[buildloop 14:18:24] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   25.506 s   ±   1.072 s     24.748 s   …  26.264 s
+ 
+[buildloop 14:19:18] section cold: ok in 310 s
+[buildloop 14:19:18] === go-zig-flutter: section edits (quick=0) ===
+[buildloop 14:19:18] edits: priming build_check and build_dev
+[buildloop 14:19:25] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    734.5 ms  ±    62.1 ms     697.1 ms  …   806.2 ms
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    793.8 ms  ±    36.8 ms     752.5 ms  …   823.1 ms            +8.1%
+ 
+[buildloop 14:19:32] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    695.7 ms  ±     3.3 ms     692.5 ms  …   699.0 ms
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   6714.8 ms  ±     2.2 ms    6712.2 ms  …  6716.3 ms          +865.2%  (9.7x slower)
+ 
+[buildloop 14:20:09] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    700.6 ms  ±     2.9 ms     697.3 ms  …   703.1 ms
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   6717.1 ms  ±     5.4 ms    6712.0 ms  …  6722.7 ms          +858.8%  (9.6x slower)
+ 
+[buildloop 14:20:45] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    707.0 ms  ±     2.6 ms     704.5 ms  …   709.7 ms
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   2695.3 ms  ±    33.3 ms    2673.4 ms  …  2733.6 ms          +281.2%  (3.8x slower)
+ 
+[buildloop 14:21:04] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    5.435 s   ±   0.064 s      5.392 s   …   5.509 s
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    7.042 s   ±   0.020 s      7.028 s   …   7.064 s            +29.6%
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-zig-flutter
+[buildloop 14:22:02] section edits: ok in 164 s

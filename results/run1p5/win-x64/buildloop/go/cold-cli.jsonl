@@ -1,0 +1,2 @@
+{"wall_s": 2.7696059999871068, "cpu_s": 5.921875, "parallelism": 2.138165139744631, "mem_peak_mb": 350.7578125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 11, "exit_code": 0, "method": "psutil", "stack": "go", "label": "cold-cli"}
+{"wall_s": 2.6365476000355557, "cpu_s": 6.359375, "parallelism": 2.412008415821599, "mem_peak_mb": 329.66015625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 22, "exit_code": 0, "method": "psutil", "stack": "go", "label": "cold-cli"}

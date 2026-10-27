@@ -1,0 +1,216 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "hyperfine_version": "2.0.0",
+    "start_time": "2026-10-27T21:11:24Z",
+    "platform": {
+      "os": "Windows_NT",
+      "architecture": "x86_64"
+    }
+  },
+  "primary_metric": "time_wall_clock",
+  "results": [
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go-flutter edit-ui-check -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter build_check",
+      "name": "edit-ui-check",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 5.659525,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 8.421875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 6.359375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 2.0625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 5.5452431,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 8.171875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 6.53125,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.640625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 5.5324163,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 8.28125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 6.4375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.8437500000000002,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 8.291666666666666,
+          "stddev": 0.1253250980782913,
+          "median": 8.28125,
+          "min": 8.171875,
+          "max": 8.421875
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 1.8489583333333333,
+          "stddev": 0.21098571979717803,
+          "median": 1.8437500000000002,
+          "min": 1.640625,
+          "max": 2.0625
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 6.442708333333333,
+          "stddev": 0.08605578980134534,
+          "median": 6.4375,
+          "min": 6.359375,
+          "max": 6.53125
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 5.5790614666666665,
+          "stddev": 0.06997797401270867,
+          "median": 5.5452431,
+          "min": 5.5324163,
+          "max": 5.659525
+        }
+      }
+    },
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh go-flutter edit-ui-dev -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/go-flutter build_dev",
+      "name": "edit-ui-dev",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 6.7910802,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 8.21875,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 5.484375,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 2.734375,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 6.7815222,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 7.890625,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 5.25,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 2.640625,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 6.8945473,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 8.25,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 5.53125,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 2.71875,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 8.119791666666666,
+          "stddev": 0.19907827972517075,
+          "median": 8.21875,
+          "min": 7.890625,
+          "max": 8.25
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 2.6979166666666665,
+          "stddev": 0.050227347713504976,
+          "median": 2.71875,
+          "min": 2.640625,
+          "max": 2.734375
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 5.421875,
+          "stddev": 0.15068204314051492,
+          "median": 5.484375,
+          "min": 5.25,
+          "max": 5.53125
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 6.822383233333333,
+          "stddev": 0.06267837130464814,
+          "median": 6.7910802,
+          "min": 6.7815222,
+          "max": 6.8945473
+        }
+      }
+    }
+  ]
+}

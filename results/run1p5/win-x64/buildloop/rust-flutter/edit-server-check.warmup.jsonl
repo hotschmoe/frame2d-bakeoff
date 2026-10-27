@@ -1,0 +1,1 @@
+{"wall_s": 0.9524431999889202, "cpu_s": 0.65625, "parallelism": 0.6890174658264494, "mem_peak_mb": 242.05078125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 14, "exit_code": 0, "method": "psutil", "stack": "rust-flutter", "label": "edit-server-check"}

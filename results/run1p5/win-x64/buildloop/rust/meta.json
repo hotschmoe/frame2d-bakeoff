@@ -1,0 +1,37 @@
+{
+ "stack": "rust",
+ "stack_dir": "C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust",
+ "run": "run1p5",
+ "machine": "win-x64",
+ "started": "2026-10-27T14:01:49-0700",
+ "quick": false,
+ "sections": [
+  "cold",
+  "edits"
+ ],
+ "toolchains": [
+  "cargo"
+ ],
+ "params": {
+  "cold_runs": 2,
+  "runs": 3,
+  "warmup": 1,
+  "cycles": 50,
+  "size_every": 10,
+  "engine_runs": 3,
+  "hot_reps": 10,
+  "cold_targets": [
+   "cli",
+   "server",
+   "desktop",
+   "web",
+   "dev"
+  ]
+ },
+ "platform": "Windows-11-10.0.26300-SP0",
+ "cpu_count": 24,
+ "hyperfine": "hyperfine 2.0.0",
+ "repo_commit": "",
+ "goflags": "",
+ "measure_method": "psutil-fallback"
+}

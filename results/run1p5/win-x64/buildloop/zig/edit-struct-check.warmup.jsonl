@@ -1,0 +1,1 @@
+{"wall_s": 0.33827950002159923, "cpu_s": 0.234375, "parallelism": 0.6928442308358476, "mem_peak_mb": 96.86328125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 7, "exit_code": 0, "method": "psutil", "stack": "zig", "label": "edit-struct-check"}

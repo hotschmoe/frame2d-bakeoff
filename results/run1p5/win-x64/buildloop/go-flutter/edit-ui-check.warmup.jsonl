@@ -1,0 +1,1 @@
+{"wall_s": 5.988997799984645, "cpu_s": 1.625, "parallelism": 0.2713308727553993, "mem_peak_mb": 69.2109375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 6, "exit_code": 0, "method": "psutil", "stack": "go-flutter", "label": "edit-ui-check"}

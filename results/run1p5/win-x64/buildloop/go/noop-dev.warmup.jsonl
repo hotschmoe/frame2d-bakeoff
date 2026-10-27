@@ -1,0 +1,1 @@
+{"wall_s": 0.3399150000186637, "cpu_s": 0.484375, "parallelism": 1.4249886000129575, "mem_peak_mb": 125.01953125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 9, "exit_code": 0, "method": "psutil", "stack": "go", "label": "noop-dev"}

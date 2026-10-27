@@ -1,0 +1,7 @@
+[buildloop 15:26:21] === go: section cold (quick=0) ===
+[buildloop 15:26:21] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   19.941 s   ±  18.479 s      6.875 s   …  33.008 s
+ 
+[buildloop 15:27:02] section cold: ok in 41 s

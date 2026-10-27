@@ -18,8 +18,21 @@ case "$(uname -s)" in
         "$_h/AppData/Local/Microsoft/WinGet/Links"; do
         [ -d "$_d" ] && PATH="$_d:$PATH"
       done
+      # win-x64: winget installs zig/hyperfine/oha under per-package dirs (no Links shims), and the
+      # pinned Python 3.12 must beat any older Python on the Windows PATH.
+      for _d in \
+        "$_h/AppData/Local/Programs/Python/Python312/Scripts" \
+        "$_h/AppData/Local/Programs/Python/Python312" \
+        "$_h"/AppData/Local/Microsoft/WinGet/Packages/hatoo.oha_*/ \
+        "$_h"/AppData/Local/Microsoft/WinGet/Packages/sharkdp.hyperfine_*/hyperfine-*-x86_64-pc-windows-msvc \
+        "$_h"/AppData/Local/Microsoft/WinGet/Packages/zig.zig_*/zig-x86_64-windows-0.17.0; do
+        [ -d "$_d" ] && PATH="${_d%/}:$PATH"
+      done
       export PATH F2D_MACHINE_ENV_DONE=1
-      export F2D_MACHINE_ID="${F2D_MACHINE_ID:-win-arm64}"
+      case "${PROCESSOR_ARCHITECTURE:-}" in
+        AMD64) export F2D_MACHINE_ID="${F2D_MACHINE_ID:-win-x64}" ;;
+        *)     export F2D_MACHINE_ID="${F2D_MACHINE_ID:-win-arm64}" ;;
+      esac
       export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-}"
       unset _h _d
     fi

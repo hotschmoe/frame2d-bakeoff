@@ -1,0 +1,1 @@
+{"wall_s": 7.610691700014286, "cpu_s": 26.296875, "parallelism": 3.455254270771557, "mem_peak_mb": 942.046875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 21, "exit_code": 1, "method": "psutil", "stack": "go", "label": "cold-server"}

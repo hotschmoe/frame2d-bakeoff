@@ -1,0 +1,1 @@
+{"wall_s": 1.8379514000262134, "cpu_s": 2.28125, "parallelism": 1.241191687640633, "mem_peak_mb": 653.59375, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 10, "exit_code": 0, "method": "psutil", "stack": "rust", "label": "edit-ui-dev"}

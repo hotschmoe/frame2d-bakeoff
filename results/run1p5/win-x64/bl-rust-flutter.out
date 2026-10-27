@@ -1,0 +1,79 @@
+[buildloop 15:18:26] === rust-flutter: section cold (quick=0) ===
+[buildloop 15:18:26] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   10.966 s   ±   1.888 s      9.631 s   …  12.301 s
+ 
+[buildloop 15:18:51] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   21.224 s   ±   0.662 s     20.756 s   …  21.692 s
+ 
+[buildloop 15:19:36] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   36.175 s   ±   4.051 s     33.310 s   …  39.040 s
+ 
+[buildloop 15:20:50] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   50.317 s   ±   0.910 s     49.674 s   …  50.961 s
+ 
+[buildloop 15:22:33] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   34.133 s   ±   6.021 s     29.875 s   …  38.391 s
+ 
+[buildloop 15:23:44] section cold: ok in 318 s
+[buildloop 15:23:44] === rust-flutter: section edits (quick=0) ===
+[buildloop 15:23:44] edits: priming build_check and build_dev
+[buildloop 15:23:57] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    619.7 ms  ±    29.5 ms     585.7 ms  …   638.9 ms
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    704.0 ms  ±     4.2 ms     700.2 ms  …   708.5 ms           +13.6%
+ 
+[buildloop 15:24:03] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.279 s   ±   0.030 s      1.259 s   …   1.313 s
+ 
+Benchmark 2: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    3.618 s   ±   0.037 s      3.593 s   …   3.660 s           +182.8%  (2.8x slower)
+ 
+[buildloop 15:24:28] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.334 s   ±   0.034 s      1.311 s   …   1.373 s
+ 
+Benchmark 2: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    4.141 s   ±   0.054 s      4.090 s   …   4.197 s           +210.3%  (3.1x slower)
+ 
+[buildloop 15:24:55] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    753.3 ms  ±     3.7 ms     749.8 ms  …   757.1 ms
+ 
+Benchmark 2: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   1402.4 ms  ±    30.3 ms    1367.4 ms  …  1419.9 ms           +86.2%  (1.9x slower)
+ 
+[buildloop 15:25:09] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    5.198 s   ±   0.226 s      5.060 s   …   5.458 s
+ 
+Benchmark 2: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    7.577 s   ±   0.003 s      7.575 s   …   7.580 s            +45.8%  (1.5x slower)
+ 
+restored edit leaf in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter
+restored edit struct in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter
+restored edit server in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter
+restored edit ui in C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/rust-flutter
+[buildloop 15:26:06] section edits: ok in 142 s

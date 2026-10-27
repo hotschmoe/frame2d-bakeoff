@@ -1,0 +1,1 @@
+{"wall_s": 0.39097200002288446, "cpu_s": 0.703125, "parallelism": 1.7984024430364438, "mem_peak_mb": 124.62890625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 9, "exit_code": 0, "method": "psutil", "stack": "go", "label": "edit-ui-dev"}

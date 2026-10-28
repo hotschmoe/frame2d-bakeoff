@@ -1,0 +1,17 @@
+.{
+    .name = .frame2d,
+    .version = "0.1.0",
+    .fingerprint = 0xb74d83b371857737,
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{
+        .teak = .{
+            .url = "git+https://github.com/hotschmoe/teak.git#9b16f1065daa65ff7cc823c76db0d9275f53bcc3",
+            .hash = "teak-0.1.0-639rmkG9NADP08iyj7hk3YM0VTOn9rYHU24SP0sydNxf",
+        },
+        .sqlite = .{
+            .url = "https://www.sqlite.org/2024/sqlite-amalgamation-3460100.zip",
+            .hash = "N-V-__8AAEC6owBrwhm_VrknRpx9Q_U8I_4oAcgViAD4YTp4",
+        },
+    },
+    .paths = .{ "build.zig", "build.zig.zon", "src", "web" },
+}

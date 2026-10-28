@@ -1,0 +1,2 @@
+{"wall_s": 12.70152209996013, "cpu_s": null, "parallelism": null, "mem_peak_mb": null, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": null, "exit_code": 1, "method": "wall-only", "stack": "zig-teak", "label": "server-release"}
+{"wall_s": 6.7789457000326365, "cpu_s": null, "parallelism": null, "mem_peak_mb": null, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": null, "exit_code": 0, "method": "wall-only", "stack": "zig-teak", "label": "server-release"}

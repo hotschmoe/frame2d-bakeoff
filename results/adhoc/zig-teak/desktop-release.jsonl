@@ -1,0 +1,3 @@
+{"wall_s": 27.733356199983973, "cpu_s": null, "parallelism": null, "mem_peak_mb": null, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": null, "exit_code": 0, "method": "wall-only", "stack": "zig-teak", "label": "desktop-release"}
+{"wall_s": 27.05642610002542, "cpu_s": null, "parallelism": null, "mem_peak_mb": null, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": null, "exit_code": 0, "method": "wall-only", "stack": "zig-teak", "label": "desktop-release"}
+{"wall_s": 27.15304639999522, "cpu_s": null, "parallelism": null, "mem_peak_mb": null, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": null, "exit_code": 0, "method": "wall-only", "stack": "zig-teak", "label": "desktop-release"}

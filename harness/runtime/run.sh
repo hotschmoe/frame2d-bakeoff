@@ -9,7 +9,7 @@ set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 STACK="${1:-}"; [ -n "$STACK" ] || { sed -n '2,8p' "$0"; exit 2; }; shift
-case "$STACK" in rust|go|zig|rust-flutter|zig-flutter|go-flutter|go-zig-flutter) ;; *) echo "unknown stack $STACK" >&2; exit 2;; esac
+case "$STACK" in rust|go|zig|rust-flutter|zig-flutter|go-flutter|go-zig-flutter|zig-teak) ;; *) echo "unknown stack $STACK" >&2; exit 2;; esac
 
 SECTIONS=(); QUICK=""; NOALT=""; RUNS=""
 while [ $# -gt 0 ]; do

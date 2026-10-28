@@ -1,0 +1,1 @@
+{"wall_s": 6.978320299996994, "cpu_s": null, "parallelism": null, "mem_peak_mb": null, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": null, "exit_code": 0, "method": "wall-only", "stack": "zig-teak", "label": "dev"}

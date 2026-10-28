@@ -20,6 +20,8 @@ const defl_color = [4]f32{ 0.95, 0.45, 0.85, 1 };
 const moment_color = [4]f32{ 0.98, 0.75, 0.25, 0.9 };
 const support_color = [4]f32{ 0.40, 0.95, 0.55, 1 };
 const node_color = [4]f32{ 0.85, 0.88, 0.95, 1 };
+const spring_color = [4]f32{ 0.35, 0.85, 0.95, 1 };
+const hinge_color = [4]f32{ 0.98, 0.98, 0.98, 1 };
 
 fn visible(m: *const state.Model, a: [2]f32, b: [2]f32, margin: f32) bool {
     const w = m.canvas_w;
@@ -132,6 +134,39 @@ fn build(m: *const state.Model, arena: std.mem.Allocator) ![]const Prim {
         if (p[0] < -10 or p[1] < -10 or p[0] > m.canvas_w + 10 or p[1] > m.canvas_h + 10) continue;
         try prims.append(arena, .{ .filled_rect = .{ .x = p[0] - 6, .y = p[1], .w = 12, .h = 6, .color = support_color } });
     }
+    // P2: springs (zigzag under/beside the node) and mz releases (hinge dots near the released end)
+    var springs: std.ArrayList([4]f32) = .empty;
+    for (m.m.springs) |sp| {
+        const k = node_map.get(sp.node) orelse continue;
+        const p = scr[k];
+        if (p[0] < -20 or p[1] < -20 or p[0] > m.canvas_w + 20 or p[1] > m.canvas_h + 20) continue;
+        const zig = [_]f32{ 0, 3, -3, 3, -3, 0 };
+        if (sp.ky != null) for (0..zig.len - 1) |q| {
+            const y0 = p[1] + @as(f32, @floatFromInt(q)) * 3;
+            try springs.append(arena, .{ p[0] + zig[q], y0, p[0] + zig[q + 1], y0 + 3 });
+        };
+        if (sp.kx != null) for (0..zig.len - 1) |q| {
+            const x0 = p[0] - @as(f32, @floatFromInt(q + 1)) * 3;
+            try springs.append(arena, .{ x0 + 3, p[1] + zig[q], x0, p[1] + zig[q + 1] });
+        };
+        if (sp.kr != null) try prims.append(arena, .{ .marker = .{ .x = p[0], .y = p[1], .size = 12, .color = spring_color } });
+    }
+    if (springs.items.len > 0) try prims.append(arena, .{ .lines = .{ .segs = springs.items, .color = spring_color, .thickness = 1.5, .key = key_base + 22 } });
+    for (m.m.members) |mb| {
+        const rl = mb.release orelse continue;
+        const ni = node_map.get(mb.i) orelse continue;
+        const nj = node_map.get(mb.j) orelse continue;
+        const a = scr[ni];
+        const b = scr[nj];
+        const dx = b[0] - a[0];
+        const dy = b[1] - a[1];
+        const len = @sqrt(dx * dx + dy * dy);
+        if (len < 16 or !visible(m, a, b, 10)) continue;
+        const off = @min(8, len / 4) / len;
+        if (engine.model.hasMz(rl.i)) try prims.append(arena, .{ .marker = .{ .x = a[0] + dx * off, .y = a[1] + dy * off, .size = 6, .color = hinge_color } });
+        if (engine.model.hasMz(rl.j)) try prims.append(arena, .{ .marker = .{ .x = b[0] - dx * off, .y = b[1] - dy * off, .size = 6, .color = hinge_color } });
+    }
+
     const spacing_ok = m.zoom * 1.0 > 4; // ~1 m apart at >= 4 px
     if (spacing_ok and m.m.nodes.len <= 20000) {
         for (scr, 0..) |p, k| {

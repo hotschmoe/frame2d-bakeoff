@@ -48,6 +48,8 @@ pub const Results = struct {
     /// sorted node position -> supported (any DOF restrained) / restraint flags
     restrained: [][3]bool,
     supported: []bool,
+    /// P2 auto-restrained rotational DOFs (SPEC 4.7), by sorted node position, ascending
+    auto_restrained: []u32,
     cases: []CaseResult,
     stats: Stats,
 };
@@ -75,6 +77,9 @@ const Elem = struct {
     L: f64,
     c: f64,
     s: f64,
+    /// P2 end releases (SPEC 4.7): mz released at end i / end j
+    rel_i: bool = false,
+    rel_j: bool = false,
 };
 
 fn fail(a: Allocator, code: []const u8, comptime fmt: []const u8, args: anytype) !Outcome {
@@ -85,8 +90,49 @@ fn lessId(ids: []const i64, x: u32, y: u32) bool {
     return ids[x] < ids[y];
 }
 
-/// Local stiffness (acting on member, local axes).
+/// Local stiffness (acting on member, local axes), statically condensed for end releases.
 pub fn localK(e: Elem) [6][6]f64 {
+    var k = rigidK(e);
+    if (e.rel_i) condenseK(&k, 2);
+    if (e.rel_j) condenseK(&k, 5);
+    return k;
+}
+
+/// Static condensation of local DOF r out of k: k' = k - k[:,r] k[r,:] / k[r][r] (row/col r become 0).
+fn condenseK(k: *[6][6]f64, r: usize) void {
+    const d = k[r][r];
+    if (d == 0) return;
+    const old = k.*;
+    for (0..6) |p| for (0..6) |q| {
+        k[p][q] = old[p][q] - old[p][r] * old[r][q] / d;
+    };
+    for (0..6) |p| {
+        k[p][r] = 0;
+        k[r][p] = 0;
+    }
+}
+
+/// Condense fixed-end forces with the same step: f' = f - k[:,r] f[r] / k[r][r], then condense k.
+fn condenseF(k: *[6][6]f64, f: *[6]f64, r: usize) void {
+    const d = k[r][r];
+    if (d == 0) return;
+    const fr = f[r];
+    for (0..6) |p| f[p] -= k[p][r] * fr / d;
+    f[r] = 0;
+    condenseK(k, r);
+}
+
+/// Fixed-end forces of a local-y UDL on member e, condensed for its releases.
+fn memberFixedEnd(e: Elem, w: f64) [6]f64 {
+    var f = fixedEnd(w, e.L);
+    if (!e.rel_i and !e.rel_j) return f;
+    var k = rigidK(e);
+    if (e.rel_i) condenseF(&k, &f, 2);
+    if (e.rel_j) condenseF(&k, &f, 5);
+    return f;
+}
+
+fn rigidK(e: Elem) [6][6]f64 {
     const L = e.L;
     const ea = e.E * e.A / L;
     const ei = e.E * e.I;
@@ -239,6 +285,10 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
         const dy = xy[nj][1] - xy[ni][1];
         const L = @sqrt(dx * dx + dy * dy);
         elems[k] = .{ .ni = ni, .nj = nj, .E = E.?, .A = sec.?.A, .I = sec.?.I, .L = L, .c = 0, .s = 0 };
+        if (mb.release) |rl| {
+            elems[k].rel_i = model.hasMz(rl.i);
+            elems[k].rel_j = model.hasMz(rl.j);
+        }
     }
     for (elems, 0..) |*e, k| {
         if (!(e.L >= 1e-9)) return fail(a, "zero_length", "member {d} has length {e}", .{ mem_ids[member_src[k]], e.L });
@@ -255,8 +305,49 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
         if (sp.ux) restr[k][0] = true;
         if (sp.uy) restr[k][1] = true;
         if (sp.rz) restr[k][2] = true;
-        supported[k] = sp.ux or sp.uy or sp.rz;
+        if (sp.ux or sp.uy or sp.rz) supported[k] = true;
     }
+
+    // ── P2: springs (SPEC 4.7) ──
+    const comp_names = [_][]const u8{ "ux", "uy", "rz" };
+    const spring_k = try a.alloc([3]f64, nn);
+    defer a.free(spring_k);
+    @memset(spring_k, .{ 0, 0, 0 });
+    var any_spring = false;
+    for (m.springs) |sp| {
+        const k = node_map.get(sp.node) orelse return fail(a, "invalid_ref", "spring references missing node {d}", .{sp.node});
+        const ks = [3]?f64{ sp.kx, sp.ky, sp.kr };
+        for (ks, 0..) |kv, c| if (kv) |v| {
+            if (restr[k][c]) return fail(a, "support_conflict", "node {d} {s} is both restrained and sprung", .{ sp.node, comp_names[c] });
+            spring_k[k][c] += v;
+            any_spring = true;
+        };
+    }
+
+    // ── P2: auto-restrain rotations that releases leave with zero stiffness (SPEC 4.7) ──
+    var auto_list: std.ArrayList(u32) = .empty;
+    {
+        const n_inc = try a.alloc(u32, nn); // incident members
+        defer a.free(n_inc);
+        const n_rigid = try a.alloc(u32, nn); // incident members not released in mz at that end
+        defer a.free(n_rigid);
+        @memset(n_inc, 0);
+        @memset(n_rigid, 0);
+        var any_rel = false;
+        for (elems) |e| {
+            n_inc[e.ni] += 1;
+            n_inc[e.nj] += 1;
+            if (!e.rel_i) n_rigid[e.ni] += 1;
+            if (!e.rel_j) n_rigid[e.nj] += 1;
+            if (e.rel_i or e.rel_j) any_rel = true;
+        }
+        if (any_rel) for (0..nn) |v| {
+            if (restr[v][2] or n_inc[v] == 0 or n_rigid[v] > 0 or spring_k[v][2] != 0) continue;
+            restr[v][2] = true;
+            try auto_list.append(a, @intCast(v));
+        };
+    }
+    const auto_restrained = try auto_list.toOwnedSlice(a);
     for (m.load_cases) |lc| {
         for (lc.nodal) |p| if (node_map.get(p.node) == null)
             return fail(a, "invalid_ref", "load case '{s}' references missing node {d}", .{ lc.id, p.node });
@@ -316,6 +407,10 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
             }
         }
     }
+    if (any_spring) for (0..nn) |v| for (0..3) |c| {
+        const d = dof[v * 3 + c];
+        if (d != NONE and spring_k[v][c] != 0) sky.at(d, d).* += spring_k[v][c];
+    };
     const t1 = now(opts);
     stats.assemble_ms = t1 - t0;
 
@@ -360,7 +455,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
         };
         for (elems, 0..) |e, k| {
             if (udl_w[k] == 0) continue;
-            const eq = toGlobal(e, fixedEnd(udl_w[k], e.L));
+            const eq = toGlobal(e, memberFixedEnd(e, udl_w[k]));
             for (0..3) |c| {
                 const di = dof[e.ni * 3 + c];
                 const dj = dof[e.nj * 3 + c];
@@ -388,7 +483,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
             const ul = toLocal(e, ug);
             const kl = localK(e);
             const w = udl_w[k];
-            var f = if (w != 0) fixedEnd(w, e.L) else @as([6]f64, @splat(0));
+            var f = if (w != 0) memberFixedEnd(e, w) else @as([6]f64, @splat(0));
             for (0..6) |r| {
                 var sum: f64 = 0;
                 for (0..6) |q| sum += kl[r][q] * ul[q];
@@ -426,7 +521,9 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
             load_sum[2] += p[2] + xy[v][0] * p[1] - xy[v][1] * p[0];
             load_abs += @abs(p[0]) + @abs(p[1]);
             for (0..3) |c| react[v][c] = if (restr[v][c]) nodal_sum[v][c] - p[c] else 0;
-            const r = react[v];
+            var r = react[v];
+            // spring forces act on the structure like reactions: -k u
+            for (0..3) |c| r[c] -= spring_k[v][c] * disp[v][c];
             load_sum[0] += r[0];
             load_sum[1] += r[1];
             load_sum[2] += r[2] + xy[v][0] * r[1] - xy[v][1] * r[0];
@@ -441,6 +538,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
         .member_src = member_src,
         .restrained = restr,
         .supported = supported,
+        .auto_restrained = auto_restrained,
         .cases = cases,
         .stats = stats,
     } };
@@ -486,4 +584,40 @@ test "gen 10 10 profile matches the reference statistic" {
     try std.testing.expectEqual(@as(u64, 10221), r.stats.profile_before);
     try std.testing.expectEqual(@as(u64, 7575), r.stats.profile_after);
     try std.testing.expectEqual(@as(usize, 330), r.stats.free_dofs);
+}
+
+test "P2: internal hinge, auto-restraint and support_conflict (F23-F25)" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const a = arena.allocator();
+    var nodes = [_]model.Node{ .{ .id = 1, .x = 0, .y = 0 }, .{ .id = 2, .x = 2.5, .y = 0 }, .{ .id = 3, .x = 5, .y = 0 } };
+    const fixed = [_]model.Support{ .{ .node = 1, .ux = true, .uy = true, .rz = true }, .{ .node = 3, .ux = true, .uy = true, .rz = true } };
+    const lcs = [_]model.LoadCase{.{ .id = "P", .nodal = &.{.{ .node = 2, .fy = -10000 }} }};
+    var m = model.Model{
+        .materials = &.{.{ .id = "s", .E = 200e9 }},
+        .sections = &.{.{ .id = "b", .A = 0.01, .I = 8e-5 }},
+        .nodes = &nodes,
+        .supports = &fixed,
+        .members = &.{
+            .{ .id = 1, .i = 1, .j = 2, .material = "s", .section = "b", .release = .{ .j = &.{"mz"} } },
+            .{ .id = 2, .i = 2, .j = 3, .material = "s", .section = "b" },
+        },
+        .load_cases = &lcs,
+    };
+    const r23 = (try solve(a, m, .{})).ok;
+    try std.testing.expectApproxEqRel(@as(f64, -0.001627604167), r23.cases[0].disp[1][1], 1e-9);
+    try std.testing.expectApproxEqRel(@as(f64, 12500), r23.cases[0].react[0][2], 1e-9);
+    try std.testing.expectEqual(@as(usize, 0), r23.auto_restrained.len);
+
+    m.members = &.{
+        .{ .id = 1, .i = 1, .j = 2, .material = "s", .section = "b", .release = .{ .j = &.{"mz"} } },
+        .{ .id = 2, .i = 2, .j = 3, .material = "s", .section = "b", .release = .{ .i = &.{"mz"} } },
+    };
+    const r24 = (try solve(a, m, .{})).ok;
+    try std.testing.expectEqualSlices(u32, &.{1}, r24.auto_restrained);
+    try std.testing.expectApproxEqRel(@as(f64, -0.001627604167), r24.cases[0].disp[1][1], 1e-9);
+    try std.testing.expectEqual(@as(f64, 0), r24.cases[0].disp[1][2]);
+
+    m.springs = &.{.{ .node = 3, .ky = 1e6 }};
+    try std.testing.expectEqualStrings("support_conflict", (try solve(a, m, .{})).err.code);
 }

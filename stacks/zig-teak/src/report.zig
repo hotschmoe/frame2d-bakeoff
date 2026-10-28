@@ -74,7 +74,12 @@ pub fn writeResults(w: *std.Io.Writer, m: model.Model, r: engine.Results) !void 
         try writeNum(w, c.residual);
         try w.writeByte('}');
     }
-    try w.writeAll("],\n\"warnings\":[],\n\"stats\":");
+    try w.writeAll("],\n\"warnings\":[");
+    for (r.auto_restrained, 0..) |pos, k| {
+        if (k > 0) try w.writeByte(',');
+        try w.print("{{\"warning\":\"auto_restrained\",\"node\":{d},\"dof\":\"rz\"}}", .{m.nodes[r.node_src[pos]].id});
+    }
+    try w.writeAll("],\n\"stats\":");
     try writeStats(w, r.stats);
     try w.writeAll("}\n");
 }

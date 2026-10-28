@@ -1,0 +1,1 @@
+{"wall_s": 0.27616370003670454, "cpu_s": 0.390625, "parallelism": 1.4144690266971458, "mem_peak_mb": 111.6796875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 6, "exit_code": 1, "method": "psutil", "stack": "zig-teak", "label": "p2-test-2"}

@@ -79,3 +79,47 @@ Machine note: two other agents were building/profiling on this machine at the sa
   render p50 8.3 / p95 28.5 / p99 40.4 ms, 774 MB; boundary noop 0.22 ns (in-process).
 - Web (`F2D_PW_ARGS` above, hardware D3D12 WebGPU): ready 258 ms, startup 290 ms, boundary noop 2.3 ns / transfer 7.3 us (zero-copy),
   drag p50 16.8 / p99 21.3 ms, solve_p50 12.8 ms; render p50 16.8 / p99 29.9 ms; 257 KB brotli transferred (2.0 MB raw).
+
+---
+
+# AGENT_LOG: zig-teak, phase P2 (change request, SPEC 4.7)
+
+Run id: run1p5   Machine: win-x64   Agent model: claude-opus-5-5   Started: 2026-10-27 (from tag `p1-done-zig-teak`)
+Teak pin unchanged (9b16f10...). Shared machine: other agents were building concurrently, timings indicative only.
+
+## What changed
+
+- `model.zig`: `Member.release` (`{"i":[..],"j":[..]}`, only `mz` matters), top-level `springs` (`kx`/`ky`/`kr` optional, presence
+  = sprung), both written back by `model.write` (Save in the UI).
+- `engine.zig`: releases by static condensation of the local stiffness (`condenseK`) and of the UDL fixed-end forces (`condenseF`,
+  same elimination step), applied to assembly, the load vector and end-force recovery, so released end moments come out as 0.
+  Springs add to the free DOF diagonal after assembly; restrained + sprung on the same DOF -> `support_conflict`. Auto-restraint:
+  a free `rz` with at least one incident member, every incident member released in `mz` at that end, and no `kr` spring, is
+  restrained before DOF numbering and listed in `Results.auto_restrained`. Profile still uses all 6 member DOFs (structural coupling).
+  Spring forces (-k u) are included in the equilibrium residual (the reference leaves them out, so its F21 residual is 0.33;
+  ours is 2e-16). Springs are not listed under `reactions` (only user-restrained nodes are), matching the reference.
+- `report.zig`: `warnings` array (`{"warning":"auto_restrained","node":n,"dof":"rz"}`, node-id order).
+- UI: warning line (amber, first 12 nodes) and warning count in the status line; member table gets a sortable `Rel` column
+  (`-`, `i`, `j`, `i+j`); canvas draws springs (zigzags for kx/ky, a ring marker for kr) and hinge dots near released ends.
+- Tests: engine F23/F24/F25 unit test; UI test that loads a P2 model and checks the warning text and the `Rel` cells (11/11 pass).
+
+## Problems over ~10 minutes
+
+- None in the engine. Self-inflicted tooling slip (~3 min): a Python edit script run with Windows' default cp1252 encoding
+  truncated `src/engine.zig` (open-for-write before the encode failed) and wrote CRLF into `model.zig`; restored from git
+  and re-ran with explicit UTF-8 / `newline=''`. Also the Bash tool collapsed a leading `\` in Zig multiline-string lines inside
+  a heredoc; fixed with Edit.
+
+## Teak-caused time (excluded, SPEC 15.6)
+
+- ~3 min: Teak `Palette` has no warning colour; filed hotschmoe/teak#143, app uses a literal amber colour.
+
+## Phase notes (end of P2)
+
+- `python harness/conformance.py zig-teak p2`: 7/7 (F21-F25, gen_10_10, gen_50_50); `... p1`: 17/17.
+- `harness/server_conformance.sh zig-teak`: all passed (0 failures), port 18087. Spot-check: POST /solve F24 -> 200 with the
+  warning, F25 -> 422 `support_conflict`.
+- Desktop bench (release): startup 359 ms; drag p50 8.3 / p99 8.7 ms, solve_p50 7.0 ms; render p50 8.4 / p99 37.6 ms; boundary ok.
+- Web bench (`F2D_PW_ARGS="--enable-unsafe-webgpu --enable-gpu --disable-dawn-features=use_dxc"`, 1 run): ready 254 ms,
+  startup 308 ms, drag p50 16.8 / p99 23.0 ms (solve_p50 13.5), render p50 16.8 / p99 29.3 ms, boundary 2.1 ns / 7.3 us.
+- Diff vs P1 tag: 8 files, ~+259 / -7 lines (incl. ~65 lines of tests). Failed builds in P2: 2 (both the test multiline-string typo).

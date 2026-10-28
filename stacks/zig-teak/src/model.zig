@@ -19,7 +19,19 @@ pub const Member = struct {
     j: i64,
     material: []const u8,
     section: []const u8,
+    release: ?Release = null,
 };
+
+/// P2 (SPEC 4.7): end releases per member end; only "mz" is meaningful.
+pub const Release = struct { i: []const []const u8 = &.{}, j: []const []const u8 = &.{} };
+
+/// P2 (SPEC 4.7): spring support stiffnesses on free DOFs (null = absent).
+pub const Spring = struct { node: i64, kx: ?f64 = null, ky: ?f64 = null, kr: ?f64 = null };
+
+pub fn hasMz(names: []const []const u8) bool {
+    for (names) |n| if (std.mem.eql(u8, n, "mz")) return true;
+    return false;
+}
 
 pub const NodalLoad = struct { node: i64, fx: f64 = 0, fy: f64 = 0, mz: f64 = 0 };
 pub const Udl = struct { member: i64, w: f64 };
@@ -35,6 +47,7 @@ pub const Model = struct {
     sections: []const Section = &.{},
     nodes: []Node = &.{},
     supports: []const Support = &.{},
+    springs: []const Spring = &.{},
     members: []const Member = &.{},
     load_cases: []const LoadCase = &.{},
 };
@@ -185,6 +198,21 @@ pub fn write(w: *std.Io.Writer, m: Model) !void {
         try writeStr(w, x.material);
         try w.writeAll(",\"section\":");
         try writeStr(w, x.section);
+        if (x.release) |r| {
+            try w.print(",\"release\":{{\"i\":[{s}],\"j\":[{s}]}}", .{
+                if (hasMz(r.i)) "\"mz\"" else "", if (hasMz(r.j)) "\"mz\"" else "",
+            });
+        }
+        try w.writeByte('}');
+    }
+    try w.writeAll("],\n\"springs\":[");
+    for (m.springs, 0..) |x, k| {
+        if (k > 0) try w.writeByte(',');
+        try w.print("{{\"node\":{d}", .{x.node});
+        inline for (.{ "kx", "ky", "kr" }) |f| if (@field(x, f)) |v| {
+            try w.writeAll(",\"" ++ f ++ "\":");
+            try writeNum(w, v);
+        };
         try w.writeByte('}');
     }
     try w.writeAll("],\n\"load_cases\":[");

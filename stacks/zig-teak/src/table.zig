@@ -2,6 +2,7 @@
 const std = @import("std");
 const teak = @import("teak");
 const state = @import("state.zig");
+const engine = @import("engine.zig");
 
 pub const Table = teak.DataTable(.{ .max_rows = 131_072, .max_cols = 8 });
 
@@ -13,7 +14,16 @@ pub const columns = [_]teak.DataTableColumn{
     .{ .title = "N_i kN", .width = 80, .cell_align = .right },
     .{ .title = "V_i kN", .width = 80, .cell_align = .right },
     .{ .title = "max|M| kNm", .width = 100, .cell_align = .right },
+    .{ .title = "Rel", .width = 44, .cell_align = .center },
 };
+
+/// P2 end releases as a sortable code: 0 none, 1 i, 2 j, 3 both.
+fn releaseCode(mb: anytype) f64 {
+    const r = mb.release orelse return 0;
+    const i: f64 = if (engine.model.hasMz(r.i)) 1 else 0;
+    const j: f64 = if (engine.model.hasMz(r.j)) 2 else 0;
+    return i + j;
+}
 
 /// Row source: data row = member position in id order.
 pub const Rows = struct {
@@ -31,6 +41,7 @@ pub const Rows = struct {
             3 => cr.stations[row][cr.stations[row].len - 1].x,
             4 => cr.end_forces[row][0] / 1000,
             5 => cr.end_forces[row][1] / 1000,
+            7 => releaseCode(mb),
             else => blk: {
                 var mx: f64 = 0;
                 for (cr.stations[row]) |s| mx = @max(mx, @abs(s.M));
@@ -44,6 +55,7 @@ pub const Rows = struct {
         return switch (col) {
             0, 1, 2 => std.fmt.allocPrint(arena, "{d}", .{@as(i64, @intFromFloat(v))}) catch "?",
             3 => std.fmt.allocPrint(arena, "{d:.3}", .{v}) catch "?",
+            7 => ([_][]const u8{ "-", "i", "j", "i+j" })[@intFromFloat(v)],
             else => std.fmt.allocPrint(arena, "{d:.2}", .{v}) catch "?",
         };
     }

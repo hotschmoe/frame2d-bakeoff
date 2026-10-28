@@ -162,7 +162,7 @@ pub const Model = struct {
                 self.err = null;
                 const n = r.member_src.len;
                 if (self.tbl.n_rows != n) self.tbl.setRows(n);
-                self.setStatus("{d} nodes, {d} members, {d} free DOFs, solve {d:.1} ms", .{ r.stats.nodes, r.stats.members, r.stats.free_dofs, self.last_solve_ms });
+                self.setStatus("{d} nodes, {d} members, {d} free DOFs, solve {d:.1} ms, {d} warning(s)", .{ r.stats.nodes, r.stats.members, r.stats.free_dofs, self.last_solve_ms, r.auto_restrained.len });
             },
             .err => |e| {
                 self.res = null;

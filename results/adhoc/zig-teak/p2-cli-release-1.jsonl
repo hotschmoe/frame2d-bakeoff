@@ -1,0 +1,1 @@
+{"wall_s": 6.432354399992619, "cpu_s": 6.375, "parallelism": 0.9910834514975287, "mem_peak_mb": 224.15625, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 6, "exit_code": 0, "method": "psutil", "stack": "zig-teak", "label": "p2-cli-release-1"}

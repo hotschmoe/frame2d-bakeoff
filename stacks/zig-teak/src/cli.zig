@@ -151,6 +151,7 @@ fn freeResults(a: std.mem.Allocator, r: engine.Results) void {
     a.free(r.member_src);
     a.free(r.restrained);
     a.free(r.supported);
+    a.free(r.auto_restrained);
 }
 
 fn median(xs: []f64) f64 {

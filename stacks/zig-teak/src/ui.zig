@@ -112,6 +112,14 @@ pub fn view(m: *const Model, cb: anytype) void {
     cb.popGroup();
 
     if (m.err) |e| cb.textDanger(e);
+    if (m.res) |r| if (r.auto_restrained.len > 0) {
+        // P2 warnings (SPEC 4.7): list the first few auto-restrained rotations
+        var aw: std.Io.Writer.Allocating = .init(a);
+        aw.writer.print("auto_restrained rz ({d}): node", .{r.auto_restrained.len}) catch {};
+        for (r.auto_restrained[0..@min(r.auto_restrained.len, 12)]) |pos| aw.writer.print(" {d}", .{m.m.nodes[r.node_src[pos]].id}) catch {};
+        if (r.auto_restrained.len > 12) aw.writer.writeAll(" ...") catch {};
+        cb.textStyled(aw.written(), .{ .size_px = 13, .family = .mono }, .{ 0.98, 0.75, 0.25, 1 }); // amber (Teak palette has no warning colour)
+    };
 
     cb.pushGroup(.{ .direction = .horizontal, .padding = 0, .gap = 8 });
     canvas.view(m, cb);
@@ -173,4 +181,33 @@ test "dragging a node re-solves" {
     try std.testing.expect(m.drag_node != null);
     update(&m, .{ .canvas = .{ .id = state.CANVAS_ID, .kind = .move, .x = 10, .y = 10, .dx = 0, .dy = 0, .button = .none, .buttons = .{ .left = true }, .mods = .{}, .w = 0, .h = 0 } });
     try std.testing.expect(m.res.?.cases[0].disp[60][1] != before);
+}
+
+test "P2 model: warnings line, release column and hinge/spring markers are shown" {
+    var m = Model.init();
+    m.loadJson(
+        \\{"materials":[{"id":"s","E":2e11}],"sections":[{"id":"b","A":0.01,"I":8e-5}],
+        \\"nodes":[{"id":1,"x":0,"y":0},{"id":2,"x":2.5,"y":0},{"id":3,"x":5,"y":0}],
+        \\"supports":[{"node":1,"ux":true,"uy":true,"rz":true},{"node":3,"ux":true,"uy":true}],
+        \\"springs":[{"node":3,"kr":1e6}],
+        \\"members":[{"id":1,"i":1,"j":2,"material":"s","section":"b","release":{"j":["mz"]}},
+        \\{"id":2,"i":2,"j":3,"material":"s","section":"b","release":{"i":["mz"]}}],
+        \\"load_cases":[{"id":"D","nodal":[{"node":2,"fy":-10000}]}]}
+    );
+    try std.testing.expect(m.res != null);
+    try std.testing.expectEqual(@as(usize, 1), m.res.?.auto_restrained.len);
+    var cb = teak.CmdBuffer(Msg).init(std.testing.allocator);
+    defer cb.deinit();
+    view(&m, &cb);
+    var found = false;
+    for (cb.cmds.items) |c| switch (c) {
+        .text => |t| if (std.mem.indexOf(u8, t.content, "auto_restrained rz (1): node 2") != null) {
+            found = true;
+        },
+        else => {},
+    };
+    try std.testing.expect(found);
+    const rows = table.Rows{ .m = &m };
+    try std.testing.expectEqualStrings("j", rows.cell(cb.arena.allocator(), 7, 0));
+    try std.testing.expectEqualStrings("i", rows.cell(cb.arena.allocator(), 7, 1));
 }

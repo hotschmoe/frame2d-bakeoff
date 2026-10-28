@@ -31,8 +31,14 @@ sec_edits() {
   hf noop "$BL_RUNS" "$BL_WARMUP" "" noop-check=build_check noop-dev=build_dev || failed+="noop "
   for e in $EDITS; do
     if ! edit "$e" 2>/dev/null; then log "edits: no BENCH-EDIT:$e marker in $BL_STACK, skipping"; na+="$e "; continue; fi
+    # undo the probe: otherwise hyperfine's first prepare toggles back to the already-built state and that run is a
+    # no-op (only the discarded warmup with --warmup >= 1, but the only measured run with --quick)
+    edit "$e"
     log "edits: $e  (hyperfine warmup=$BL_WARMUP runs=$BL_RUNS; check then dev)"
-    hf "edit-$e" "$BL_RUNS" "$BL_WARMUP" "edit:$e" "edit-$e-check=build_check" "edit-$e-dev=build_dev" || failed+="$e "
+    hf "edit-$e-check" "$BL_RUNS" "$BL_WARMUP" "edit:$e" "edit-$e-check=build_check" || failed+="$e "
+    # dev last built the pre-check state; after an odd number of check toggles its first prepare would return there
+    [ $(( (BL_RUNS + BL_WARMUP) % 2 )) = 0 ] || edit "$e"
+    hf "edit-$e-dev" "$BL_RUNS" "$BL_WARMUP" "edit:$e" "edit-$e-dev=build_dev" || failed+="$e "
   done
   restore_edits
   [ -z "$na" ] || echo "$na" > "$BL_OUT/edits-not-applicable.txt"

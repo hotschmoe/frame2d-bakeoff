@@ -15,8 +15,16 @@ const is_wasm = builtin.cpu.arch.isWasm();
 
 // ---------------------------------------------------------------- shared state (session API)
 
+// Handles are generation-tagged: handle = gen * max_sessions + slot + 1. f2d_free bumps the slot's generation, so a
+// stale handle (freed, slot since reused by another session) resolves to null instead of aliasing the new session and
+// letting the caller read its buffers with the old session's lengths. Session buffers (geometry, results, stats) are
+// allocated once per session and never reallocated, so a pointer from f2d_geometry/f2d_result/f2d_stats is valid
+// exactly until f2d_free of its handle.
 const max_sessions = 256;
+const max_gen = @divTrunc(std.math.maxInt(c_int), max_sessions) - 1; // keeps every handle a positive c_int
 var sessions: [max_sessions]?*session.Session = @splat(null);
+var slot_gen: [max_sessions]c_int = @splat(0);
+// Message of the last failing session call; f2d_last_error points here and callers copy it out immediately.
 var last_error: [256]u8 = @splat(0);
 
 fn setError(d: *const model.Diag) void {
@@ -31,9 +39,15 @@ fn fail(d: *model.Diag, comptime msg: []const u8) c_int {
     return d.code.abi();
 }
 
+fn slotOf(h: c_int) ?usize {
+    if (h < 1) return null;
+    const k: usize = @intCast(@mod(h - 1, max_sessions));
+    if (@divTrunc(h - 1, max_sessions) != slot_gen[k]) return null;
+    return k;
+}
+
 fn getSession(h: c_int) ?*session.Session {
-    if (h < 1 or h > max_sessions) return null;
-    return sessions[@intCast(h - 1)];
+    return sessions[slotOf(h) orelse return null];
 }
 
 fn register(ar: std.heap.ArenaAllocator, m: model.Model, d: *model.Diag) c_int {
@@ -44,7 +58,7 @@ fn register(ar: std.heap.ArenaAllocator, m: model.Model, d: *model.Diag) c_int {
     };
     for (&sessions, 0..) |*slot, k| if (slot.* == null) {
         slot.* = s;
-        return @intCast(k + 1);
+        return slot_gen[k] * max_sessions + @as(c_int, @intCast(k)) + 1;
     };
     session.destroy(s);
     _ = d.set(.bad_request, "too many open sessions", .{}) catch {};
@@ -103,7 +117,7 @@ export fn f2d_load_json(data: ?[*]const u8, n: c_int) c_int {
     return register(ar, m, &d);
 }
 
-export fn f2d_gen(bays: c_int, stories: c_int) c_int {
+pub export fn f2d_gen(bays: c_int, stories: c_int) c_int {
     var d = model.Diag{};
     var ar = std.heap.ArenaAllocator.init(gpa);
     const m = model.gen(ar.allocator(), @intCast(@max(bays, 1)), @intCast(@max(stories, 1))) catch {
@@ -113,30 +127,32 @@ export fn f2d_gen(bays: c_int, stories: c_int) c_int {
     return register(ar, m, &d);
 }
 
-export fn f2d_free(h: c_int) void {
-    if (getSession(h)) |s| {
-        sessions[@intCast(h - 1)] = null;
-        session.destroy(s);
-    }
+pub export fn f2d_free(h: c_int) void {
+    const k = slotOf(h) orelse return;
+    const s = sessions[k] orelse return;
+    sessions[k] = null;
+    slot_gen[k] = if (slot_gen[k] >= max_gen) 0 else slot_gen[k] + 1;
+    session.destroy(s);
 }
 
 export fn f2d_last_error() [*]const u8 {
     return &last_error;
 }
 
-export fn f2d_counts(h: c_int, out: *[3]c_int) void {
-    if (getSession(h)) |s| out.* = s.counts();
+/// Writes {nodes, members, cases}; all zero for a dead handle (callers size their reads from this).
+pub export fn f2d_counts(h: c_int, out: *[3]c_int) void {
+    out.* = if (getSession(h)) |s| s.counts() else .{ 0, 0, 0 };
 }
 
-export fn f2d_geometry(h: c_int) ?[*]f64 {
+pub export fn f2d_geometry(h: c_int) ?[*]f64 {
     return if (getSession(h)) |s| s.geo.ptr else null;
 }
 
-export fn f2d_result(h: c_int) ?[*]f64 {
+pub export fn f2d_result(h: c_int) ?[*]f64 {
     return if (getSession(h)) |s| s.res.ptr else null;
 }
 
-export fn f2d_stats(h: c_int) ?[*]f64 {
+pub export fn f2d_stats(h: c_int) ?[*]f64 {
     return if (getSession(h)) |s| &s.stats else null;
 }
 
@@ -151,11 +167,11 @@ export fn f2d_case_ids(h: c_int, buf: [*]u8, capacity: c_int) c_int {
     return @intCast(s.case_ids.len);
 }
 
-export fn f2d_set_node(h: c_int, idx: c_int, x: f64, y: f64) void {
+pub export fn f2d_set_node(h: c_int, idx: c_int, x: f64, y: f64) void {
     if (getSession(h)) |s| if (idx >= 0) s.setNode(@intCast(idx), x, y);
 }
 
-export fn f2d_solve(h: c_int, c: c_int) c_int {
+pub export fn f2d_solve(h: c_int, c: c_int) c_int {
     const s = getSession(h) orelse return -1;
     var d = model.Diag{};
     s.solve(c, &d) catch |e| {
@@ -166,8 +182,11 @@ export fn f2d_solve(h: c_int, c: c_int) c_int {
     return 0;
 }
 
-/// Returns the serialized model (owned by the session, valid until the next call); length in out_len.
-export fn f2d_to_json(h: c_int, out_len: *c_int) ?[*]const u8 {
+/// Returns the serialized model and its length together (out_len; 0 with a null pointer on failure). The buffer is
+/// owned by the session and valid until the next f2d_to_json or f2d_free of that handle: copy it out before any
+/// other call (on web, any call may also grow memory).
+pub export fn f2d_to_json(h: c_int, out_len: *c_int) ?[*]const u8 {
+    out_len.* = 0;
     const s = getSession(h) orelse return null;
     const j = s.toJson() catch return null;
     out_len.* = @intCast(j.len);

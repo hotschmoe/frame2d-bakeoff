@@ -285,3 +285,53 @@ test "release: i-end release mirrors j-end release (fixed at the released side's
     try testing.expectApproxEqAbs(0.0, a.outs[0].ef[2], 1e-6); // released i end carries no moment
     try testing.expect(a.outs[0].residual < 1e-9);
 }
+
+// ---- C ABI lifetime contract (lib.zig): what the Dart bridge relies on
+const lib = @import("lib.zig");
+
+test "abi: a freed handle stays dead after its slot is reused; double free is a no-op" {
+    const h1 = lib.f2d_gen(2, 2);
+    try testing.expect(h1 > 0);
+    lib.f2d_free(h1);
+    const h2 = lib.f2d_gen(5, 4); // reuses the slot
+    defer lib.f2d_free(h2);
+    try testing.expect(h2 > 0 and h2 != h1);
+    var c: [3]c_int = .{ 9, 9, 9 };
+    lib.f2d_counts(h1, &c);
+    try testing.expectEqual([3]c_int{ 0, 0, 0 }, c);
+    try testing.expect(lib.f2d_geometry(h1) == null);
+    try testing.expect(lib.f2d_result(h1) == null);
+    try testing.expect(lib.f2d_stats(h1) == null);
+    try testing.expect(lib.f2d_solve(h1, 0) < 0);
+    var n: c_int = 77;
+    try testing.expect(lib.f2d_to_json(h1, &n) == null);
+    try testing.expectEqual(@as(c_int, 0), n);
+    lib.f2d_free(h1); // must not free h2
+    try testing.expectEqual(@as(c_int, 0), lib.f2d_solve(h2, 0));
+    lib.f2d_counts(h2, &c);
+    try testing.expectEqual([3]c_int{ 30, 44, 3 }, c);
+    for ([_]c_int{ 0, -1, 1 << 30 }) |bad| try testing.expect(lib.f2d_result(bad) == null);
+}
+
+test "abi: session buffers are stable across solve, set_node, to_json and other sessions" {
+    const h = lib.f2d_gen(10, 10);
+    defer lib.f2d_free(h);
+    const geo = lib.f2d_geometry(h).?;
+    const res = lib.f2d_result(h).?;
+    const st = lib.f2d_stats(h).?;
+    try testing.expectEqual(@as(c_int, 0), lib.f2d_solve(h, 0));
+    var n: c_int = 0;
+    const j1 = lib.f2d_to_json(h, &n).?;
+    try testing.expect(n > 100);
+    _ = j1;
+    const other = lib.f2d_gen(40, 40);
+    try testing.expectEqual(@as(c_int, 0), lib.f2d_solve(other, 1));
+    lib.f2d_free(other);
+    lib.f2d_set_node(h, 5, 1.25, 2.5);
+    try testing.expectEqual(@as(c_int, 0), lib.f2d_solve(h, 1));
+    _ = lib.f2d_to_json(h, &n).?;
+    try testing.expect(lib.f2d_geometry(h).? == geo);
+    try testing.expect(lib.f2d_result(h).? == res);
+    try testing.expect(lib.f2d_stats(h).? == st);
+    try testing.expectEqual(@as(f64, 1.25), geo[5 * session.node_stride + 1]);
+}

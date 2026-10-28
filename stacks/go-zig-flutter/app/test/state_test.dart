@@ -29,11 +29,11 @@ class FakeEngine implements Engine {
   @override
   (int, int, int) counts(int h) => (2, 1, 1);
   @override
-  Float64List geometry(int h, int length) => geo;
+  Float64List geometry(int h) => Float64List.fromList(geo);
   @override
-  Float64List result(int h, int length) => res;
+  Float64List resultInto(int h, Float64List dst) => dst..setRange(0, res.length, res);
   @override
-  Float64List stats(int h) => Float64List(Layout.statCount);
+  Float64List statsInto(int h, Float64List dst) => dst;
   @override
   List<String> caseIds(int h) => ['D'];
   @override

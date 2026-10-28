@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 
 import 'engine/engine.dart';
 
-/// Holds the loaded model session, its latest results (flat buffers owned by the Zig engine) and the view.
+/// Holds the loaded model session, Dart-owned copies of its geometry and latest results (never views into engine
+/// memory, which a free, a new model or a wasm memory.grow would invalidate) and the view.
 /// No analysis happens here: Dart only does state, geometry-to-screen mapping and drawing.
 class AppState extends ChangeNotifier {
   AppState(this.engine);
@@ -79,13 +80,15 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return false;
     }
-    if (handle > 0) engine.free(handle);
+    final old = handle;
     handle = h;
-    final (n, m, c) = engine.counts(h);
+    final (n, m, _) = engine.counts(h);
     nodeCount = n;
     memberCount = m;
-    geo = engine.geometry(h, n * Layout.nodeStride + m * Layout.memberStride);
-    res = Float64List(n * 3 + m * Layout.resMember);
+    geo = engine.geometry(h);
+    res = Float64List(Layout.resultLength(n, m)); // reused by every solve of this model
+    stats = Float64List(Layout.statCount);
+    if (old > 0) engine.free(old); // only after nothing refers to the old session
     caseIds = engine.caseIds(h);
     caseIndex = 0;
     error = null;
@@ -129,8 +132,8 @@ class AppState extends ChangeNotifier {
       return false;
     }
     error = null;
-    res = engine.result(handle, nodeCount * 3 + memberCount * Layout.resMember);
-    stats = engine.stats(handle);
+    res = engine.resultInto(handle, res);
+    stats = engine.statsInto(handle, stats);
     lastSolveMs = sw.elapsedMicroseconds / 1000.0;
     solved = true;
     _maxima();
@@ -160,7 +163,7 @@ class AppState extends ChangeNotifier {
   /// Moves node [index] to (x, y) in the engine and re-solves the current case.
   void moveNode(int index, double x, double y) {
     engine.setNode(handle, index, x, y);
-    // keep the Dart-side geometry in sync (on web the buffer is a copy)
+    // keep the Dart-side geometry copy in sync with the engine
     geo[index * Layout.nodeStride + 1] = x;
     geo[index * Layout.nodeStride + 2] = y;
     solve();

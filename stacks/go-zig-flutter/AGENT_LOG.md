@@ -236,3 +236,22 @@ In-app and engine performance were not changed on purpose: the engine solve is a
 ### Final conformance
 
 `harness/conformance.py go-zig-flutter p1`: 17/17. `p2`: 7/7. `all` (includes the P3 set): 22/22. `harness/server_conformance.sh go-zig-flutter`: all passed (port 18096). `test_all` (zig test 13/13, go test, flutter test 2/2): green. `build_check` and `build_dev` green. Runtime smoke (`F2D_RUN=run1p5 harness/runtime/run.sh go-zig-flutter build cli desktop web server binsize --quick`): rc 0, all bench modes (boundary, startup, drag, render) ran on desktop and web (wasm and dart2js).
+
+## Bridge lifetime audit (docs/zig-dart-bridge.md 2.2-2.6)
+
+Checked every place Dart gets a pointer/view into engine memory, against free / gen or load of another size / Save / solve / wasm `memory.grow`.
+
+- **Web: safe before and after.** `web/f2d_loader.js` `slice()`s every f64 buffer, decodes strings right away, and always reads `memory.buffer` *after* the wasm call that may grow it (`loadJson` takes the buffer after `f2d_alloc`). No view on `memory.buffer` reaches Dart.
+- **Native: no crash in the shipped app, but it was fragile.** `AppState.geo/res/stats` were long-lived `asTypedList` views into session buffers. Those buffers are allocated once per session and never reallocated (solve, set_node and to_json do not move them), so they were valid until `f2d_free`. `_adopt` freed the old session while `geo`/`res` still pointed into it, then reassigned them, all synchronously. Any reference kept across a generate or load would dangle. `f2d_to_json` hands back pointer and length together and is decoded at once, but a null return (OOM) read garbage `len`.
+- **Engine globals: real bug.** `sessions[256]` handles were bare slot numbers, so a freed handle aliased the next session in that slot (ABA): reads were sized with the old counts on a new buffer. `f2d_counts` also left `out` untouched for a dead handle (native: uninitialized malloc; web: stale scratch from the previous call). `last_error` is a static buffer that both sides copy out right away (fine single-threaded). `echo_buf` is reallocated when `n` changes; only the boundary bench uses it and it never holds the view (documented, not changed).
+
+Fixes:
+- Handles are generation-tagged (`gen * 256 + slot + 1`, gen bumped on free). Stale handles resolve to null/zero counts, and a double free is a no-op.
+- `f2d_counts` zero-fills; `f2d_to_json` sets `out_len = 0` on failure.
+- Dart `Engine` API is now `geometry(h)` (Dart-owned copy, once per model), `resultInto(h, dst)` and `statsInto(h, dst)`. Native: `setRange` into lists that `AppState` allocates once per model and reuses on every solve, so no allocation on the drag path; sized from `f2d_counts`; null pointer means nothing is read. The `f2d_counts` out-param is allocated once, so `counts` no longer mallocs. Web: returns the loader's copy, unchanged.
+- `AppState._adopt` frees the old session last. Lifetimes are documented in the header.
+
+Tests (all run by `test_all`): zig `abi:` tests (stale handle after slot reuse; buffer pointers stable across solve/set_node/to_json/other sessions). `app/test/ffi_lifetime_test.dart` runs on the real dev DLL through `F2D_ENGINE_LIB`: hold results, Save twice, gen another size, load, solve, gen 100x100, dispose, then check the held lists are unchanged. It also covers result-list reuse, the dead handle and lastError. `app/test/web/lifetime_test.mjs` runs Node against the real loader and wasm: a control proves a raw view detaches on grow, then the same sequence plus dead handle. Before the fix the web test failed only on the stale-handle case.
+
+Verified: conformance p1 17/17, p2 7/7, server conformance passed, test_all green, `runtime/run.sh go-zig-flutter build desktop web --quick` rc 0 (indicative only: shared machine).
+Note: `server_conformance.sh` needs the pinned Python (source `harness/machine-env.sh` first); the PATH default Python 3.11 has no numpy.

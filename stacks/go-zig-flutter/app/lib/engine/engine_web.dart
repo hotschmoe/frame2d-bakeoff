@@ -63,14 +63,16 @@ class WasmEngine implements Engine {
     return (c[0].toInt(), c[1].toInt(), c[2].toInt());
   }
 
+  // The loader slices every buffer out of wasm memory (a fresh JS array, never a view on memory.buffer, which
+  // memory.grow detaches), so the returned list is already caller-owned; dst is not needed.
   @override
-  Float64List geometry(int h, int length) => _a.geometry(h).toDart;
+  Float64List geometry(int h) => _a.geometry(h).toDart;
 
   @override
-  Float64List result(int h, int length) => _a.result(h).toDart;
+  Float64List resultInto(int h, Float64List dst) => _a.result(h).toDart;
 
   @override
-  Float64List stats(int h) => _a.stats(h).toDart;
+  Float64List statsInto(int h, Float64List dst) => _a.stats(h).toDart;
 
   @override
   List<String> caseIds(int h) => (jsonDecode(_a.caseIds(h)) as List).cast<String>();

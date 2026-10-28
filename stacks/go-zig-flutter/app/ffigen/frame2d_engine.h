@@ -6,7 +6,12 @@
 extern "C" {
 #endif
 
-/* ---- session API (Flutter desktop via dart:ffi, web via WASM) ---- */
+/* ---- session API (Flutter desktop via dart:ffi, web via WASM) ----
+ * Lifetimes: handles are generation-tagged (a freed handle stays dead even after its slot is reused). Pointers from
+ * f2d_geometry/f2d_result/f2d_stats are fixed per session (never reallocated) and valid until f2d_free(h); results
+ * are overwritten in place by the next f2d_solve. f2d_to_json and f2d_last_error buffers are valid until the next
+ * call of the same function; f2d_echo's until the next f2d_echo. On web every call may grow memory and detach
+ * views, so the loader copies everything out. Single-threaded by contract. */
 extern void f2d_noop(void);
 extern void* f2d_echo(int n);
 extern int f2d_load_json(void* data, int n);

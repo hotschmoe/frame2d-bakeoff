@@ -299,11 +299,19 @@ run_server() {
   FRAME2D_DB="${FRAME2D_DB:-$OUT/frame2d.db}" exec "$REL_DIR/frame2d-server$EXE"
 }
 
+# test_all: zig test, go test, flutter test (Dart state tests + dart:ffi bridge lifetime tests against the dev
+# shared library), and the web bridge lifetime test (real web/f2d_loader.js + dev engine.wasm under Node).
 test_all() {
   ( cd "$STACK_DIR/zig" && zig test src/tests.zig ) >&2 || return 1
-  _build_static_lib dev || return 1
+  _build_static_lib dev && _build_native_lib dev && _build_wasm dev || return 1
   _go dev test "${_jobs_flag[@]}" -ldflags="$(_go_ldflags dev '')" ./... >&2 || return 1
-  ( cd "$APP" && _pub_get && flutter test >&2 )
+  local lib="$DEV_DIR/$LIB_FILE"; [ "$HOST" = windows ] && lib="$(cygpath -w "$lib")"
+  ( cd "$APP" && _pub_get && F2D_ENGINE_LIB="$lib" flutter test >&2 ) || return 1
+  if command -v node >/dev/null; then
+    node "$APP/test/web/lifetime_test.mjs" "$DEV_DIR/engine.wasm" >&2 || return 1
+  else
+    echo "test_all: node not found, web bridge lifetime test skipped" >&2
+  fi
 }
 
 deps_report() { # transitive dependencies: Go modules used by the build + Dart/pub packages (Zig: std only)

@@ -10,11 +10,15 @@ import 'engine.dart';
 
 Future<Engine> createEngine() async => FfiEngine();
 
-/// dart:ffi bridge to the Zig shared library. Result buffers are session-owned Zig memory exposed as
-/// zero-copy Float64List views; they stay valid until the next solve or free of that session.
+/// dart:ffi bridge to the Zig shared library. Results are copied (setRange, a few us for 38k doubles) out of the
+/// session-owned Zig buffers into Dart-owned lists the caller reuses, so no view into engine memory outlives a call.
+/// Every read is sized from f2d_counts of the same handle, and a dead handle (pointer null, counts zero) reads nothing.
 class FfiEngine implements Engine {
-  FfiEngine() : _b = EngineBindings(ffi.DynamicLibrary.open(_libName()));
+  /// [libPath] overrides the library lookup (tests load build/dev directly).
+  FfiEngine([String? libPath]) : _b = EngineBindings(ffi.DynamicLibrary.open(libPath ?? _libName()));
   final EngineBindings _b;
+  // out-parameter scratch, allocated once for the engine's lifetime (no per-call malloc on the solve path)
+  final ffi.Pointer<ffi.Int> _cnt = malloc<ffi.Int>(3);
 
   static String _libName() {
     if (Platform.isWindows) return 'frame2d_engine.dll';
@@ -57,23 +61,34 @@ class FfiEngine implements Engine {
 
   @override
   (int, int, int) counts(int h) {
-    final out = malloc<ffi.Int>(3);
-    try {
-      _b.f2d_counts(h, out);
-      return (out[0], out[1], out[2]);
-    } finally {
-      malloc.free(out);
-    }
+    _b.f2d_counts(h, _cnt);
+    return (_cnt[0], _cnt[1], _cnt[2]);
   }
 
   @override
-  Float64List geometry(int h, int length) => _b.f2d_geometry(h).cast<ffi.Double>().asTypedList(length);
+  Float64List geometry(int h) {
+    final (n, m, _) = counts(h);
+    final p = _b.f2d_geometry(h);
+    if (p == ffi.nullptr) return Float64List(0);
+    final len = Layout.geometryLength(n, m);
+    return Float64List(len)..setRange(0, len, p.cast<ffi.Double>().asTypedList(len));
+  }
 
   @override
-  Float64List result(int h, int length) => _b.f2d_result(h).cast<ffi.Double>().asTypedList(length);
+  Float64List resultInto(int h, Float64List dst) {
+    final (n, m, _) = counts(h);
+    final p = _b.f2d_result(h);
+    final len = Layout.resultLength(n, m);
+    if (p != ffi.nullptr && len <= dst.length) dst.setRange(0, len, p.cast<ffi.Double>().asTypedList(len));
+    return dst;
+  }
 
   @override
-  Float64List stats(int h) => _b.f2d_stats(h).cast<ffi.Double>().asTypedList(Layout.statCount);
+  Float64List statsInto(int h, Float64List dst) {
+    final p = _b.f2d_stats(h);
+    if (p != ffi.nullptr) dst.setRange(0, Layout.statCount, p.cast<ffi.Double>().asTypedList(Layout.statCount));
+    return dst;
+  }
 
   @override
   List<String> caseIds(int h) {
@@ -104,7 +119,9 @@ class FfiEngine implements Engine {
   String toJson(int h) {
     final len = malloc<ffi.Int>(1);
     try {
+      // pointer and length come back from one call; decode (copy) before any other engine call
       final p = _b.f2d_to_json(h, len);
+      if (p == ffi.nullptr) return '';
       return utf8.decode(p.cast<ffi.Uint8>().asTypedList(len[0]));
     } finally {
       malloc.free(len);

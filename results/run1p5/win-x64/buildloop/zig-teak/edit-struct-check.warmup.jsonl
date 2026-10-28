@@ -1,1 +1,1 @@
-{"wall_s": 1.301862499967683, "cpu_s": 2.15625, "parallelism": 1.6562809052826437, "mem_peak_mb": 415.6875, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 9, "exit_code": 0, "method": "psutil", "stack": "zig-teak", "label": "edit-struct-check"}
+{"wall_s": 1.3043922000215389, "cpu_s": 2.078125, "parallelism": 1.5931749668279869, "mem_peak_mb": 415.89453125, "swap_peak_mb": null, "io_read_mb": null, "io_write_mb": null, "procs_peak": 9, "exit_code": 0, "method": "psutil", "stack": "zig-teak", "label": "edit-struct-check"}

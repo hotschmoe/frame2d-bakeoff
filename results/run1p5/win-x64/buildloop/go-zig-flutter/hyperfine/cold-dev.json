@@ -2,7 +2,7 @@
   "schema_version": 2,
   "metadata": {
     "hyperfine_version": "2.0.0",
-    "start_time": "2026-10-27T21:18:24Z",
+    "start_time": "2026-10-28T06:40:02Z",
     "platform": {
       "os": "Windows_NT",
       "architecture": "x86_64"
@@ -16,38 +16,38 @@
       "measurements": [
         {
           "time_wall_clock": {
-            "value": 24.7476255,
+            "value": 23.5114293,
             "unit": "second"
           },
           "time_cpu": {
-            "value": 201.609375,
+            "value": 194.84375,
             "unit": "second"
           },
           "time_user": {
-            "value": 129.65625,
+            "value": 129.15625,
             "unit": "second"
           },
           "time_system": {
-            "value": 71.953125,
+            "value": 65.6875,
             "unit": "second"
           },
           "exit_code": 0
         },
         {
           "time_wall_clock": {
-            "value": 26.2638303,
+            "value": 25.532041,
             "unit": "second"
           },
           "time_cpu": {
-            "value": 222.171875,
+            "value": 216.59375,
             "unit": "second"
           },
           "time_user": {
-            "value": 146.859375,
+            "value": 143.109375,
             "unit": "second"
           },
           "time_system": {
-            "value": 75.3125,
+            "value": 73.484375,
             "unit": "second"
           },
           "exit_code": 0
@@ -57,38 +57,38 @@
         "time_cpu": {
           "unit": "second",
           "count": 2,
-          "mean": 211.890625,
-          "stddev": 14.539883188148384,
-          "median": 211.890625,
-          "min": 201.609375,
-          "max": 222.171875
+          "mean": 205.71875,
+          "stddev": 15.379572490807409,
+          "median": 205.71875,
+          "min": 194.84375,
+          "max": 216.59375
         },
         "time_system": {
           "unit": "second",
           "count": 2,
-          "mean": 73.6328125,
-          "stddev": 2.375436843048558,
-          "median": 73.6328125,
-          "min": 71.953125,
-          "max": 75.3125
+          "mean": 69.5859375,
+          "stddev": 5.513223184563863,
+          "median": 69.5859375,
+          "min": 65.6875,
+          "max": 73.484375
         },
         "time_user": {
           "unit": "second",
           "count": 2,
-          "mean": 138.2578125,
-          "stddev": 12.164446345099826,
-          "median": 138.2578125,
-          "min": 129.65625,
-          "max": 146.859375
+          "mean": 136.1328125,
+          "stddev": 9.866349306243546,
+          "median": 136.1328125,
+          "min": 129.15625,
+          "max": 143.109375
         },
         "time_wall_clock": {
           "unit": "second",
           "count": 2,
-          "mean": 25.5057279,
-          "stddev": 1.072118695747591,
-          "median": 25.5057279,
-          "min": 24.7476255,
-          "max": 26.2638303
+          "mean": 24.521735149999998,
+          "stddev": 1.4287882352148777,
+          "median": 24.521735149999998,
+          "min": 23.5114293,
+          "max": 25.532041
         }
       }
     }

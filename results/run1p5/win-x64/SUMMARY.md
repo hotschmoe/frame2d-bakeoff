@@ -23,12 +23,12 @@ with the same reduced protocol and stack code (repo HEAD, P5 state) as `results/
 | zig | 64.7 s (44.1 s) | 78.8 s (51.4 s) | 127.0 s (87.5 s) | 95.7 s (60.4 s) | 92.8 s (68.2 s) | 0.94 s (1.04 s) | 3.91 s (3.03 s) | 0.34 s (0.51 s) |
 | go | **2.70 s** (3.65 s) | **6.79 s** (8.33 s) [1] | **4.50 s** (5.70 s) | **3.77 s** (5.39 s) | **10.2 s** (11.7 s) | **0.39 s** (0.63 s) | **1.15 s** (0.96 s) | 0.33 s (0.67 s) |
 | rust-flutter | 10.7 s (9.32 s) | 21.0 s (18.3 s) | 35.9 s (43.9 s) | 50.1 s (73.4 s) | 33.9 s (42.2 s) | 1.85 s (2.02 s) | 3.94 s (5.41 s) | 0.45 s (0.90 s) |
-| zig-flutter | 70.1 s (59.3 s) | 69.4 s (61.0 s) | 100.0 s (96.9 s) | 90.8 s (88.5 s) | 79.5 s (79.9 s) | 3.31 s (3.05 s) | 6.65 s (9.53 s) | 0.39 s (0.85 s) |
+| zig-flutter [3] | 66.7 s (59.3 s) | 66.9 s (61.0 s) | 92.1 s (96.9 s) | 87.1 s (88.5 s) | 79.6 s (79.9 s) | 2.87 s (3.05 s) | 6.54 s (9.53 s) | 0.38 s (0.85 s) |
 | go-flutter | 2.68 s (5.47 s) | 7.06 s (24.1 s) | 28.9 s (46.0 s) | 26.9 s (47.1 s) | 25.5 s (37.9 s) | 1.84 s (2.23 s) | 3.45 s (6.11 s) | **0.28 s** (0.79 s) |
-| go-zig-flutter | 28.5 s (51.4 s) | 33.0 s (53.1 s) | 29.9 s (43.5 s) | 29.8 s (48.6 s) | 25.3 s (38.0 s) | 1.62 s (1.94 s) | 5.54 s (6.93 s) | 0.56 s (1.65 s) |
-| zig-teak [2] | 53.9 s (n/a) | 91.7 s (n/a) | 107.1 s (n/a) | 85.7 s (n/a) | 88.5 s (n/a) | 1.07 s (n/a) | 5.89 s (n/a) | 0.22 s (n/a) |
+| go-zig-flutter [3] | 27.4 s (51.4 s) | 41.3 s (53.1 s) | 27.5 s (43.5 s) | 27.1 s (48.6 s) | 24.3 s (38.0 s) | 1.18 s (1.94 s) | 4.93 s (6.93 s) | 0.60 s (1.65 s) |
+| zig-teak [2][3] | 53.2 s (n/a) | 91.8 s (n/a) | 108.3 s (n/a) | 86.0 s (n/a) | 84.5 s (n/a) | 1.09 s (n/a) | **2.55 s** (n/a) | 0.27 s (n/a) |
 
-zig-flutter also has cold web_wasm 91.5 s (93.2 s).
+zig-flutter also has cold web_wasm 92.8 s (93.2 s).
 
 [1] **Blocked by Windows Defender in the default environment.** Every clean `go` `build_server_release` failed: Defender quarantined the
 freshly linked `%TEMP%\go-build*\b001\exe\a.out.exe` as `Behavior:Win32/DefenseEvasion.A!ml` (ML false positive), so `go build`
@@ -39,9 +39,16 @@ Defender's first-sight scan of the new binary in the (not excluded) repo folder.
 target (35.3 s). go-flutter and go-zig-flutter servers were never flagged.
 
 [2] **zig-teak is a win-x64-only extra stack** (SPEC 15.6; built this session, P1/P2/P5 on this machine), so there is no win-arm64
-column. Measured at its P5 state (Teak pinned at v0.1.0 `9b16f10`), same protocol, on a quiet machine, after harness fix `9d1284d`
+column. Measured with Teak v0.2.0 (see [3]; first measured at P5 on v0.1.0), same protocol, quiet machine, after harness fix `9d1284d`
 (which only changes `--quick` runs). Its web target goes through Teak's zunk/WebGPU path, not Flutter or wasm-bindgen.
-Per-edit p50: leaf/struct/ui check 1.25-1.30 s, server check 0.49 s; leaf/struct/ui dev 6.8-7.1 s, server dev 2.65 s.
+Per-edit p50: leaf/struct/ui check 1.24-1.31 s, server check 0.49 s; leaf/struct dev 2.83 s, ui dev 1.90 s, server dev 2.66 s.
+
+[3] **Re-measured 2026-10-27 23:00-23:43 after same-day code changes** (quiet machine, same protocol); the earlier values are in git
+(`cf8d6b4` and before). zig-teak: Teak v0.1.0 -> v0.2.0 (`ba2fe87`), whose Debug CLI + desktop builds now use Zig's self-hosted
+backend (`use_llvm = false`, Teak #154): edit dev 5.89 s -> 2.55 s, check unchanged; the server stays on LLVM. zig-flutter:
+memory-safe bridge (`907bff3`, docs/zig-dart-bridge.md 2.5); go-zig-flutter: handle generations + owned copies (`ea7d3ac`).
+Both bridge fixes are build-time neutral within noise (zig-flutter edit dev 6.65 -> 6.54 s; go-zig-flutter 5.54 -> 4.93 s,
+cold server 33.0 -> 41.3 s).
 
 ## Resources (psutil; Flutter stacks under-counted, see caveats)
 
@@ -51,10 +58,10 @@ Per-edit p50: leaf/struct/ui check 1.25-1.30 s, server check 0.49 s; leaf/struct
 | zig | 347.3 | 4189 | 6.1 | 614 |
 | go | 56.2 | 1346 | 1.3 | 563 |
 | rust-flutter | 59.5 | 1825 | 2.1 | 458 |
-| zig-flutter | 139.4 | 2339 | 5.1 | 959 |
+| zig-flutter | 144.1 | 2367 | 4.9 | 965 |
 | go-flutter | 51.1 | 1237 | 2.0 | 449 |
-| go-zig-flutter | 137.7 | 1721 | 6.9 | 618 |
-| zig-teak | 157.3 | 2071 | 8.3 | 994 |
+| go-zig-flutter | 141.9 | 1799 | 6.6 | 626 |
+| zig-teak | 152.3 | 1973 | 4.4 | 529 |
 
 ## Findings
 
@@ -62,8 +69,9 @@ Per-edit p50: leaf/struct/ui check 1.25-1.30 s, server check 0.49 s; leaf/struct
 2. **Zig cold builds are ~45% slower on this x64 desktop than on the Snapdragon laptop** (cli 64.7 s vs 44.1 s; desktop 127 s vs 87.5 s).
    They are close to single-threaded (cold cli: 65 CPU-s in 65 s wall), so single-core speed decides, not the 24 cores. Zig incremental
    checks are unchanged (~1 s). The Zig engine is also why zig-flutter and go-zig-flutter have the slowest cold builds of the Flutter stacks.
-   zig-teak (all-Zig UI) lands in the same band: 54-107 s cold, ~1.1 s check, but ~6-7 s `build_dev` per edit because every dev build
-   relinks the desktop app and the web wasm (P5 measured `zig build check --watch -fincremental` at 0.05 s, not part of this protocol).
+   zig-teak (all-Zig UI) lands in the same band: 53-108 s cold, ~1.1 s check; `build_dev` per edit was ~6-7 s because every dev build
+   relinks the desktop app and the web wasm; with Teak v0.2.0 the self-hosted backend cut that to ~2.6 s [3] (P5 measured
+   `zig build check --watch -fincremental` at 0.05 s, not part of this protocol).
 3. **Rust is a wash between machines** (cargo parallelises well: cold desktop 280 CPU-s in 24 s).
 4. **Flutter stacks are 20-70% faster than on win-arm64**, where Dart and the engine ran under x64 emulation (go-flutter cold server
    7.1 s vs 24.1 s, ui-edit `build_dev` 6.5 s vs 11.5 s). Flutter UI edits are still the slowest edit loop (4.5-5 s check, 7-17 s dev).

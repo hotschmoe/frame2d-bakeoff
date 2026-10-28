@@ -1,0 +1,115 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "hyperfine_version": "2.0.0",
+    "start_time": "2026-10-28T06:33:22Z",
+    "platform": {
+      "os": "Windows_NT",
+      "architecture": "x86_64"
+    }
+  },
+  "primary_metric": "time_wall_clock",
+  "results": [
+    {
+      "command": "C:/PROGRA~1/Git/bin/bash.exe C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/measure.sh zig-flutter edit-struct-dev -- bash C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/harness/buildloop/call.sh C:/Users/hotschmoe/Documents/GitHub/frame2d-bakeoff/stacks/zig-flutter build_dev",
+      "name": "edit-struct-dev",
+      "measurements": [
+        {
+          "time_wall_clock": {
+            "value": 3.4317932,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 9.078125,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 7.0,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 2.078125,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 3.3691641,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 9.468750000000002,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 7.515625000000001,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.9531250000000002,
+            "unit": "second"
+          },
+          "exit_code": 0
+        },
+        {
+          "time_wall_clock": {
+            "value": 3.4230874,
+            "unit": "second"
+          },
+          "time_cpu": {
+            "value": 9.140625000000002,
+            "unit": "second"
+          },
+          "time_user": {
+            "value": 7.171875000000001,
+            "unit": "second"
+          },
+          "time_system": {
+            "value": 1.9687500000000002,
+            "unit": "second"
+          },
+          "exit_code": 0
+        }
+      ],
+      "summary": {
+        "time_cpu": {
+          "unit": "second",
+          "count": 3,
+          "mean": 9.229166666666666,
+          "stddev": 0.2098253862342057,
+          "median": 9.140625000000002,
+          "min": 9.078125,
+          "max": 9.468750000000002
+        },
+        "time_system": {
+          "unit": "second",
+          "count": 3,
+          "mean": 2.0,
+          "stddev": 0.06810779599282289,
+          "median": 1.9687500000000002,
+          "min": 1.9531250000000002,
+          "max": 2.078125
+        },
+        "time_user": {
+          "unit": "second",
+          "count": 3,
+          "mean": 7.229166666666667,
+          "stddev": 0.2625433991901787,
+          "median": 7.171875000000001,
+          "min": 7.0,
+          "max": 7.515625000000001
+        },
+        "time_wall_clock": {
+          "unit": "second",
+          "count": 3,
+          "mean": 3.4080149,
+          "stddev": 0.03392618802473989,
+          "median": 3.4230874,
+          "min": 3.3691641,
+          "max": 3.4317932
+        }
+      }
+    }
+  ]
+}

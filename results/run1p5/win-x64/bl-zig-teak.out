@@ -1,0 +1,77 @@
+[buildloop 23:00:08] === zig-teak: section cold (quick=0) ===
+[buildloop 23:00:08] cold: cli (build_cli_release) x2, clean_all before each run
+Benchmark 1: cold-cli (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time   53.461 s   ±   0.015 s     53.450 s   …  53.471 s
+ 
+[buildloop 23:01:56] cold: server (build_server_release) x2, clean_all before each run
+Benchmark 1: cold-server (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.5 min ±     0.0 min      1.5 min …     1.5 min
+ 
+[buildloop 23:05:02] cold: desktop (build_desktop_release) x2, clean_all before each run
+Benchmark 1: cold-desktop (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.8 min ±     0.0 min      1.8 min …     1.8 min
+ 
+[buildloop 23:08:40] cold: web (build_web_release) x2, clean_all before each run
+Benchmark 1: cold-web (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.4 min ±     0.0 min      1.4 min …     1.4 min
+ 
+[buildloop 23:11:34] cold: dev (build_dev) x2, clean_all before each run
+Benchmark 1: cold-dev (2 runs)
+                mean     ±       σ          min     …     max
+  Wall Time      1.4 min ±     0.0 min      1.4 min …     1.4 min
+ 
+[buildloop 23:14:24] section cold: ok in 856 s
+[buildloop 23:14:25] === zig-teak: section edits (quick=0) ===
+[buildloop 23:14:25] edits: priming build_check and build_dev
+[buildloop 23:14:29] edits: no-op rebuilds
+Benchmark 1: noop-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    485.1 ms  ±    23.1 ms     465.4 ms  …   510.5 ms
+ 
+Benchmark 2: noop-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    500.4 ms  ±    34.0 ms     461.5 ms  …   524.2 ms            +3.2%
+ 
+[buildloop 23:14:34] edits: leaf  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-leaf-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.548 s   ±   0.003 s      1.546 s   …   1.552 s
+ 
+Benchmark 1: edit-leaf-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    3.085 s   ±   0.006 s      3.082 s   …   3.092 s
+ 
+  Warning: The first benchmarking run for this command was significantly slower than the rest (3.092 s). This could be caused by (filesystem) caches that were not filled until after the first run. You are already using both the '--warmup' option as well as the '--prepare' option. Consider re-running the benchmark on a quiet system. Maybe it was a random outlier. Alternatively, consider increasing the warmup count.
+ 
+[buildloop 23:14:57] edits: struct  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-struct-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.555 s   ±   0.007 s      1.547 s   …   1.560 s
+ 
+Benchmark 1: edit-struct-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    3.069 s   ±   0.027 s      3.038 s   …   3.087 s
+ 
+[buildloop 23:15:20] edits: server  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-server-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    739.1 ms  ±     6.5 ms     735.2 ms  …   746.7 ms
+ 
+Benchmark 1: edit-server-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.905 s   ±   0.013 s      2.890 s   …   2.914 s
+ 
+[buildloop 23:15:38] edits: ui  (hyperfine warmup=1 runs=3; check then dev)
+Benchmark 1: edit-ui-check (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.501 s   ±   0.013 s      1.487 s   …   1.514 s
+ 
+Benchmark 1: edit-ui-dev (3 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    2.146 s   ±   0.003 s      2.143 s   …   2.149 s
+ 
+[buildloop 23:15:57] section edits: ok in 92 s

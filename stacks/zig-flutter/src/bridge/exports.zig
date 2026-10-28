@@ -2,8 +2,16 @@
 //! (dart:ffi on desktop) and to wasm32-freestanding (dart:js_interop on web).
 //!
 //! The library holds one session: a model plus the last solve. Dart never parses JSON or does any maths;
-//! it reads flat arrays (zero-copy views over library memory) and calls f2d_solve after editing a node.
-//! All pointers returned stay valid until the next call that reloads or regenerates the model.
+//! it reads flat arrays out of library memory and calls f2d_solve after editing a node.
+//!
+//! Buffer contract (docs/zig-dart-bridge.md 2.5):
+//! - Every published buffer is returned as address + element count + generation in ONE call, written to a
+//!   caller-owned `F2dSlice` (`f2d_xxx(..., out) -> status`). There is no separate ptr/len pair that can be
+//!   called in the wrong order.
+//! - The generation increases whenever a published buffer may have been freed or moved (new model, case
+//!   buffers reallocated, scratch/echo buffer regrown) and, on wasm, whenever linear memory grew (which
+//!   detaches every JS typed-array view). A view is valid only while `f2d_generation()` still returns the
+//!   generation it was fetched with; hosts re-fetch it otherwise, and copy whatever they keep across calls.
 const std = @import("std");
 const builtin = @import("builtin");
 const engine = @import("engine");
@@ -29,12 +37,52 @@ var stats_buf: [8]f64 = @splat(0);
 var last_error: [200]u8 = undefined;
 var last_error_len: usize = 0;
 
+/// Address, element count and generation of one published buffer. Native 64-bit: 24 bytes; wasm32: 16.
+pub const F2dSlice = extern struct {
+    ptr: usize,
+    len: usize,
+    gen: u32,
+    _pad: u32 = 0,
+};
+
+var generation: u32 = 1;
+var wasm_pages: usize = 0;
+
+/// Marks every view handed out so far as stale.
+fn bump() void {
+    generation +%= 1;
+    if (generation == 0) generation = 1;
+}
+
+/// Current generation; on wasm, memory growth since the last check counts as a reallocation.
+fn currentGen() u32 {
+    if (comptime builtin.cpu.arch.isWasm()) {
+        const pages = @wasmMemorySize(0);
+        if (pages != wasm_pages) {
+            wasm_pages = pages;
+            bump();
+        }
+    }
+    return generation;
+}
+
+fn publish(out: *F2dSlice, comptime T: type, items: []const T) i32 {
+    out.* = .{ .ptr = @intFromPtr(items.ptr), .len = items.len, .gen = currentGen() };
+    return ok;
+}
+
+fn none(out: *F2dSlice, code: i32) i32 {
+    out.* = .{ .ptr = 0, .len = 0, .gen = currentGen() };
+    return code;
+}
+
 const ok: i32 = 0;
 const err_model: i32 = 1;
 const err_oom: i32 = 2;
 const err_state: i32 = 3;
 
 fn dropSession() void {
+    bump();
     if (session) |*s| {
         s.solver.deinit();
         gpa.free(s.node_ids);
@@ -108,14 +156,25 @@ fn fail(e: error{ Model, OutOfMemory }) i32 {
 
 export fn f2d_noop() void {}
 
-/// Returns a buffer of n f64 values (the payload shape of a 50x50 result set).
+/// Returns a buffer of n f64 values (the payload shape of a 50x50 result set). The buffer is filled once,
+/// when it is (re)allocated, so the boundary bench times the crossing and not an engine fill loop (SPEC 5.5:
+/// "separate from the engine's own work"). Probe only: a transient view, valid until the next f2d_echo.
 export fn f2d_echo(n: u32) [*]f64 {
     if (echo_buf.len < n) {
         gpa.free(echo_buf);
-        echo_buf = gpa.alloc(f64, n) catch return @ptrCast(&stats_buf);
+        bump();
+        echo_buf = gpa.alloc(f64, n) catch {
+            echo_buf = &.{};
+            return @ptrCast(&stats_buf);
+        };
+        for (echo_buf, 0..) |*v, k| v.* = @floatFromInt(k);
     }
-    for (echo_buf[0..n], 0..) |*v, k| v.* = @floatFromInt(k);
     return echo_buf.ptr;
+}
+
+/// See F2dSlice. Cheap: call it before reusing a view you kept.
+export fn f2d_generation() u32 {
+    return currentGen();
 }
 
 // ---- memory for passing input in ----
@@ -141,12 +200,9 @@ export fn f2d_generate(bays: u32, stories: u32) i32 {
     return adopt(m);
 }
 
-export fn f2d_error_ptr() [*]const u8 {
-    return &last_error;
-}
-
-export fn f2d_error_len() usize {
-    return last_error_len;
+/// UTF-8 text of the last model error.
+export fn f2d_error(out: *F2dSlice) i32 {
+    return publish(out, u8, last_error[0..last_error_len]);
 }
 
 // ---- geometry (read directly by Dart) ----
@@ -163,43 +219,38 @@ export fn f2d_case_count() u32 {
     return if (session) |s| @intCast(s.model.load_cases.len) else 0;
 }
 
-export fn f2d_node_ids() ?[*]const i32 {
-    return (session orelse return null).node_ids.ptr;
+export fn f2d_node_ids(out: *F2dSlice) i32 {
+    return publish(out, i32, (session orelse return none(out, err_state)).node_ids);
 }
 
 /// x0, y0, x1, y1, ...
-export fn f2d_node_xy() ?[*]const f64 {
-    return (session orelse return null).node_xy.ptr;
+export fn f2d_node_xy(out: *F2dSlice) i32 {
+    return publish(out, f64, (session orelse return none(out, err_state)).node_xy);
 }
 
 /// One bit mask per node: 1 = ux, 2 = uy, 4 = rz restrained.
-export fn f2d_node_restraint() ?[*]const u8 {
-    return (session orelse return null).model.restraint.ptr;
+export fn f2d_node_restraint(out: *F2dSlice) i32 {
+    return publish(out, u8, (session orelse return none(out, err_state)).model.restraint);
 }
 
-export fn f2d_member_ids() ?[*]const i32 {
-    return (session orelse return null).member_ids.ptr;
+export fn f2d_member_ids(out: *F2dSlice) i32 {
+    return publish(out, i32, (session orelse return none(out, err_state)).member_ids);
 }
 
 /// i0, j0, i1, j1, ... as node indices.
-export fn f2d_member_ends() ?[*]const u32 {
-    return (session orelse return null).member_ends.ptr;
+export fn f2d_member_ends(out: *F2dSlice) i32 {
+    return publish(out, u32, (session orelse return none(out, err_state)).member_ends);
 }
 
-export fn f2d_member_len() ?[*]const f64 {
-    return (session orelse return null).member_len.ptr;
+export fn f2d_member_len(out: *F2dSlice) i32 {
+    return publish(out, f64, (session orelse return none(out, err_state)).member_len);
 }
 
-export fn f2d_case_name_ptr(k: u32) ?[*]const u8 {
-    const s = &(session orelse return null);
-    if (k >= s.model.load_cases.len) return null;
-    return s.model.load_cases[k].id.ptr;
-}
-
-export fn f2d_case_name_len(k: u32) usize {
-    const s = &(session orelse return 0);
-    if (k >= s.model.load_cases.len) return 0;
-    return s.model.load_cases[k].id.len;
+/// UTF-8 id of load case k.
+export fn f2d_case_name(k: u32, out: *F2dSlice) i32 {
+    const s = &(session orelse return none(out, err_state));
+    if (k >= s.model.load_cases.len) return none(out, err_state);
+    return publish(out, u8, s.model.load_cases[k].id);
 }
 
 /// Move one node (index, not id). Topology is unchanged, so the factor plan is reused by the next solve.
@@ -220,6 +271,8 @@ export fn f2d_set_node_xy(idx: u32, x: f64, y: f64) void {
 /// Solve the load cases whose bit is set in `mask`. Returns 0 on success.
 export fn f2d_solve(mask: u32) i32 {
     const s = &(session orelse return err_state);
+    const before = caseFingerprint(&s.solver);
+    defer if (caseFingerprint(&s.solver) != before) bump();
     s.solver.solve(&s.model, s.model.sections, mask, &diag) catch |e| return fail(e);
     const st = s.solver.stats;
     stats_buf = .{
@@ -235,9 +288,16 @@ export fn f2d_solve(mask: u32) i32 {
     return ok;
 }
 
-/// assemble_ms, factor_ms, solve_ms, free_dofs, profile_before, profile_after.
-export fn f2d_stats() [*]const f64 {
-    return &stats_buf;
+/// Identifies the current case buffers: changes when the solver (re)allocates any of them.
+fn caseFingerprint(sv: *const engine.Solver) usize {
+    var h: usize = @intFromPtr(sv.cases.ptr) ^ sv.cases.len;
+    for (sv.cases) |c| h = (h *% 31) ^ @intFromPtr(c.disp.ptr) ^ (@intFromPtr(c.m_stations.ptr) << 1);
+    return h;
+}
+
+/// assemble_ms, factor_ms, solve_ms, free_dofs, profile_before, profile_after (6 values).
+export fn f2d_stats(out: *F2dSlice) i32 {
+    return publish(out, f64, stats_buf[0..6]);
 }
 
 fn solvedCase(k: u32) ?*const engine.solver.CaseResult {
@@ -246,28 +306,28 @@ fn solvedCase(k: u32) ?*const engine.solver.CaseResult {
     return &s.solver.cases[k];
 }
 
-/// nodes*3 displacements (ux, uy, rz); null pointer when the case has not been solved.
-export fn f2d_disp(k: u32) ?[*]const f64 {
-    return (solvedCase(k) orelse return null).disp.ptr;
+/// nodes*3 displacements (ux, uy, rz). Status 3 and an empty slice when the case has not been solved.
+export fn f2d_disp(k: u32, out: *F2dSlice) i32 {
+    return publish(out, f64, (solvedCase(k) orelse return none(out, err_state)).disp);
 }
 
-export fn f2d_reactions(k: u32) ?[*]const f64 {
-    return (solvedCase(k) orelse return null).reactions.ptr;
+export fn f2d_reactions(k: u32, out: *F2dSlice) i32 {
+    return publish(out, f64, (solvedCase(k) orelse return none(out, err_state)).reactions);
 }
 
 /// members*6 local end forces.
-export fn f2d_end_forces(k: u32) ?[*]const f64 {
-    return (solvedCase(k) orelse return null).end_forces.ptr;
+export fn f2d_end_forces(k: u32, out: *F2dSlice) i32 {
+    return publish(out, f64, (solvedCase(k) orelse return none(out, err_state)).end_forces);
 }
 
 /// members: max |M| over the member's stations.
-export fn f2d_max_m(k: u32) ?[*]const f64 {
-    return (solvedCase(k) orelse return null).max_m.ptr;
+export fn f2d_max_m(k: u32, out: *F2dSlice) i32 {
+    return publish(out, f64, (solvedCase(k) orelse return none(out, err_state)).max_m);
 }
 
 /// members*11 bending moments at the stations x = 0, L/10, ..., L.
-export fn f2d_stations_m(k: u32) ?[*]const f64 {
-    return (solvedCase(k) orelse return null).m_stations.ptr;
+export fn f2d_stations_m(k: u32, out: *F2dSlice) i32 {
+    return publish(out, f64, (solvedCase(k) orelse return none(out, err_state)).m_stations);
 }
 
 export fn f2d_residual(k: u32) f64 {
@@ -279,33 +339,36 @@ export fn f2d_residual(k: u32) f64 {
 /// Not thread-safe: the session, diagnostics and scratch buffer are process-global, so a host must call
 /// the whole f2d_* surface from one thread (the Flutter UI isolate / the JS main thread do).
 ///
-/// Serialize into the scratch buffer; returns its length (0 on failure). Read it with f2d_out_ptr.
-export fn f2d_export_model() usize {
-    const s = &(session orelse return 0);
-    scratch.clearRetainingCapacity();
-    var aw: std.Io.Writer.Allocating = .fromArrayList(gpa, &scratch);
-    engine.model_json.writeModel(&aw.writer, &s.model) catch {
-        scratch = aw.toArrayList();
-        return 0;
-    };
-    scratch = aw.toArrayList();
-    return scratch.items.len;
+/// Serializes into the scratch buffer and publishes it (UTF-8) in `out`; the view is valid until the next
+/// export or generation change. Status 0, 2 (out of memory) or 3 (no model).
+export fn f2d_export_model(out: *F2dSlice) i32 {
+    const s = &(session orelse return none(out, err_state));
+    return exportInto(out, writeModelJson, s);
 }
 
-export fn f2d_export_results() usize {
-    const s = &(session orelse return 0);
-    scratch.clearRetainingCapacity();
-    var aw: std.Io.Writer.Allocating = .fromArrayList(gpa, &scratch);
-    engine.results_json.writeResults(&aw.writer, &s.model, &s.solver, null) catch {
-        scratch = aw.toArrayList();
-        return 0;
-    };
-    scratch = aw.toArrayList();
-    return scratch.items.len;
+export fn f2d_export_results(out: *F2dSlice) i32 {
+    const s = &(session orelse return none(out, err_state));
+    return exportInto(out, writeResultsJson, s);
 }
 
-export fn f2d_out_ptr() [*]const u8 { // valid for the length returned by f2d_export_*; never null (empty slice ptr)
-    return scratch.items.ptr;
+fn writeModelJson(w: *std.Io.Writer, s: *Session) !void {
+    return engine.model_json.writeModel(w, &s.model);
+}
+
+fn writeResultsJson(w: *std.Io.Writer, s: *Session) !void {
+    return engine.results_json.writeResults(w, &s.model, &s.solver, null);
+}
+
+fn exportInto(out: *F2dSlice, comptime write: anytype, s: *Session) i32 {
+    const old_ptr = scratch.items.ptr;
+    const old_cap = scratch.capacity;
+    scratch.clearRetainingCapacity();
+    var aw: std.Io.Writer.Allocating = .fromArrayList(gpa, &scratch);
+    const failed = if (write(&aw.writer, s)) |_| false else |_| true;
+    scratch = aw.toArrayList();
+    if (scratch.items.ptr != old_ptr or scratch.capacity != old_cap) bump();
+    if (failed) return none(out, err_oom);
+    return publish(out, u8, scratch.items);
 }
 
 // ---- process clock (native only; used by the startup bench) ----

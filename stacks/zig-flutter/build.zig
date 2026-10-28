@@ -91,6 +91,16 @@ pub fn build(b: *std.Build) void {
     wasm.rdynamic = true;
     b.getInstallStep().dependOn(&b.addInstallFileWithDir(wasm.getEmittedBin(), .{ .custom = "web" }, "frame2d_engine.wasm").step);
 
+    // Engine library + WASM for the Dart bridge tests (test_all), in their own dir so the release
+    // artifacts in zig-out/bin and zig-out/web are never replaced by these builds.
+    const bridge_test = b.step("bridge-test-libs", "Install the engine library and WASM into zig-out/test-bridge");
+    bridge_test.dependOn(&b.addInstallArtifact(bridge_lib, .{
+        .dest_dir = .{ .override = .{ .custom = "test-bridge" } },
+        .implib_dir = .disabled,
+        .pdb_dir = .disabled,
+    }).step);
+    bridge_test.dependOn(&b.addInstallFileWithDir(wasm.getEmittedBin(), .{ .custom = "test-bridge" }, "frame2d_engine.wasm").step);
+
     const tests = b.addTest(.{ .root_module = b.createModule(.{
         .root_source_file = b.path("src/engine/engine.zig"),
         .target = target,

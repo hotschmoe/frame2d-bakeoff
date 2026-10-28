@@ -77,3 +77,33 @@ Review defects: fixed - unchecked `session.?` getters, unchecked `set_node_xy`, 
 Not done: results JSON is ~27 ms of the ~53 ms server CPU per 50x50 request, all shortest-round-trip float formatting (35 ns/number, 760k numbers); a faster hand-rolled formatter or caching station x values would help but is a larger change. UI-edit dev loop is bound by the dart2js debug compile (~25-30 s). Per-request Solver/model allocations could use an arena. Dart UI for springs/releases not extended (outside P5 scope). Skipping the CanvasKit variants would shrink the web dir but changes browser coverage.
 
 Final conformance: `conformance.py zig-flutter p1` 17/17, `p2` 7/7, `server_conformance.sh zig-flutter` all passed, `test_all` green (Zig tests incl. 4 new, 2 Dart); runtime smoke desktop (startup/drag/render/boundary) and web default + wasm bench modes all ran OK after the changes. Not committed.
+
+## Bridge memory-safety fix (docs/zig-dart-bridge.md 2.5)
+
+Why: result arrays held by `AppState` were views onto engine memory. On web a Save (`f2d_export_model`) grows wasm
+memory and detaches them (length 0: RangeError under dart2js, TypeError under dart2wasm); on native every view
+dangled after `f2d_generate`/`f2d_load_json`, and `f2d_out_ptr()` + `f2d_export_*` read freed memory when called in
+the obvious order.
+
+What changed (about 1.5 h):
+- `src/bridge/exports.zig` / `frame2d.h`: every buffer export writes `f2d_slice {ptr, len, gen, _pad}` to a
+  caller-owned out-param and returns a status (ptr+len from one call; `f2d_out_ptr`, `f2d_error_ptr/len`,
+  `f2d_case_name_ptr/len` removed). `f2d_generation()` bumps on new model, case-buffer reallocation in solve,
+  scratch/echo regrowth, and on wasm on memory growth. `f2d_echo` fills only on (re)allocation, so the boundary
+  bench's `transfer_us` measures the crossing as SPEC 5.5 defines it (was the 38k-double fill loop).
+- Dart: new `lib/engine/engine_core.dart` holds the shared logic for both backends: generation-checked view cache
+  (web also checks `memory.buffer` identity with `strictEquals`), geometry copied once per model, results copied with
+  `setRange` into the list the caller passes back (`displacements(k, into: disp)`), so no allocation per solve.
+  `engine_native.dart` / `engine_web.dart` are now only the raw call tables. `FrameEngine` gained `generation` and
+  `exportResultsJson`. ffigen bindings regenerated (libclang re-fetched into `.tools/`, see the ffigen note above).
+- `build.zig`: `bridge-test-libs` step (debug DLL + wasm into `zig-out/test-bridge`, release outputs untouched).
+- Tests: `app/test/bridge_lifetime_test.dart` (native ffi: generate 50x50 -> solve -> hold -> export model and
+  results -> regenerate 3x2 and 60x40 -> held lists unchanged; checked that it fails with the old view-returning
+  code) and `app/test_web/` (the real `engine_web.dart` compiled with dart2js and dart2wasm, run under node by
+  `run.mjs`, plus a control showing a raw JS view really detaches). `test_all` runs both.
+- Wasm memory is not pre-sized: with no long-lived views, growth is harmless.
+
+Checks: conformance p1 17/17, p2 7/7, server conformance all passed, test_all green, runtime smoke
+(build desktop web --quick) OK. Indicative drag p50 before -> after (single quick runs, shared machine): desktop
+13.7 -> 13.3 ms, dart2js 44.7 -> 38.3, dart2wasm 52.2 -> 46.8: no regression. boundary transfer_us desktop
+7.1 -> 0.02 us (fill moved out of the timed loop).

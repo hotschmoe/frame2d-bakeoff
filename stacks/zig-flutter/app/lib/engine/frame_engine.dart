@@ -34,7 +34,11 @@ class SolveStats {
 
 /// The analysis engine (Zig). Native builds reach it through dart:ffi, web builds through a WASM module.
 ///
-/// All arrays are views onto engine memory or copies of it: re-read them after every [solve] or load.
+/// Every array returned here is Dart-owned (a copy), never a view onto engine memory, so it stays intact
+/// whatever the engine does next (reload, export, WASM memory growth). Geometry lists are replaced on every
+/// load; [nodeXy] is kept current by [setNodeXY]. Result getters copy into [into] when it has the right
+/// length (pass the list from the previous call: no allocation per solve), else into a new list.
+/// The buffer contract with the engine is described in docs/zig-dart-bridge.md 2.5 and engine_core.dart.
 abstract class FrameEngine {
   /// Short description of the bridge, e.g. `ffi` or `wasm`.
   String get backend;
@@ -69,23 +73,32 @@ abstract class FrameEngine {
   String? solve(int mask);
   SolveStats get stats;
 
-  /// Per case results, null when the case was not solved.
-  Float64List? displacements(int k);
-  Float64List? endForces(int k);
-  Float64List? maxMoment(int k);
+  /// Per case results (copies), null when the case was not solved.
+  Float64List? displacements(int k, {Float64List? into});
+  Float64List? endForces(int k, {Float64List? into});
+  Float64List? maxMoment(int k, {Float64List? into});
 
   /// members * 11 bending moments along each member.
-  Float64List? stationMoments(int k);
+  Float64List? stationMoments(int k, {Float64List? into});
   double residual(int k);
 
   /// Current model as JSON text.
   String exportModelJson();
+
+  /// Results of the solved cases as JSON text (SPEC results format).
+  String exportResultsJson();
+
+  /// The engine's buffer generation (bumps whenever engine memory a view could point at was freed, moved or,
+  /// on web, grown). Diagnostics and tests; callers never hold views, so they need not check it.
+  int get generation;
 
   /// Milliseconds since process start (desktop) or navigation start (web).
   double sinceStartMs();
 
   // Boundary probes (SPEC 5.5).
   void noop();
+
+  /// A transient view (not a copy): valid only until the next engine call.
   Float64List echo(int n);
 
   /// How [echo] results reach Dart: `zero-copy view` or `memcpy`.

@@ -290,6 +290,34 @@ Fixes for the template (in order of value):
 - results the UI keeps across calls: copy with `setRange` into Dart-owned buffers you reuse (3.9 us native / 4.4 us
   dart2js for 38k doubles) rather than keeping views.
 
+**2.5 fixed** (zig-flutter stack and the lab generator). Final contract:
+- Every buffer-publishing export takes a caller-owned out slice as its last parameter and returns a status:
+  `int32_t f2d_disp(uint32_t k, f2d_slice* out)` with `f2d_slice { uintptr_t ptr; size_t len /* elements */;
+  uint32_t gen; uint32_t _pad; }` (24 bytes native, 16 on wasm32). Pointer and length come from one call; the
+  separate `f2d_out_ptr`, `f2d_error_ptr/len`, `f2d_case_name_ptr/len` exports are gone.
+- `uint32_t f2d_generation()` increases whenever a published buffer may have been freed or moved: new model
+  (`f2d_load_json`/`f2d_generate`), case buffers reallocated by `f2d_solve`, the export scratch buffer or the echo
+  buffer regrown, and on wasm whenever linear memory grew (`@wasmMemorySize` checked on every call that reports a
+  generation). The Dart web backend additionally tracks `memory.buffer` identity with `strictEquals` (`identical`
+  does not work under dart2wasm, where every property read is a new wrapper).
+- The Dart side caches views per buffer and re-fetches them when the generation moved; views never leave the bridge
+  class. Geometry is copied once per model into fresh Dart lists; results are copied with `setRange` into a list the
+  caller passes back (`displacements(k, into: disp)`), so steady-state solves allocate nothing; strings and JSON
+  exports are decoded immediately. `f2d_echo` stays a raw probe (transient view) and now fills its buffer only on
+  (re)allocation, so the `boundary` bench's `transfer_us` measures the crossing (SPEC 5.5: "separate from the
+  engine's own work"): zig-flutter desktop 7.1 us -> ~0.02 us, web dart2js ~0.5 us / dart2wasm ~1 us (view creation).
+- Wasm memory is not pre-sized: with no long-lived views, growth is harmless, so this was not needed.
+- Tests: `app/test/bridge_lifetime_test.dart` (native: hold results -> export model + results -> regenerate other
+  sizes -> held lists unchanged; fails with the old views) and `app/test_web/` (same scenario through the real
+  `engine_web.dart` compiled with dart2js and dart2wasm, run under node, plus a control showing a raw view does
+  detach), both in `stack.sh test_all`. Drag p50 unchanged within noise (desktop 13.7 -> 13.3 ms, dart2js
+  44.7 -> 38.3, dart2wasm 52.2 -> 46.8, single quick runs on a shared machine).
+- Generator (`engine/tools/gen_bindings.zig` in the lab): an export whose last parameter is `*Slice(T)` (an extern
+  struct with `pub const bridge_slice_elem = T`) is not exposed raw; the generated `Frame2dRawBase` offers
+  `<name>_view(arg)` (generation-checked, transient), `<name>_copy(arg, into:)` (setRange into a reusable list) and,
+  for u8 text slices, `<name>_text(arg)`; `generation` is part of the interface. `bridge_meta` gains `slice_c`,
+  `generation`, `alloc` (for the one out-slot each backend allocates) and `text`.
+
 ### 2.6 Web: dart2js vs dart2wasm, views vs copies
 
 Method: same Dart source (`webbench/web/main.dart`) compiled with `dart compile js -O2` and

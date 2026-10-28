@@ -32,6 +32,8 @@ class AppState extends ChangeNotifier {
   Float64List memberLength = Float64List(0);
   List<String> caseNames = const [];
 
+  // Dart-owned copies of the selected case's results (never views onto engine memory, so a Save or any
+  // other engine call cannot invalidate them). Each solve copies into the same lists while sizes match.
   Float64List? disp;
   Float64List? endForces;
   Float64List? maxM;
@@ -139,13 +141,13 @@ class AppState extends ChangeNotifier {
 
   void _pullResults() {
     if (!hasModel) return;
-    // Views may have moved (WASM memory growth), so geometry arrays are re-read too.
+    // nodeXy is the engine's Dart-owned mirror (same list); member lengths are refreshed in place.
     nodeXy = engine.nodeXy;
     memberLength = engine.memberLength;
-    disp = engine.displacements(caseIndex);
-    endForces = engine.endForces(caseIndex);
-    maxM = engine.maxMoment(caseIndex);
-    stationM = engine.stationMoments(caseIndex);
+    disp = engine.displacements(caseIndex, into: disp);
+    endForces = engine.endForces(caseIndex, into: endForces);
+    maxM = engine.maxMoment(caseIndex, into: maxM);
+    stationM = engine.stationMoments(caseIndex, into: stationM);
     residual = engine.residual(caseIndex);
     var mm = 0.0;
     final m = maxM;

@@ -40,38 +40,31 @@ class Frame2dBindings {
     isLeaf: true,
   );
 
-  int f2d_case_name_len(int k) {
-    return _f2d_case_name_len(k);
+  int f2d_case_name(int k, ffi.Pointer<f2d_slice> out) {
+    return _f2d_case_name(k, out);
   }
 
-  late final _f2d_case_name_lenPtr =
-      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Uint32)>>(
-        'f2d_case_name_len',
-      );
-  late final _f2d_case_name_len = _f2d_case_name_lenPtr
-      .asFunction<int Function(int)>(isLeaf: true);
+  late final _f2d_case_namePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Uint32, ffi.Pointer<f2d_slice>)
+        >
+      >('f2d_case_name');
+  late final _f2d_case_name = _f2d_case_namePtr
+      .asFunction<int Function(int, ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Uint8> f2d_case_name_ptr(int k) {
-    return _f2d_case_name_ptr(k);
-  }
-
-  late final _f2d_case_name_ptrPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint8> Function(ffi.Uint32)>>(
-        'f2d_case_name_ptr',
-      );
-  late final _f2d_case_name_ptr = _f2d_case_name_ptrPtr
-      .asFunction<ffi.Pointer<ffi.Uint8> Function(int)>(isLeaf: true);
-
-  ffi.Pointer<ffi.Double> f2d_disp(int k) {
-    return _f2d_disp(k);
+  int f2d_disp(int k, ffi.Pointer<f2d_slice> out) {
+    return _f2d_disp(k, out);
   }
 
   late final _f2d_dispPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function(ffi.Uint32)>>(
-        'f2d_disp',
-      );
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Uint32, ffi.Pointer<f2d_slice>)
+        >
+      >('f2d_disp');
   late final _f2d_disp = _f2d_dispPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function(int)>(isLeaf: true);
+      .asFunction<int Function(int, ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
   ffi.Pointer<ffi.Double> f2d_echo(int n) {
     return _f2d_echo(n);
@@ -84,55 +77,51 @@ class Frame2dBindings {
   late final _f2d_echo = _f2d_echoPtr
       .asFunction<ffi.Pointer<ffi.Double> Function(int)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Double> f2d_end_forces(int k) {
-    return _f2d_end_forces(k);
+  int f2d_end_forces(int k, ffi.Pointer<f2d_slice> out) {
+    return _f2d_end_forces(k, out);
   }
 
   late final _f2d_end_forcesPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function(ffi.Uint32)>>(
-        'f2d_end_forces',
-      );
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Uint32, ffi.Pointer<f2d_slice>)
+        >
+      >('f2d_end_forces');
   late final _f2d_end_forces = _f2d_end_forcesPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function(int)>(isLeaf: true);
+      .asFunction<int Function(int, ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  int f2d_error_len() {
-    return _f2d_error_len();
+  int f2d_error(ffi.Pointer<f2d_slice> out) {
+    return _f2d_error(out);
   }
 
-  late final _f2d_error_lenPtr =
-      _lookup<ffi.NativeFunction<ffi.Size Function()>>('f2d_error_len');
-  late final _f2d_error_len = _f2d_error_lenPtr.asFunction<int Function()>(
-    isLeaf: true,
-  );
-
-  ffi.Pointer<ffi.Uint8> f2d_error_ptr() {
-    return _f2d_error_ptr();
-  }
-
-  late final _f2d_error_ptrPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint8> Function()>>(
-        'f2d_error_ptr',
+  late final _f2d_errorPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
+        'f2d_error',
       );
-  late final _f2d_error_ptr = _f2d_error_ptrPtr
-      .asFunction<ffi.Pointer<ffi.Uint8> Function()>(isLeaf: true);
+  late final _f2d_error = _f2d_errorPtr
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  int f2d_export_model() {
-    return _f2d_export_model();
+  int f2d_export_model(ffi.Pointer<f2d_slice> out) {
+    return _f2d_export_model(out);
   }
 
   late final _f2d_export_modelPtr =
-      _lookup<ffi.NativeFunction<ffi.Size Function()>>('f2d_export_model');
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
+        'f2d_export_model',
+      );
   late final _f2d_export_model = _f2d_export_modelPtr
-      .asFunction<int Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  int f2d_export_results() {
-    return _f2d_export_results();
+  int f2d_export_results(ffi.Pointer<f2d_slice> out) {
+    return _f2d_export_results(out);
   }
 
   late final _f2d_export_resultsPtr =
-      _lookup<ffi.NativeFunction<ffi.Size Function()>>('f2d_export_results');
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
+        'f2d_export_results',
+      );
   late final _f2d_export_results = _f2d_export_resultsPtr
-      .asFunction<int Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
   void f2d_free(ffi.Pointer<ffi.Uint8> p, int n) {
     return _f2d_free(p, n);
@@ -156,6 +145,16 @@ class Frame2dBindings {
   late final _f2d_generate = _f2d_generatePtr
       .asFunction<int Function(int, int)>(isLeaf: true);
 
+  int f2d_generation() {
+    return _f2d_generation();
+  }
+
+  late final _f2d_generationPtr =
+      _lookup<ffi.NativeFunction<ffi.Uint32 Function()>>('f2d_generation');
+  late final _f2d_generation = _f2d_generationPtr.asFunction<int Function()>(
+    isLeaf: true,
+  );
+
   int f2d_load_json(ffi.Pointer<ffi.Uint8> ptr, int len) {
     return _f2d_load_json(ptr, len);
   }
@@ -167,16 +166,18 @@ class Frame2dBindings {
   late final _f2d_load_json = _f2d_load_jsonPtr
       .asFunction<int Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Double> f2d_max_m(int k) {
-    return _f2d_max_m(k);
+  int f2d_max_m(int k, ffi.Pointer<f2d_slice> out) {
+    return _f2d_max_m(k, out);
   }
 
   late final _f2d_max_mPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function(ffi.Uint32)>>(
-        'f2d_max_m',
-      );
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Uint32, ffi.Pointer<f2d_slice>)
+        >
+      >('f2d_max_m');
   late final _f2d_max_m = _f2d_max_mPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function(int)>(isLeaf: true);
+      .asFunction<int Function(int, ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
   int f2d_member_count() {
     return _f2d_member_count();
@@ -187,38 +188,38 @@ class Frame2dBindings {
   late final _f2d_member_count = _f2d_member_countPtr
       .asFunction<int Function()>(isLeaf: true);
 
-  ffi.Pointer<ffi.Uint32> f2d_member_ends() {
-    return _f2d_member_ends();
+  int f2d_member_ends(ffi.Pointer<f2d_slice> out) {
+    return _f2d_member_ends(out);
   }
 
   late final _f2d_member_endsPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint32> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_member_ends',
       );
   late final _f2d_member_ends = _f2d_member_endsPtr
-      .asFunction<ffi.Pointer<ffi.Uint32> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Int32> f2d_member_ids() {
-    return _f2d_member_ids();
+  int f2d_member_ids(ffi.Pointer<f2d_slice> out) {
+    return _f2d_member_ids(out);
   }
 
   late final _f2d_member_idsPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int32> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_member_ids',
       );
   late final _f2d_member_ids = _f2d_member_idsPtr
-      .asFunction<ffi.Pointer<ffi.Int32> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Double> f2d_member_len() {
-    return _f2d_member_len();
+  int f2d_member_len(ffi.Pointer<f2d_slice> out) {
+    return _f2d_member_len(out);
   }
 
   late final _f2d_member_lenPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_member_len',
       );
   late final _f2d_member_len = _f2d_member_lenPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
   int f2d_node_count() {
     return _f2d_node_count();
@@ -230,38 +231,38 @@ class Frame2dBindings {
     isLeaf: true,
   );
 
-  ffi.Pointer<ffi.Int32> f2d_node_ids() {
-    return _f2d_node_ids();
+  int f2d_node_ids(ffi.Pointer<f2d_slice> out) {
+    return _f2d_node_ids(out);
   }
 
   late final _f2d_node_idsPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int32> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_node_ids',
       );
   late final _f2d_node_ids = _f2d_node_idsPtr
-      .asFunction<ffi.Pointer<ffi.Int32> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Uint8> f2d_node_restraint() {
-    return _f2d_node_restraint();
+  int f2d_node_restraint(ffi.Pointer<f2d_slice> out) {
+    return _f2d_node_restraint(out);
   }
 
   late final _f2d_node_restraintPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint8> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_node_restraint',
       );
   late final _f2d_node_restraint = _f2d_node_restraintPtr
-      .asFunction<ffi.Pointer<ffi.Uint8> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Double> f2d_node_xy() {
-    return _f2d_node_xy();
+  int f2d_node_xy(ffi.Pointer<f2d_slice> out) {
+    return _f2d_node_xy(out);
   }
 
   late final _f2d_node_xyPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_node_xy',
       );
   late final _f2d_node_xy = _f2d_node_xyPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
   void f2d_noop() {
     return _f2d_noop();
@@ -271,17 +272,6 @@ class Frame2dBindings {
     'f2d_noop',
   );
   late final _f2d_noop = _f2d_noopPtr.asFunction<void Function()>(isLeaf: true);
-
-  ffi.Pointer<ffi.Uint8> f2d_out_ptr() {
-    return _f2d_out_ptr();
-  }
-
-  late final _f2d_out_ptrPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint8> Function()>>(
-        'f2d_out_ptr',
-      );
-  late final _f2d_out_ptr = _f2d_out_ptrPtr
-      .asFunction<ffi.Pointer<ffi.Uint8> Function()>(isLeaf: true);
 
   double f2d_process_uptime_ms() {
     return _f2d_process_uptime_ms();
@@ -294,16 +284,18 @@ class Frame2dBindings {
   late final _f2d_process_uptime_ms = _f2d_process_uptime_msPtr
       .asFunction<double Function()>(isLeaf: true);
 
-  ffi.Pointer<ffi.Double> f2d_reactions(int k) {
-    return _f2d_reactions(k);
+  int f2d_reactions(int k, ffi.Pointer<f2d_slice> out) {
+    return _f2d_reactions(k, out);
   }
 
   late final _f2d_reactionsPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function(ffi.Uint32)>>(
-        'f2d_reactions',
-      );
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Uint32, ffi.Pointer<f2d_slice>)
+        >
+      >('f2d_reactions');
   late final _f2d_reactions = _f2d_reactionsPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function(int)>(isLeaf: true);
+      .asFunction<int Function(int, ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
   double f2d_residual(int k) {
     return _f2d_residual(k);
@@ -340,25 +332,53 @@ class Frame2dBindings {
     isLeaf: true,
   );
 
-  ffi.Pointer<ffi.Double> f2d_stations_m(int k) {
-    return _f2d_stations_m(k);
+  int f2d_stations_m(int k, ffi.Pointer<f2d_slice> out) {
+    return _f2d_stations_m(k, out);
   }
 
   late final _f2d_stations_mPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function(ffi.Uint32)>>(
-        'f2d_stations_m',
-      );
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Uint32, ffi.Pointer<f2d_slice>)
+        >
+      >('f2d_stations_m');
   late final _f2d_stations_m = _f2d_stations_mPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function(int)>(isLeaf: true);
+      .asFunction<int Function(int, ffi.Pointer<f2d_slice>)>(isLeaf: true);
 
-  ffi.Pointer<ffi.Double> f2d_stats() {
-    return _f2d_stats();
+  int f2d_stats(ffi.Pointer<f2d_slice> out) {
+    return _f2d_stats(out);
   }
 
   late final _f2d_statsPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Double> Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<f2d_slice>)>>(
         'f2d_stats',
       );
   late final _f2d_stats = _f2d_statsPtr
-      .asFunction<ffi.Pointer<ffi.Double> Function()>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<f2d_slice>)>(isLeaf: true);
+}
+
+final class f2d_slice extends ffi.Struct {
+  @ffi.UintPtr()
+  external int ptr;
+
+  @ffi.Size()
+  external int len;
+
+  @ffi.Uint32()
+  external int gen;
+
+  @ffi.Uint32()
+  external int _pad;
+
+  static ffi.Pointer<f2d_slice> $allocate(
+    ffi.Allocator $allocator, {
+    required int ptr,
+    required int len,
+    required int gen,
+    required int $pad,
+  }) => $allocator<f2d_slice>()
+    ..ref.ptr = ptr
+    ..ref.len = len
+    ..ref.gen = gen
+    ..ref._pad = $pad;
 }

@@ -1,29 +1,38 @@
-import 'dart:convert';
 import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'dart:typed_data';
 
-
 import '../generated/frame2d_bindings.dart';
+import 'engine_core.dart';
 import 'frame_engine.dart';
 
 /// Desktop bridge: dart:ffi calls into frame2d_engine.dll (or .so/.dylib) next to the executable.
-/// Result arrays are zero-copy views over the engine's memory.
 Future<FrameEngine> createEngine() async {
   final dir = File(Platform.resolvedExecutable).parent.path;
-  final name = Platform.isWindows
-      ? 'frame2d_engine.dll'
-      : Platform.isMacOS
-          ? 'libframe2d_engine.dylib'
-          : 'libframe2d_engine.so';
-  final lib = ffi.DynamicLibrary.open('$dir${Platform.pathSeparator}$name');
-  return NativeEngine(Frame2dBindings(lib));
+  return openNativeEngine('$dir${Platform.pathSeparator}$engineLibraryName');
 }
 
-class NativeEngine implements FrameEngine {
-  NativeEngine(this._b);
+String get engineLibraryName => Platform.isWindows
+    ? 'frame2d_engine.dll'
+    : Platform.isMacOS
+        ? 'libframe2d_engine.dylib'
+        : 'libframe2d_engine.so';
+
+/// Opens the engine library at [path] (tests load the one built by `zig build bridge-test-libs`).
+FrameEngine openNativeEngine(String path) => NativeEngine(Frame2dBindings(ffi.DynamicLibrary.open(path)));
+
+class NativeEngine extends EngineCore {
+  NativeEngine(this._b) {
+    // One out-slot for every slice getter, allocated once (8-byte aligned, lives as long as the engine).
+    final raw = _b.f2d_alloc(ffi.sizeOf<f2d_slice>() + 8);
+    if (raw == ffi.nullptr) throw StateError('engine: out of memory');
+    _slotPtr = ffi.Pointer<f2d_slice>.fromAddress((raw.address + 7) & ~7);
+    _slot = _slotPtr.ref;
+  }
 
   final Frame2dBindings _b;
+  late final ffi.Pointer<f2d_slice> _slotPtr;
+  late final f2d_slice _slot;
 
   @override
   String get backend => 'ffi';
@@ -31,37 +40,71 @@ class NativeEngine implements FrameEngine {
   @override
   String get transferMechanism => 'zero-copy view';
 
-  String _lastError() {
-    final n = _b.f2d_error_len();
-    return utf8.decode(_b.f2d_error_ptr().asTypedList(n));
-  }
+  @override
+  int get generation => _b.f2d_generation();
 
-  String? _status(int code) {
-    switch (code) {
-      case 0:
-        return null;
-      case 1:
-        return _lastError();
-      case 2:
-        return 'out of memory';
-      default:
-        return 'no model loaded';
-    }
+  @override
+  int fetchSlice(Buf b, int k) {
+    final o = _slotPtr;
+    return switch (b) {
+      Buf.error => _b.f2d_error(o),
+      Buf.nodeIds => _b.f2d_node_ids(o),
+      Buf.nodeXy => _b.f2d_node_xy(o),
+      Buf.restraint => _b.f2d_node_restraint(o),
+      Buf.memberIds => _b.f2d_member_ids(o),
+      Buf.memberEnds => _b.f2d_member_ends(o),
+      Buf.memberLen => _b.f2d_member_len(o),
+      Buf.caseName => _b.f2d_case_name(k, o),
+      Buf.stats => _b.f2d_stats(o),
+      Buf.disp => _b.f2d_disp(k, o),
+      Buf.endForces => _b.f2d_end_forces(k, o),
+      Buf.maxM => _b.f2d_max_m(k, o),
+      Buf.stationsM => _b.f2d_stations_m(k, o),
+      Buf.exportModel => _b.f2d_export_model(o),
+      Buf.exportResults => _b.f2d_export_results(o),
+    };
   }
 
   @override
-  String? loadJson(String text) {
-    final bytes = utf8.encode(text);
-    final buf = _b.f2d_alloc(bytes.length);
-    if (buf == ffi.nullptr) return 'out of memory';
-    buf.asTypedList(bytes.length).setAll(0, bytes);
-    final code = _b.f2d_load_json(buf, bytes.length);
-    _b.f2d_free(buf, bytes.length);
-    return _status(code);
+  int get slicePtr => _slot.ptr;
+  @override
+  int get sliceLen => _slot.len;
+  @override
+  int get sliceGen => _slot.gen;
+
+  // asTypedList on a null pointer throws, and an empty slice may carry address 0.
+  @override
+  Float64List viewF64(int ptr, int n) =>
+      n == 0 ? Float64List(0) : ffi.Pointer<ffi.Double>.fromAddress(ptr).asTypedList(n);
+  @override
+  Int32List viewI32(int ptr, int n) =>
+      n == 0 ? Int32List(0) : ffi.Pointer<ffi.Int32>.fromAddress(ptr).asTypedList(n);
+  @override
+  Uint32List viewU32(int ptr, int n) =>
+      n == 0 ? Uint32List(0) : ffi.Pointer<ffi.Uint32>.fromAddress(ptr).asTypedList(n);
+  @override
+  Uint8List viewU8(int ptr, int n) =>
+      n == 0 ? Uint8List(0) : ffi.Pointer<ffi.Uint8>.fromAddress(ptr).asTypedList(n);
+
+  @override
+  int rawLoadJson(Uint8List bytes) {
+    final n = bytes.length;
+    final buf = _b.f2d_alloc(n == 0 ? 1 : n);
+    if (buf == ffi.nullptr) return 2;
+    buf.asTypedList(n).setAll(0, bytes);
+    final code = _b.f2d_load_json(buf, n);
+    _b.f2d_free(buf, n == 0 ? 1 : n);
+    return code;
   }
 
   @override
-  String? generate(int bays, int stories) => _status(_b.f2d_generate(bays, stories));
+  int rawGenerate(int bays, int stories) => _b.f2d_generate(bays, stories);
+  @override
+  int rawSolve(int mask) => _b.f2d_solve(mask);
+  @override
+  void rawSetNodeXY(int index, double x, double y) => _b.f2d_set_node_xy(index, x, y);
+  @override
+  int rawEcho(int n) => _b.f2d_echo(n).address;
 
   @override
   int get nodeCount => _b.f2d_node_count();
@@ -69,60 +112,8 @@ class NativeEngine implements FrameEngine {
   int get memberCount => _b.f2d_member_count();
   @override
   int get caseCount => _b.f2d_case_count();
-
-  @override
-  String caseName(int k) => utf8.decode(_b.f2d_case_name_ptr(k).asTypedList(_b.f2d_case_name_len(k)));
-
-  @override
-  Int32List get nodeIds => _b.f2d_node_ids().asTypedList(nodeCount);
-  @override
-  Float64List get nodeXy => _b.f2d_node_xy().asTypedList(nodeCount * 2);
-  @override
-  Uint8List get nodeRestraint => _b.f2d_node_restraint().asTypedList(nodeCount);
-  @override
-  Int32List get memberIds => _b.f2d_member_ids().asTypedList(memberCount);
-  @override
-  Uint32List get memberEnds => _b.f2d_member_ends().asTypedList(memberCount * 2);
-  @override
-  Float64List get memberLength => _b.f2d_member_len().asTypedList(memberCount);
-
-  @override
-  void setNodeXY(int index, double x, double y) => _b.f2d_set_node_xy(index, x, y);
-
-  @override
-  String? solve(int mask) => _status(_b.f2d_solve(mask));
-
-  @override
-  SolveStats get stats {
-    final s = _b.f2d_stats().asTypedList(6);
-    return SolveStats(
-      assembleMs: s[0],
-      factorMs: s[1],
-      solveMs: s[2],
-      freeDofs: s[3].toInt(),
-      profileBefore: s[4].toInt(),
-      profileAfter: s[5].toInt(),
-    );
-  }
-
-  Float64List? _view(ffi.Pointer<ffi.Double> p, int n) => p == ffi.nullptr ? null : p.asTypedList(n);
-
-  @override
-  Float64List? displacements(int k) => _view(_b.f2d_disp(k), nodeCount * 3);
-  @override
-  Float64List? endForces(int k) => _view(_b.f2d_end_forces(k), memberCount * 6);
-  @override
-  Float64List? maxMoment(int k) => _view(_b.f2d_max_m(k), memberCount);
-  @override
-  Float64List? stationMoments(int k) => _view(_b.f2d_stations_m(k), memberCount * 11);
   @override
   double residual(int k) => _b.f2d_residual(k);
-
-  @override
-  String exportModelJson() {
-    final n = _b.f2d_export_model();
-    return utf8.decode(_b.f2d_out_ptr().asTypedList(n));
-  }
 
   @override
   double sinceStartMs() {
@@ -134,7 +125,4 @@ class NativeEngine implements FrameEngine {
 
   @override
   void noop() => _b.f2d_noop();
-
-  @override
-  Float64List echo(int n) => _b.f2d_echo(n).asTypedList(n);
 }

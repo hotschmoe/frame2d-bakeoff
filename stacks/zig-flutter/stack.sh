@@ -152,7 +152,7 @@ build_web_wasm_release() {
 build_check() {
   _zig_build Debug check || return 1
   local stamp="$APP_DIR/build/.check.stamp"
-  if _stale "$stamp" "$APP_DIR/lib" "$APP_DIR/test" "$APP_DIR/pubspec.yaml" "$APP_DIR/pubspec.lock" "$APP_DIR/analysis_options.yaml"; then
+  if _stale "$stamp" "$APP_DIR/lib" "$APP_DIR/test" "$APP_DIR/test_web" "$APP_DIR/pubspec.yaml" "$APP_DIR/pubspec.lock" "$APP_DIR/analysis_options.yaml"; then
     mkdir -p "$APP_DIR/build"; : > "$stamp.new"
     (cd "$APP_DIR" && dart analyze) || { rm -f "$stamp.new"; return 1; }
     mv -f "$stamp.new" "$stamp"
@@ -188,10 +188,18 @@ run_server() {
   FRAME2D_ADDR="${FRAME2D_ADDR:-127.0.0.1:8080}" exec "$bin"
 }
 
-# Zig engine unit tests, then the Dart unit tests.
+# Zig engine unit tests, then the Dart unit tests (incl. the native bridge lifetime test against a debug
+# engine in zig-out/test-bridge), then the web bridge lifetime test: the same Dart engine code compiled with
+# dart2js and dart2wasm, run under node against the debug WASM (app/test_web/run.mjs).
 test_all() {
-  _zig_build Debug test || return 1
-  (cd "$APP_DIR" && flutter test)
+  _zig_build Debug bridge-test-libs test || return 1
+  (cd "$APP_DIR" && flutter test) || return 1
+  local out="$APP_DIR/build/test_web"
+  mkdir -p "$out"
+  (cd "$APP_DIR" &&
+    dart compile js -O1 -o "$out/bridge_lifetime.js" test_web/bridge_lifetime_web.dart >/dev/null &&
+    dart compile wasm -O1 -o "$out/bridge_lifetime.wasm" test_web/bridge_lifetime_web.dart >/dev/null &&
+    node test_web/run.mjs "$STACK_DIR/zig-out/test-bridge/frame2d_engine.wasm"       "$out/bridge_lifetime.js" "$out/bridge_lifetime.mjs")
 }
 
 # Direct dependencies of both toolchains, one per line.

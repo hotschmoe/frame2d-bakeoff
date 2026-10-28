@@ -46,7 +46,6 @@ pub const Graph = struct {
         for (0..n) |v| {
             const row = raw[start[v]..start[v + 1]];
             std.mem.sort(u32, row, {}, std.sort.asc(u32));
-            const new_start = out;
             var last: ?u32 = null;
             for (row) |x| {
                 if (last != null and last.? == x) continue;
@@ -56,7 +55,6 @@ pub const Graph = struct {
             }
             start[v] = row_start;
             row_start = out;
-            _ = new_start;
         }
         start[n] = out;
         return .{ .start = start, .adj = adj[0..out], .adj_cap = adj.len };

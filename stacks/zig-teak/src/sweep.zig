@@ -41,7 +41,8 @@ fn runOne(sh: *Shared, k: usize) !void {
     const a = arena.allocator();
     const n = sh.out.len;
     const scale = if (n == 1) sh.lo else sh.lo + (sh.hi - sh.lo) * @as(f64, @floatFromInt(k)) / @as(f64, @floatFromInt(n - 1));
-    var mm = try model.clone(a, sh.m);
+    // engine.solve does not mutate the model: only the scaled sections need a private copy
+    var mm = sh.m;
     const secs = try a.dupe(model.Section, sh.m.sections);
     for (secs) |*s| if (std.mem.eql(u8, s.id, "BM")) {
         s.I *= scale;
@@ -55,7 +56,7 @@ fn runOne(sh: *Shared, k: usize) !void {
             }
         },
         .ok => |r| {
-            var drift: f64 = 0;
+            var drift: f64 = std.math.nan(f64); // no case "W": written as null
             if (sh.w_case) |wc| {
                 for (r.node_src, 0..) |src, pos| if (src == sh.top_left_src) {
                     drift = r.cases[wc].disp[pos][0];
@@ -76,7 +77,7 @@ pub fn run(gpa: std.mem.Allocator, err_arena: std.mem.Allocator, m: model.Model,
     var tl: u32 = 0;
     for (m.nodes, 0..) |nd, k| {
         const best = m.nodes[tl];
-        if (nd.y > best.y or (nd.y == best.y and nd.x < best.x)) tl = @intCast(k);
+        if (nd.y > best.y or (nd.y == best.y and (nd.x < best.x or (nd.x == best.x and nd.id < best.id)))) tl = @intCast(k);
     }
     var w_case: ?usize = null;
     for (m.load_cases, 0..) |lc, k| if (std.mem.eql(u8, lc.id, "W")) {

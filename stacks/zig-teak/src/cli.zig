@@ -106,8 +106,6 @@ fn run(init: std.process.Init) !u8 {
         var last: engine.Stats = .{};
         for (0..reps) |rep| {
             var counting = Counting{ .child = std.heap.smp_allocator };
-            var ra = std.heap.ArenaAllocator.init(counting.allocator());
-            defer ra.deinit();
             const o = try engine.solve(counting.allocator(), m, .{ .clock = clockMs });
             switch (o) {
                 .err => |e| {

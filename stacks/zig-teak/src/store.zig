@@ -15,6 +15,10 @@ pub const Store = struct {
         return s;
     }
 
+    fn bind(st: ?*c.sqlite3_stmt, i: c_int, text: []const u8) !void {
+        if (c.sqlite3_bind_text(st, i, text.ptr, @intCast(text.len), c.SQLITE_STATIC) != c.SQLITE_OK) return error.SqliteBind;
+    }
+
     fn exec(s: *Store, sql: [:0]const u8) !void {
         if (c.sqlite3_exec(s.db, sql.ptr, null, null, null) != c.SQLITE_OK) return error.SqliteExec;
     }
@@ -25,8 +29,8 @@ pub const Store = struct {
         var st: ?*c.sqlite3_stmt = null;
         if (c.sqlite3_prepare_v2(s.db, "INSERT OR REPLACE INTO models (id, body) VALUES (?1, ?2)", -1, &st, null) != c.SQLITE_OK) return error.SqlitePrepare;
         defer _ = c.sqlite3_finalize(st);
-        _ = c.sqlite3_bind_text(st, 1, id.ptr, @intCast(id.len), c.SQLITE_STATIC);
-        _ = c.sqlite3_bind_text(st, 2, body.ptr, @intCast(body.len), c.SQLITE_STATIC);
+        try bind(st, 1, id);
+        try bind(st, 2, body);
         if (c.sqlite3_step(st) != c.SQLITE_DONE) return error.SqliteStep;
     }
 
@@ -37,9 +41,14 @@ pub const Store = struct {
         var st: ?*c.sqlite3_stmt = null;
         if (c.sqlite3_prepare_v2(s.db, "SELECT body FROM models WHERE id = ?1", -1, &st, null) != c.SQLITE_OK) return error.SqlitePrepare;
         defer _ = c.sqlite3_finalize(st);
-        _ = c.sqlite3_bind_text(st, 1, id.ptr, @intCast(id.len), c.SQLITE_STATIC);
-        if (c.sqlite3_step(st) != c.SQLITE_ROW) return null;
-        const p: [*]const u8 = @ptrCast(c.sqlite3_column_text(st, 0));
+        try bind(st, 1, id);
+        switch (c.sqlite3_step(st)) {
+            c.SQLITE_ROW => {},
+            c.SQLITE_DONE => return null,
+            else => return error.SqliteStep,
+        }
+        // column_text is null on OOM (body is NOT NULL, so never for a real row)
+        const p: [*]const u8 = @ptrCast(c.sqlite3_column_text(st, 0) orelse return error.SqliteNoMem);
         const n: usize = @intCast(c.sqlite3_column_bytes(st, 0));
         return try gpa.dupe(u8, p[0..n]);
     }

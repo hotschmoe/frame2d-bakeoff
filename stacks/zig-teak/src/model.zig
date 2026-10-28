@@ -65,14 +65,6 @@ pub fn parse(arena: std.mem.Allocator, text: []const u8) ParseError!Model {
     };
 }
 
-/// Deep copy (strings are shared; arrays are copied) so a variant can be edited.
-pub fn clone(arena: std.mem.Allocator, m: Model) !Model {
-    var out = m;
-    out.nodes = try arena.dupe(Node, m.nodes);
-    out.sections = try arena.dupe(Section, m.sections);
-    return out;
-}
-
 // ── generator (SPEC 4.8) ──────────────────────────────────────────────
 
 pub const bay_width = 6.0;

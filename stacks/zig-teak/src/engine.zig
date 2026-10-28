@@ -228,6 +228,9 @@ fn now(o: Options) f64 {
     return if (o.clock) |c| c() else 0;
 }
 
+/// Analyse `m`. Scratch is freed before returning, but on a model error (`.err`) the partly built
+/// result slices and the error detail are not: pass an arena (server, UI, sweep do), or accept the
+/// leak in a process that exits right after (CLI).
 pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
     const nn = m.nodes.len;
     const nm = m.members.len;
@@ -239,7 +242,8 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
     const node_src = try a.alloc(u32, nn);
     for (node_src, 0..) |*x, k| x.* = @intCast(k);
     std.mem.sort(u32, node_src, @as([]const i64, node_ids), lessId);
-    for (1..nn) |k| if (node_ids[node_src[k]] == node_ids[node_src[k - 1]])
+    // (guarded: `1..0` is an invalid range, and an empty model must reach `no_free_dofs`, not crash)
+    if (nn > 1) for (1..nn) |k| if (node_ids[node_src[k]] == node_ids[node_src[k - 1]])
         return fail(a, "duplicate_id", "duplicate node id {d}", .{node_ids[node_src[k]]});
 
     const mem_ids = try a.alloc(i64, nm);
@@ -248,7 +252,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
     const member_src = try a.alloc(u32, nm);
     for (member_src, 0..) |*x, k| x.* = @intCast(k);
     std.mem.sort(u32, member_src, @as([]const i64, mem_ids), lessId);
-    for (1..nm) |k| if (mem_ids[member_src[k]] == mem_ids[member_src[k - 1]])
+    if (nm > 1) for (1..nm) |k| if (mem_ids[member_src[k]] == mem_ids[member_src[k - 1]])
         return fail(a, "duplicate_id", "duplicate member id {d}", .{mem_ids[member_src[k]]});
 
     var node_map: std.AutoHashMapUnmanaged(i64, u32) = .empty;
@@ -418,8 +422,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
     var bad: usize = 0;
     sky.factor(&bad) catch {
         for (0..nn) |v| for (0..3) |c| if (dof[v * 3 + c] == bad) {
-            const comp = [_][]const u8{ "ux", "uy", "rz" };
-            return fail(a, "unstable", "pivot failed at node {d} {s}", .{ node_ids[node_src[v]], comp[c] });
+            return fail(a, "unstable", "pivot failed at node {d} {s}", .{ node_ids[node_src[v]], comp_names[c] });
         };
         return fail(a, "unstable", "pivot failed", .{});
     };
@@ -430,6 +433,17 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
     const case_lo: usize = opts.only_case orelse 0;
     const case_hi: usize = if (opts.only_case) |c| c + 1 else m.load_cases.len;
     const cases = try a.alloc(CaseResult, case_hi - case_lo);
+    // length scale for the moment residual: model bounding-box size (>= 1 m)
+    var span: f64 = 1;
+    if (nn > 0) {
+        var lo_xy = xy[0];
+        var hi_xy = xy[0];
+        for (xy) |p| for (0..2) |c| {
+            lo_xy[c] = @min(lo_xy[c], p[c]);
+            hi_xy[c] = @max(hi_xy[c], p[c]);
+        };
+        span = @max(span, @max(hi_xy[0] - lo_xy[0], hi_xy[1] - lo_xy[1]));
+    }
     const rhs = try a.alloc(f64, nf);
     defer a.free(rhs);
     const udl_w = try a.alloc(f64, nm);
@@ -478,6 +492,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
         var max_m: f64 = 0;
         var load_sum = [3]f64{ 0, 0, 0 }; // fx, fy, moment about origin
         var load_abs: f64 = 0;
+        var mz_abs: f64 = 0; // applied nodal moments
         for (elems, 0..) |e, k| {
             const ug = [6]f64{ disp[e.ni][0], disp[e.ni][1], disp[e.ni][2], disp[e.nj][0], disp[e.nj][1], disp[e.nj][2] };
             const ul = toLocal(e, ug);
@@ -520,6 +535,7 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
             load_sum[1] += p[1];
             load_sum[2] += p[2] + xy[v][0] * p[1] - xy[v][1] * p[0];
             load_abs += @abs(p[0]) + @abs(p[1]);
+            mz_abs += @abs(p[2]);
             for (0..3) |c| react[v][c] = if (restr[v][c]) nodal_sum[v][c] - p[c] else 0;
             var r = react[v];
             // spring forces act on the structure like reactions: -k u
@@ -528,7 +544,12 @@ pub fn solve(a: Allocator, m: model.Model, opts: Options) !Outcome {
             load_sum[1] += r[1];
             load_sum[2] += r[2] + xy[v][0] * r[1] - xy[v][1] * r[0];
         }
-        const resid = @sqrt(load_sum[0] * load_sum[0] + load_sum[1] * load_sum[1]) / @max(load_abs, 1.0);
+        // SPEC 4.5: force balance and moment balance (about the origin); a moment is made relative
+        // to (total load x model size) so both residuals are dimensionless.
+        const scale = @max(load_abs, 1.0);
+        const f_resid = @sqrt(load_sum[0] * load_sum[0] + load_sum[1] * load_sum[1]) / scale;
+        const m_resid = @abs(load_sum[2]) / (scale * span + mz_abs);
+        const resid = @max(f_resid, m_resid);
         cases[out_i] = .{ .id = lc.id, .disp = disp, .react = react, .end_forces = ef, .stations = st, .residual = resid, .max_abs_m = max_m };
     }
     stats.solve_ms = now(opts) - t2;
@@ -620,4 +641,56 @@ test "P2: internal hinge, auto-restraint and support_conflict (F23-F25)" {
 
     m.springs = &.{.{ .node = 3, .ky = 1e6 }};
     try std.testing.expectEqualStrings("support_conflict", (try solve(a, m, .{})).err.code);
+}
+
+test "empty and member-less models return model errors, not a crash" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const a = arena.allocator();
+    try std.testing.expectEqualStrings("no_free_dofs", (try solve(a, .{}, .{})).err.code);
+    var one = [_]model.Node{.{ .id = 1, .x = 0, .y = 0 }};
+    const fixed = model.Model{ .nodes = &one, .supports = &.{.{ .node = 1, .ux = true, .uy = true, .rz = true }} };
+    try std.testing.expectEqualStrings("no_free_dofs", (try solve(a, fixed, .{})).err.code);
+    try std.testing.expectEqualStrings("unstable", (try solve(a, .{ .nodes = &one }, .{})).err.code);
+}
+
+test "validation errors: duplicate_id, invalid_ref, zero_length" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const a = arena.allocator();
+    var nodes = [_]model.Node{ .{ .id = 1, .x = 0, .y = 0 }, .{ .id = 2, .x = 0, .y = 0 } };
+    var m = model.Model{
+        .materials = &.{.{ .id = "s", .E = 200e9 }},
+        .sections = &.{.{ .id = "b", .A = 0.01, .I = 8e-5 }},
+        .nodes = &nodes,
+        .supports = &.{.{ .node = 1, .ux = true, .uy = true, .rz = true }},
+        .members = &.{.{ .id = 1, .i = 1, .j = 2, .material = "s", .section = "b" }},
+    };
+    try std.testing.expectEqualStrings("zero_length", (try solve(a, m, .{})).err.code);
+    m.members = &.{.{ .id = 1, .i = 1, .j = 3, .material = "s", .section = "b" }};
+    try std.testing.expectEqualStrings("invalid_ref", (try solve(a, m, .{})).err.code);
+    m.members = &.{.{ .id = 1, .i = 1, .j = 2, .material = "x", .section = "b" }};
+    try std.testing.expectEqualStrings("invalid_ref", (try solve(a, m, .{})).err.code);
+    nodes[1].id = 1;
+    try std.testing.expectEqualStrings("duplicate_id", (try solve(a, m, .{})).err.code);
+}
+
+test "equilibrium residual covers moments (UDL + nodal moment, offset origin)" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    var nodes = [_]model.Node{ .{ .id = 1, .x = 100, .y = 50 }, .{ .id = 2, .x = 103, .y = 54 } };
+    const m = model.Model{
+        .materials = &.{.{ .id = "s", .E = 200e9 }},
+        .sections = &.{.{ .id = "b", .A = 0.01, .I = 8e-5 }},
+        .nodes = &nodes,
+        .supports = &.{.{ .node = 1, .ux = true, .uy = true, .rz = true }},
+        .members = &.{.{ .id = 1, .i = 1, .j = 2, .material = "s", .section = "b" }},
+        .load_cases = &.{.{ .id = "L", .nodal = &.{.{ .node = 2, .fx = 3000, .mz = 5e4 }}, .member_udl = &.{.{ .member = 1, .w = -2000 }} }},
+    };
+    const r = (try solve(arena.allocator(), m, .{})).ok;
+    try std.testing.expect(r.cases[0].residual < 1e-12);
+    // cantilever: fixed-end moment balances every load's moment about node 1
+    const mz_fix = r.cases[0].react[0][2];
+    const udl_m = -2000.0 * 5.0 * 2.5; // w L at midspan, lever arm L/2 along the member (perpendicular load)
+    try std.testing.expectApproxEqRel(-(5e4 + udl_m - 3000.0 * 4.0), mz_fix, 1e-9);
 }

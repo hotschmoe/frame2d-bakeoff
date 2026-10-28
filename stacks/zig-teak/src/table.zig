@@ -74,6 +74,20 @@ pub const msgs = struct {
     }
 };
 
+/// Re-apply the current sort after the values changed (re-solve). DataTable has no public re-sort
+/// (filed as a Teak issue), so step its asc -> desc -> none cycle back by one and send `sort`.
+pub fn resort(m: *state.Model) void {
+    const t = m.tbl;
+    const col = t.sort_col orelse return;
+    if (t.n_rows == 0) return;
+    if (t.sort_desc) {
+        t.sort_desc = false; // desc is reached from asc
+    } else {
+        t.sort_col = null; // asc is reached from unsorted
+    }
+    Table.update(t, .{ .sort = col }, Rows{ .m = m });
+}
+
 pub fn view(m: *const state.Model, cb: anytype) void {
     Table.view(m.tbl, cb, &columns, Rows{ .m = m }, msgs, .{ .id = state.TABLE_ID, .grip_base = state.GRIP_BASE, .height = m.canvas_h - 30 });
 }

@@ -123,3 +123,95 @@ Teak pin unchanged (9b16f10...). Shared machine: other agents were building conc
 - Web bench (`F2D_PW_ARGS="--enable-unsafe-webgpu --enable-gpu --disable-dawn-features=use_dxc"`, 1 run): ready 254 ms,
   startup 308 ms, drag p50 16.8 / p99 23.0 ms (solve_p50 13.5), render p50 16.8 / p99 29.3 ms, boundary 2.1 ns / 7.3 us.
 - Diff vs P1 tag: 8 files, ~+259 / -7 lines (incl. ~65 lines of tests). Failed builds in P2: 2 (both the test multiline-string typo).
+
+---
+
+# P5 optimization pass (run1p5, win-x64)
+
+Agent model: claude-opus-5-5, 2026-10-27, one session (~60 min). Teak pin unchanged (9b16f10): the newer
+hotschmoe/teak master commits are features (bridge_js option #136, Palette.warning #143, canvas vectors, svg, TextArea),
+none a build-time or runtime win for this app, so no bump. Shared machine (two other agents), timings indicative.
+
+## Changes
+
+- **`build.zig`: `check` is now real type-checking (`-fno-emit-bin`)** (dev loop, `build_check`). Before, `check` depended
+  on the installed exes, so after an edit it did full LLVM codegen + link of CLI, server and desktop (= a `build_dev`).
+  Now each target gets a second, never-installed `Compile` sharing its root module; the build system passes
+  `-fno-emit-bin` when nothing asks for the binary, so `check` runs Sema only. It also now covers the **web** wasm target
+  (`web/main.zig` was not checked before). An error in any of the four targets still fails `build_check` (verified).
+- **Engine: empty node / member lists no longer crash** (review High). `for (1..nn)` / `for (1..nm)` are guarded;
+  `{}` and a fully supported single node give 422 `no_free_dofs`, a free node with no members gives 422 `unstable`.
+- **Engine: equilibrium residual includes moment balance** (review Medium). `residual = max(force residual,
+  |sum M about origin| / (total load x model size + sum |applied mz|))`, so it stays dimensionless and roundoff-only.
+- Server: unreadable body -> 400 `bad_request` + `connection: close` (was: socket closed with no reply); 413 now also
+  closes the connection instead of trying to drain a >64 MB body; `FRAME2D_ADDR=[::1]:port` accepted.
+- Store: `sqlite3_bind_text` return codes checked, `sqlite3_column_text` null-checked, step errors distinguished from "no row".
+- Sweep: no per-variant `model.clone` (solve does not mutate the model, only sections are copied; `model.clone` removed);
+  missing case `W` gives `roof_drift_W: null` (and a null envelope drift) instead of a silent 0; top-left ties broken by id.
+- UI: Save bytes are owned by the Model (page allocator), freed when the download effect completes or is replaced
+  (were in `model_arena`, which generate/load reset under an in-flight effect, and grew per Save). Member table re-applies
+  its sort after a drag ends and after Solve (once, not per drag frame).
+- Cleanups: dead `new_start` (solver), duplicate `comp` names (engine), unused arena `ra` (cli bench), wrong SQLite
+  comment in build.zig; `engine.solve` documents its allocator contract (pass an arena; model-error paths do not free).
+- Tests 11 -> 15: empty/member-less models, duplicate_id / invalid_ref / zero_length, moment equilibrium with an
+  offset origin + UDL + nodal moment, member-table re-sort after drag (fails without the fix).
+
+## Numbers (smoke, shared machine)
+
+Own before/after, same method: `harness/edits/<e>.sh` toggle, then wall time of `build_check` and of `build_dev`
+(bash `date` around the `stack.sh` function, 2 reps each, both agree within ~5%):
+
+| | before check | after check | before dev alone | after dev alone |
+|---|---:|---:|---:|---:|
+| no-op | 0.13 s | 0.12 s | 0.12 s | 0.11 s |
+| leaf | 7.0 s | **1.2 s** | 7.1 s | 7.0 s |
+| struct | 7.1 s | **1.2 s** | 7.2 s | 7.2 s |
+| server | 2.6 s | **1.2 s** | 2.7 s | 2.6 s |
+| ui | 6.9 s | **1.1 s** | 6.9 s | 7.0 s |
+
+(Before, a `build_dev` right after a `build_check` was ~0.2 s because check had already built the binaries; now
+check + dev is ~1.2 + 7 s. The point is that the check-only loop is ~6x faster and covers web.)
+`harness/buildloop/run.sh zig-teak zigincr --quick`: `zig build check --watch` rebuild 6.3 s -> 1.2 s;
+**with `-fincremental` 7.6 s -> 0.05 s** (incremental works once check does no LLVM codegen). `build_check -fincremental`
+without `--watch` gives no gain (1.35 s; state is not kept across processes), so `build_check` itself stays plain.
+`buildloop cold edits --quick` before/after: cold cli 66 s / 55 s, cold dev 96 s / 90 s (noise level). Its quick
+edit-check numbers (~0.47 s before) are not trustworthy here: with 1 run and no warmup they are cache hits.
+
+Runtime (`harness/runtime/run.sh zig-teak build cli desktop web binsize server --quick`, `F2D_PW_ARGS` as in P1): unchanged
+within noise vs the P2 notes: CLI 50x50 assemble 2.4 / factor 5.4 / solve 3.0 ms; desktop startup 437 ms, drag p50 8.3 /
+p99 12.0 ms (solve_p50 7.0), render p50 8.3 / p99 36 ms; web ready 262 ms, startup 315 ms, drag p50 16.8 / p99 19.0,
+render p50 16.9 / p99 26.8, boundary 1.9 ns / 8.1 us, 260 KB br; oha 64 conns on gen_50_50: 203 rps, p50 212 ms;
+sweeps ok. Sizes: cli 0.91 MB, server 2.0 MB, desktop bundle 3.76 MB, web 0.25 MB br.
+
+## Evaluated and rejected
+
+- **Self-hosted x86_64 backend for Debug (`use_llvm = false`)**: CLI/server compile ~0.45 s vs 2-3 s, but the desktop
+  app cannot link (`TODO handle name_type NAME_EXPORTAS` on `wgpu_native.dll.lib`; filed hotschmoe/teak#154), the
+  self-hosted Debug server segfaulted at startup (SQLite + mingw libc), and Windows panics lose their stack trace (no PDB).
+  `build_dev` wall time is the desktop compile anyway. Not adopted.
+- **Strip debug info in Debug desktop**: ~4 s instead of ~7 s, but no symbolized panics in dev builds. Not adopted
+  (a benchmark trick more than a best practice); the cheapest remaining `build_dev` lever if the human wants it.
+- **ReleaseSafe for build_dev**: desktop leaf rebuild 23 s vs 7 s Debug. Rejected.
+- **Skyline `dot` with 4 accumulators + `@mulAdd`**: 200x200 factor 1240 -> 1200-1300 ms (noise). Reverted.
+- Profiled, no change made: server `/solve` on gen_50_50 is ~11 ms solve + ~37 ms writing the 16 MB results JSON
+  (shortest round-trip float formatting is already std's direct `render`); `canvas.build` at 200x200 is 2.6 ms of an
+  8.3 ms frame, so render p95/p99 are Teak/GPU time.
+
+## Review items not changed
+
+- `engine.solve` monolith / hand-mirrored `cli.freeResults`: documented the allocator contract instead of restructuring.
+- Thread-per-connection with no limit, sweep threads per request: kept (Windows reserves, not commits, the 8 MB stacks).
+- JSON parse errors without location; DB never closed (process lifetime).
+
+## Teak issues filed
+
+- hotschmoe/teak#153: DataTable has no public re-sort after row data changes (app works around it in `table.resort`).
+- hotschmoe/teak#154: `linkNativeWgpu` on Windows: the MSVC import lib blocks Zig's self-hosted backend (`-fno-llvm`).
+
+## Final conformance (end of P5)
+
+- `harness/conformance.py zig-teak p1`: 17/17; `p2`: 7/7.
+- `harness/server_conformance.sh zig-teak` (port 18087): all passed (0 failures).
+- `test_all`: 15/15. Bench modes desktop (startup, drag, render, boundary) and web (ready, startup, drag, render,
+  boundary) all produce BENCH lines (runtime smoke above, output in `results/run1p5/win-x64/runtime-smoke-p5/zig-teak`).
+- Tip for agents: `zig build check --watch -fincremental` gives ~50 ms re-checks.

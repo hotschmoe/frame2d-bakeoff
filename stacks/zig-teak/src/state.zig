@@ -89,7 +89,10 @@ pub const Model = struct {
     fx: [2]teak.Effect = undefined,
     fx_n: usize = 0,
     next_fx: u32 = 10,
-    save_bytes: []const u8 = "",
+    /// Bytes of the in-flight Save download. Owned here (not in model_arena, which generate / load
+    /// reset while the effect may still be pending); freed when the effect completes or is replaced.
+    save_bytes: []u8 = &.{},
+    save_fx: ?u32 = null,
 
     bench: ?*bench.State = null,
 
@@ -231,6 +234,13 @@ pub const Model = struct {
         }
     }
 
+    fn releaseSave(self: *Model) void {
+        if (self.save_fx) |id| self.dropEffect(id);
+        if (self.save_bytes.len > 0) std.heap.page_allocator.free(self.save_bytes);
+        self.save_bytes = &.{};
+        self.save_fx = null;
+    }
+
     fn dropEffect(self: *Model, id: u32) void {
         var k: usize = 0;
         while (k < self.fx_n) {
@@ -258,13 +268,26 @@ pub fn update(m: *Model, msg: Msg) void {
             m.next_fx += 1;
         },
         .save_file => {
-            var aw: std.Io.Writer.Allocating = .init(m.model_arena.allocator());
-            model.write(&aw.writer, m.m) catch return;
-            m.save_bytes = aw.written();
+            var aw: std.Io.Writer.Allocating = .init(std.heap.page_allocator);
+            model.write(&aw.writer, m.m) catch {
+                aw.deinit();
+                return;
+            };
+            const bytes = aw.toOwnedSlice() catch {
+                aw.deinit();
+                return;
+            };
+            m.releaseSave();
+            m.save_bytes = bytes;
+            m.save_fx = m.next_fx;
             m.pushEffect(.{ .download = .{ .id = m.next_fx, .name = "model.json", .mime = "application/json", .bytes = m.save_bytes, .pick = true } });
             m.next_fx += 1;
         },
         .effect => |d| {
+            if (m.save_fx == d.id) {
+                m.releaseSave(); // a finished download, nothing to load
+                return;
+            }
             m.dropEffect(d.id);
             if (d.ok and d.bytes.len > 0) m.loadJson(d.bytes);
         },
@@ -280,7 +303,10 @@ pub fn update(m: *Model, msg: Msg) void {
             m.gen_open = false;
             m.generate(m.gen_b, m.gen_s);
         },
-        .solve => m.solveNow(null),
+        .solve => {
+            m.solveNow(null);
+            table.resort(m);
+        },
         .toggle_deflected => m.show_deflected = !m.show_deflected,
         .toggle_moment => m.show_moment = !m.show_moment,
         .toggle_color => m.color_by_m = !m.color_by_m,
@@ -312,6 +338,8 @@ fn onCanvas(m: *Model, ev: teak.CanvasEvent) void {
             }
         },
         .up => {
+            // the member values changed during the drag: re-sort once at the end, not per frame
+            if (m.drag_node != null) table.resort(m);
             m.drag_node = null;
             m.panning = false;
         },

@@ -6,7 +6,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
     const strip = b.option(bool, "strip", "strip release binaries (default: true unless Debug)") orelse (optimize != .debug);
 
-    const check = b.step("check", "Compile everything without installing (zig build check)");
+    // `check` = semantic analysis of every target with -fno-emit-bin (no codegen, no link): each target
+    // gets a second, never-installed Compile sharing its root module, which is what tells the build
+    // system to skip the binary.
+    const check = b.step("check", "Type-check everything, no codegen (zig build check)");
 
     // ── CLI ──
     const cli = b.addExecutable(.{
@@ -20,7 +23,7 @@ pub fn build(b: *std.Build) void {
     });
     const cli_step = b.step("cli", "Build the frame2d CLI");
     cli_step.dependOn(&b.addInstallArtifact(cli, .{}).step);
-    check.dependOn(&cli.step);
+    _ = addCheck(b, check, cli);
 
     // ── server (std.http + SQLite) ──
     const sqlite_dep = b.dependency("sqlite", .{});
@@ -42,11 +45,11 @@ pub fn build(b: *std.Build) void {
         .file = sqlite_dep.path("sqlite3.c"),
         .flags = &.{ "-DSQLITE_THREADSAFE=1", "-DSQLITE_OMIT_LOAD_EXTENSION", "-DSQLITE_DQS=0" },
     });
-    // SQLite is compiled with optimizations even in Debug so the dev loop stays fast at runtime.
+    // sqlite3.c follows the build mode (-O0 in Debug: cheapest cold dev build; the object is cached).
     const server = b.addExecutable(.{ .name = "frame2d-server", .root_module = server_mod });
     const server_step = b.step("server", "Build the frame2d server");
     server_step.dependOn(&b.addInstallArtifact(server, .{}).step);
-    check.dependOn(&server.step);
+    _ = addCheck(b, check, server);
 
     // ── desktop app (Teak, Win32/X11 + wgpu-native) ──
     if (teak.hasNativeBackend(target.result.os.tag)) {
@@ -62,7 +65,7 @@ pub fn build(b: *std.Build) void {
         teak.linkNativeWgpu(b, app, .{});
         const desktop_step = b.step("desktop", "Build the desktop app");
         desktop_step.dependOn(&b.addInstallArtifact(app, .{}).step);
-        check.dependOn(&app.step);
+        _ = addCheck(b, check, app);
     }
 
     // ── web (wasm32-freestanding + zunk/WebGPU) ──
@@ -86,6 +89,9 @@ pub fn build(b: *std.Build) void {
             }),
         });
         teak.linkWebWgpu(b, web, .{ .output_dir = "dist" });
+        const web_check = addCheck(b, check, web);
+        web_check.entry = .disabled;
+        web_check.rdynamic = true;
     }
 
     // ── tests (engine + UI state, no window) ──
@@ -100,4 +106,10 @@ pub fn build(b: *std.Build) void {
     });
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&b.addRunArtifact(tests).step);
+}
+
+fn addCheck(b: *std.Build, check: *std.Build.Step, exe: *std.Build.Step.Compile) *std.Build.Step.Compile {
+    const c = b.addExecutable(.{ .name = b.fmt("{s}-check", .{exe.name}), .root_module = exe.root_module });
+    check.dependOn(&c.step);
+    return c;
 }

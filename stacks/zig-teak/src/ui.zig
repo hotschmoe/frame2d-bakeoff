@@ -211,3 +211,26 @@ test "P2 model: warnings line, release column and hinge/spring markers are shown
     try std.testing.expectEqualStrings("j", rows.cell(cb.arena.allocator(), 7, 0));
     try std.testing.expectEqualStrings("i", rows.cell(cb.arena.allocator(), 7, 1));
 }
+
+test "member table sort is re-applied after a drag (descending max|M|)" {
+    var m = Model.init();
+    const rows = table.Rows{ .m = &m };
+    update(&m, .{ .table = .{ .sort = 6 } });
+    update(&m, .{ .table = .{ .sort = 6 } }); // second click: descending
+    try std.testing.expect(m.tbl.sort_desc);
+    const p = m.toScreen(m.m.nodes[60].x, m.m.nodes[60].y);
+    const ev = teak.CanvasEvent{ .id = state.CANVAS_ID, .kind = .down, .x = p[0], .y = p[1], .dx = 0, .dy = 0, .button = .left, .buttons = .{ .left = true }, .mods = .{}, .w = 0, .h = 0 };
+    update(&m, .{ .canvas = ev });
+    var mv = ev;
+    mv.kind = .move;
+    mv.x = 10;
+    mv.y = 10;
+    update(&m, .{ .canvas = mv });
+    var up = mv;
+    up.kind = .up;
+    up.buttons = .{};
+    update(&m, .{ .canvas = up });
+    try std.testing.expectEqual(@as(?u8, 6), m.tbl.sort_col);
+    try std.testing.expect(m.tbl.sort_desc);
+    for (1..m.tbl.n_rows) |d| try std.testing.expect(rows.compare(6, m.tbl.order[d - 1], m.tbl.order[d]) != .lt);
+}

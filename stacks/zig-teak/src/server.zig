@@ -28,7 +28,9 @@ fn run(init: std.process.Init) !void {
     const addr_text = init.environ_map.get("FRAME2D_ADDR") orelse "127.0.0.1:8080";
     const colon = std.mem.findScalarLast(u8, addr_text, ':') orelse return error.BadAddress;
     const port = try std.fmt.parseInt(u16, addr_text[colon + 1 ..], 10);
-    const addr = try std.Io.net.IpAddress.parse(addr_text[0..colon], port);
+    var host = addr_text[0..colon];
+    if (host.len >= 2 and host[0] == '[' and host[host.len - 1] == ']') host = host[1 .. host.len - 1]; // [::1]:8080
+    const addr = try std.Io.net.IpAddress.parse(host, port);
     const db_path = try init.arena.allocator().dupeSentinel(u8, init.environ_map.get("FRAME2D_DB") orelse "frame2d-models.db", 0);
 
     var ctx = Ctx{ .io = io, .store = try Store.open(io, db_path) };
@@ -63,41 +65,50 @@ fn handleConn(ctx: *Ctx, stream: std.Io.net.Stream) void {
         const keep = req.head.keep_alive;
         var arena = std.heap.ArenaAllocator.init(std.heap.smp_allocator);
         defer arena.deinit();
-        handle(arena.allocator(), ctx, &req) catch return;
-        if (!keep) return;
+        const reuse = handle(arena.allocator(), ctx, &req) catch return;
+        if (!keep or !reuse) return;
     }
 }
 
-const Reply = struct { status: std.http.Status, body: []const u8 };
+/// `close`: answer with `connection: close` and drop the connection (the request body was not
+/// consumed, so the stream is not at a request boundary).
+const Reply = struct { status: std.http.Status, body: []const u8, close: bool = false };
 
-fn respond(req: *std.http.Server.Request, r: Reply) !void {
+const too_large: Reply = .{ .status = .payload_too_large, .body = "{\"error\":\"too_large\",\"detail\":\"body over 64 MB\"}", .close = true };
+const bad_body: Reply = .{ .status = .bad_request, .body = "{\"error\":\"bad_request\",\"detail\":\"could not read the request body\"}", .close = true };
+
+/// Returns whether the connection may be reused.
+fn respond(req: *std.http.Server.Request, r: Reply) !bool {
     try req.respond(r.body, .{
         .status = r.status,
+        .keep_alive = !r.close,
         .extra_headers = &.{
             .{ .name = "content-type", .value = "application/json" },
             .{ .name = "x-frame2d", .value = frame2d_header },
         },
     });
+    return !r.close;
 }
 
-fn handle(a: std.mem.Allocator, ctx: *Ctx, req: *std.http.Server.Request) !void {
+fn handle(a: std.mem.Allocator, ctx: *Ctx, req: *std.http.Server.Request) !bool {
     const method = req.head.method;
     const target = try a.dupe(u8, req.head.target);
     var body: []const u8 = "";
     if (method == .POST or method == .PUT) {
-        if (req.head.content_length) |n| if (n > body_limit) return respond(req, .{ .status = .payload_too_large, .body = "{\"error\":\"too_large\",\"detail\":\"body over 64 MB\"}" });
+        if (req.head.content_length) |n| if (n > body_limit) return respond(req, too_large);
         const rbuf = try a.alloc(u8, 64 * 1024);
-        const r = req.readerExpectContinue(rbuf) catch return error.BadRequest;
+        const r = req.readerExpectContinue(rbuf) catch return respond(req, bad_body);
         body = r.allocRemaining(a, .limited(body_limit + 1)) catch |e| switch (e) {
-            error.StreamTooLong => return respond(req, .{ .status = .payload_too_large, .body = "{\"error\":\"too_large\",\"detail\":\"body over 64 MB\"}" }),
-            else => return e,
+            error.StreamTooLong => return respond(req, too_large),
+            error.OutOfMemory => return e,
+            error.ReadFailed => return respond(req, bad_body),
         };
     }
     const reply = route(a, ctx, method, target, body) catch |e| switch (e) {
         error.OutOfMemory => Reply{ .status = .internal_server_error, .body = "{\"error\":\"internal\",\"detail\":\"out of memory\"}" },
         else => Reply{ .status = .internal_server_error, .body = try std.fmt.allocPrint(a, "{{\"error\":\"internal\",\"detail\":\"{s}\"}}", .{@errorName(e)}) },
     };
-    try respond(req, reply);
+    return respond(req, reply);
 }
 
 fn badJson(a: std.mem.Allocator) !Reply {
@@ -188,10 +199,11 @@ fn route(a: std.mem.Allocator, ctx: *Ctx, method: std.http.Method, target: []con
                     try w.writeAll(",\"max_abs_M\":");
                     try model.writeNum(w, v.max_abs_M);
                     try w.writeByte('}');
-                    env_drift = @max(env_drift, v.roof_drift_W);
+                    if (!std.math.isNan(v.roof_drift_W)) env_drift = @max(env_drift, v.roof_drift_W);
                     env_m = @max(env_m, v.max_abs_M);
                 }
                 if (vs.len == 0) env_drift = 0;
+                if (std.math.isInf(env_drift)) env_drift = std.math.nan(f64); // no case "W" -> null
                 try w.writeAll("],\"envelope\":{\"max_roof_drift_W\":");
                 try model.writeNum(w, env_drift);
                 try w.writeAll(",\"max_abs_M\":");

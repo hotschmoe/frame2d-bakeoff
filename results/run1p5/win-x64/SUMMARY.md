@@ -26,6 +26,7 @@ with the same reduced protocol and stack code (repo HEAD, P5 state) as `results/
 | zig-flutter | 70.1 s (59.3 s) | 69.4 s (61.0 s) | 100.0 s (96.9 s) | 90.8 s (88.5 s) | 79.5 s (79.9 s) | 3.31 s (3.05 s) | 6.65 s (9.53 s) | 0.39 s (0.85 s) |
 | go-flutter | 2.68 s (5.47 s) | 7.06 s (24.1 s) | 28.9 s (46.0 s) | 26.9 s (47.1 s) | 25.5 s (37.9 s) | 1.84 s (2.23 s) | 3.45 s (6.11 s) | **0.28 s** (0.79 s) |
 | go-zig-flutter | 28.5 s (51.4 s) | 33.0 s (53.1 s) | 29.9 s (43.5 s) | 29.8 s (48.6 s) | 25.3 s (38.0 s) | 1.62 s (1.94 s) | 5.54 s (6.93 s) | 0.56 s (1.65 s) |
+| zig-teak [2] | 53.9 s (n/a) | 91.7 s (n/a) | 107.1 s (n/a) | 85.7 s (n/a) | 88.5 s (n/a) | 1.07 s (n/a) | 5.89 s (n/a) | 0.22 s (n/a) |
 
 zig-flutter also has cold web_wasm 91.5 s (93.2 s).
 
@@ -36,6 +37,11 @@ exclusion, `%TEMP%\go-build*`, added by the human for this target only. The firs
 (28 CPU-s, i.e. ~26 s waiting; `_logs/go-cold-server-attempt3-excl.jsonl`) versus 6.6-6.8 s for every later one, consistent with
 Defender's first-sight scan of the new binary in the (not excluded) repo folder. win-arm64 recorded the same one-off stall on the same
 target (35.3 s). go-flutter and go-zig-flutter servers were never flagged.
+
+[2] **zig-teak is a win-x64-only extra stack** (SPEC 15.6; built this session, P1/P2/P5 on this machine), so there is no win-arm64
+column. Measured at its P5 state (Teak pinned at v0.1.0 `9b16f10`), same protocol, on a quiet machine, after harness fix `9d1284d`
+(which only changes `--quick` runs). Its web target goes through Teak's zunk/WebGPU path, not Flutter or wasm-bindgen.
+Per-edit p50: leaf/struct/ui check 1.25-1.30 s, server check 0.49 s; leaf/struct/ui dev 6.8-7.1 s, server dev 2.65 s.
 
 ## Resources (psutil; Flutter stacks under-counted, see caveats)
 
@@ -48,6 +54,7 @@ target (35.3 s). go-flutter and go-zig-flutter servers were never flagged.
 | zig-flutter | 139.4 | 2339 | 5.1 | 959 |
 | go-flutter | 51.1 | 1237 | 2.0 | 449 |
 | go-zig-flutter | 137.7 | 1721 | 6.9 | 618 |
+| zig-teak | 157.3 | 2071 | 8.3 | 994 |
 
 ## Findings
 
@@ -55,6 +62,8 @@ target (35.3 s). go-flutter and go-zig-flutter servers were never flagged.
 2. **Zig cold builds are ~45% slower on this x64 desktop than on the Snapdragon laptop** (cli 64.7 s vs 44.1 s; desktop 127 s vs 87.5 s).
    They are close to single-threaded (cold cli: 65 CPU-s in 65 s wall), so single-core speed decides, not the 24 cores. Zig incremental
    checks are unchanged (~1 s). The Zig engine is also why zig-flutter and go-zig-flutter have the slowest cold builds of the Flutter stacks.
+   zig-teak (all-Zig UI) lands in the same band: 54-107 s cold, ~1.1 s check, but ~6-7 s `build_dev` per edit because every dev build
+   relinks the desktop app and the web wasm (P5 measured `zig build check --watch -fincremental` at 0.05 s, not part of this protocol).
 3. **Rust is a wash between machines** (cargo parallelises well: cold desktop 280 CPU-s in 24 s).
 4. **Flutter stacks are 20-70% faster than on win-arm64**, where Dart and the engine ran under x64 emulation (go-flutter cold server
    7.1 s vs 24.1 s, ui-edit `build_dev` 6.5 s vs 11.5 s). Flutter UI edits are still the slowest edit loop (4.5-5 s check, 7-17 s dev).

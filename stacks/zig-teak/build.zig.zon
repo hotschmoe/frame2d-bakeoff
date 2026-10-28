@@ -5,8 +5,8 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .teak = .{
-            .url = "git+https://github.com/hotschmoe/teak.git#9b16f1065daa65ff7cc823c76db0d9275f53bcc3",
-            .hash = "teak-0.1.0-639rmkG9NADP08iyj7hk3YM0VTOn9rYHU24SP0sydNxf",
+            .url = "git+https://github.com/hotschmoe/teak.git#1324e8e996ee66c0481548019aa0b3eec80d862f",
+            .hash = "teak-0.2.0-639rmlGcNwAXl1YD3m_i3cVfKeFeyv3bHW9OlqQ8xH1m",
         },
         .sqlite = .{
             .url = "https://www.sqlite.org/2024/sqlite-amalgamation-3460100.zip",

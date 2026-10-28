@@ -118,7 +118,7 @@ pub fn view(m: *const Model, cb: anytype) void {
         aw.writer.print("auto_restrained rz ({d}): node", .{r.auto_restrained.len}) catch {};
         for (r.auto_restrained[0..@min(r.auto_restrained.len, 12)]) |pos| aw.writer.print(" {d}", .{m.m.nodes[r.node_src[pos]].id}) catch {};
         if (r.auto_restrained.len > 12) aw.writer.writeAll(" ...") catch {};
-        cb.textStyled(aw.written(), .{ .size_px = 13, .family = .mono }, .{ 0.98, 0.75, 0.25, 1 }); // amber (Teak palette has no warning colour)
+        cb.textWarning(aw.written());
     };
 
     cb.pushGroup(.{ .direction = .horizontal, .padding = 0, .gap = 8 });

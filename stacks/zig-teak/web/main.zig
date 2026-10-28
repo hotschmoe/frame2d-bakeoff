@@ -1,6 +1,6 @@
 //! Web entry point (wasm32-freestanding, zunk + WebGPU). zunk owns the rAF loop and calls the
 //! exported init / resize / frame; each tick runs one `teak.Runtime.frame`. Bench timing and the
-//! boundary exports (f2d_noop / f2d_echo, called from js/bridge.js) live here.
+//! boundary exports (f2d_noop / f2d_echo, called from web/bridge.js) live here.
 const std = @import("std");
 const teak = @import("teak");
 const platform = @import("teak-platform-wasm");
@@ -17,7 +17,7 @@ const Gpu = gpu_web.Gpu;
 const Runtime = teak.Runtime(App, Host, Gpu);
 
 extern "env" fn zunk_app_performance_now() f64;
-/// js/bridge.js: index of ?bench=<mode> in bench.Mode + 1, or 0.
+/// web/bridge.js: index of ?bench=<mode> in bench.Mode + 1, or 0.
 extern "env" fn f2d_bench_mode() u32;
 
 fn clockMs() f64 {
@@ -67,7 +67,7 @@ export fn frame(_: f32) void {
                 report(bench.line(&line_buf, b, ft[0..nf], wasmHeapMb()));
             }
         },
-        .boundary => reported = true, // measured from JS (js/bridge.js)
+        .boundary => reported = true, // measured from JS (web/bridge.js)
     }
 }
 

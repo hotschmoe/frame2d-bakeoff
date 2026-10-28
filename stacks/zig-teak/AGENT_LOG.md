@@ -215,3 +215,37 @@ sweeps ok. Sizes: cli 0.91 MB, server 2.0 MB, desktop bundle 3.76 MB, web 0.25 M
 - `test_all`: 15/15. Bench modes desktop (startup, drag, render, boundary) and web (ready, startup, drag, render,
   boundary) all produce BENCH lines (runtime smoke above, output in `results/run1p5/win-x64/runtime-smoke-p5/zig-teak`).
 - Tip for agents: `zig build check --watch -fincremental` gives ~50 ms re-checks.
+
+## Teak bump v0.1.0 -> v0.2.0 (2026-10-27)
+
+Pin: `1324e8e` (tag v0.2.0) via `zig fetch --save=teak git+https://github.com/hotschmoe/teak.git#<commit>`. ~45 min including
+measuring and the full conformance/smoke re-run. Nothing broke: no exhaustive switches over `CanvasPrimitive` /
+`DataTable.Msg` / `Cmd` in the app, and `control.stamp`/`msBetween` were never used.
+
+Adopted:
+- #136: `js/bridge.js` moved to `web/bridge.js`, passed as `linkWebWgpu(.., .{ .bridge_js = b.path("web/bridge.js") })`.
+- #143: the auto_restrained warning line uses `cb.textWarning` (theme `warning_color`) instead of a literal amber
+  (it is now the theme's small font, not 13 px mono).
+- #153: `table.resort` is now `m.tbl.resort(Rows{..})`; the app-side "step the sort cycle back" hack is gone. The existing
+  drag re-sort test still passes.
+- #154: Debug **CLI + desktop** now build with the self-hosted x86_64 backend (`use_llvm = false`, x86_64 targets only,
+  `-Dself-hosted=false` goes back to LLVM). The desktop now links and runs (`--bench=startup/drag` work; Debug drag
+  solve ~226 ms vs ~7 ms release, so Debug runs are slow). The CLI Debug exe passes `conformance.py all`.
+  The **server stays on LLVM**: the self-hosted Debug server still segfaults at startup (address 0x38, no symbols;
+  SQLite + libc, so a Zig backend problem, not a Teak one, not filed). Cost: Debug panics in the CLI/desktop have no
+  symbolized stack trace on Windows (no PDB). `build_check` does no codegen, so the backend does not change it.
+- Not adopted: canvas `antialias`/`circle`/`transform`. The canvas code works and switching would be a rewrite for its own sake.
+
+Indicative edit loop (shared machine, back-to-back, unique edit per rep, 2 reps, bash `date` around the stack.sh function):
+
+| | build_check | build_dev |
+|---|---:|---:|
+| v0.1.0, LLVM (before) | 1.4-1.5 s | 7.3-7.5 s |
+| v0.2.0, LLVM | 1.5 s | 7.8-8.5 s |
+| v0.2.0, self-hosted cli+desktop (adopted) | 1.5-1.6 s | **2.2-3.3 s** (ui edit 2.2, leaf edit 3.2: leaf also rebuilds the LLVM server) |
+
+Re-verified: `conformance.py zig-teak p1` 17/17, `p2` 7/7; `server_conformance.sh zig-teak` all passed
+(`F2D_PORT=18187`, pinned Python 3.12 from machine-env for numpy); `test_all` 15/15;
+`runtime/run.sh zig-teak build cli desktop web server binsize --quick` (F2D_RUN=run1p5,
+F2D_RESULTS_SUBDIR=runtime-smoke-teak020, `F2D_PW_ARGS` as in P1): all desktop and web bench modes produced BENCH lines,
+numbers within noise of P5; web 0.26 MB br, desktop bundle 3.84 MB. No new Teak issues.

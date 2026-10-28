@@ -1,4 +1,4 @@
-// Frame2D bridge (picked up by zunk from js/bridge.js): bench-mode query, and the boundary bench
+// Frame2D bridge (passed to zunk via linkWebWgpu .bridge_js): bench-mode query, and the boundary bench
 // (SPEC 5.5) that calls the wasm exports f2d_noop / f2d_echo from JS.
 const F2D_MODES = ['drag', 'render', 'startup', 'ready', 'boundary'];
 const f2dMode = new URLSearchParams(location.search).get('bench');

@@ -5,6 +5,12 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const strip = b.option(bool, "strip", "strip release binaries (default: true unless Debug)") orelse (optimize != .debug);
+    // Debug CLI + desktop use Zig's self-hosted x86_64 backend (no LLVM): build_dev ~3 s instead of ~8 s.
+    // Costs: Debug code is slower and Windows panics have no symbols (no PDB); -Dself-hosted=false for LLVM.
+    // The server stays on LLVM: the self-hosted Debug server segfaults at startup (SQLite + libc).
+    // Release builds always use LLVM.
+    const self_hosted = b.option(bool, "self-hosted", "Debug: self-hosted backend instead of LLVM") orelse true;
+    const use_llvm: ?bool = if (optimize == .debug and self_hosted and target.result.cpu.arch == .x86_64) false else null;
 
     // `check` = semantic analysis of every target with -fno-emit-bin (no codegen, no link): each target
     // gets a second, never-installed Compile sharing its root module, which is what tells the build
@@ -14,6 +20,7 @@ pub fn build(b: *std.Build) void {
     // ── CLI ──
     const cli = b.addExecutable(.{
         .name = "frame2d",
+        .use_llvm = use_llvm,
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/cli.zig"),
             .target = target,
@@ -55,6 +62,7 @@ pub fn build(b: *std.Build) void {
     if (teak.hasNativeBackend(target.result.os.tag)) {
         const app = b.addExecutable(.{
             .name = "frame2d-app",
+            .use_llvm = use_llvm,
             .root_module = b.createModule(.{
                 .root_source_file = b.path("src/platform.zig"),
                 .target = target,
@@ -88,7 +96,7 @@ pub fn build(b: *std.Build) void {
                 .imports = &.{.{ .name = "frame2d_app", .module = app_mod }},
             }),
         });
-        teak.linkWebWgpu(b, web, .{ .output_dir = "dist" });
+        teak.linkWebWgpu(b, web, .{ .output_dir = "dist", .bridge_js = b.path("web/bridge.js") });
         const web_check = addCheck(b, check, web);
         web_check.entry = .disabled;
         web_check.rdynamic = true;
